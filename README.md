@@ -1,4 +1,4 @@
 xultimate-framework
 ===================
 
-The X-Ultimate Framework provides a JavaEE application reference architecture based Spring Framework.
+The X-Ultimate Toolkit provides a JavaEE application reference architecture based Spring Framework.
