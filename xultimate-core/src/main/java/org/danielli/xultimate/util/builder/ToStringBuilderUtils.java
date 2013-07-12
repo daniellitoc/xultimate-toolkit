@@ -25,7 +25,7 @@ public class ToStringBuilderUtils {
 	/**
 	 * 本地缓存。
 	 */
-	private static ConcurrentHashMap<Class<?>, Field[]> fieldHashMap = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Class<?>, Field[]> fieldCache = new ConcurrentHashMap<>();
 	
 	/**
      * <p>
@@ -51,7 +51,7 @@ public class ToStringBuilderUtils {
 	
 	private static void reflectionAppend(Object object, Class<?> clazz, ToStringBuilder builder) {
 		// 先从缓存中取，如果缓存中不存在。计算并加入缓存中。
-		Field[] classFields = fieldHashMap.get(clazz);
+		Field[] classFields = fieldCache.get(clazz);
 		if (classFields == null) {
 			List<Field> classFieldList = new ArrayList<>();
 			Field[] declaredFields = clazz.getDeclaredFields();
@@ -69,7 +69,7 @@ public class ToStringBuilderUtils {
 	    		}
 	    	}
 			classFields = new Field[classFieldList.size()];
-			fieldHashMap.put(clazz, classFieldList.toArray(classFields));
+			fieldCache.put(clazz, classFieldList.toArray(classFields));
 		}
 		
 		for (Field field : classFields) {

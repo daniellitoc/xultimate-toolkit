@@ -23,7 +23,7 @@ public class EqualsBuilderUtils {
 	/**
 	 * 本地缓存。
 	 */
-	private static ConcurrentHashMap<Class<?>, Field[]> fieldHashMap = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Class<?>, Field[]> fieldCache = new ConcurrentHashMap<>();
 	
 	/**
      * <p>This method uses reflection to determine if the two <code>Object</code>s
@@ -33,32 +33,18 @@ public class EqualsBuilderUtils {
      * @param rhs  the other object
      * @return <code>true</code> if the two Objects have tested equals.
      */
-	public static boolean reflectionEqualsByInstance(Object lhs, Object rhs) {
+	public static boolean reflectionEqualsForLeftClass(Object lhs, Object rhs) {
         if (lhs == rhs) {
             return true;
         }
         if (lhs == null || rhs == null) {
             return false;
         }
-        Class<?> lhsClass = lhs.getClass();
-        Class<?> rhsClass = rhs.getClass();
-        Class<?> testClass;
-        if (lhsClass.isInstance(rhs)) {
-            testClass = lhsClass;
-            if (!rhsClass.isInstance(lhs)) {
-                // rhsClass is a subclass of lhsClass
-                testClass = rhsClass;
-            }
-        } else if (rhsClass.isInstance(lhs)) {
-            testClass = rhsClass;
-            if (!lhsClass.isInstance(rhs)) {
-                // lhsClass is a subclass of rhsClass
-                testClass = lhsClass;
-            }
-        } else {
+        Class<?> lhsClazz = lhs.getClass();
+        if (!lhsClazz.isInstance(rhs)) {
             return false;
         }
-        return reflectionEquals(lhs, rhs, testClass);
+        return reflectionEquals(lhs, rhs, lhsClazz);
 	}
 	
 	/**
@@ -69,7 +55,7 @@ public class EqualsBuilderUtils {
      * @param rhs  the other object
      * @return <code>true</code> if the two Objects have tested equals.
      */
-	public static boolean reflectionEqualsByClass(Object lhs, Object rhs) {
+	public static boolean reflectionEqualsForBothClass(Object lhs, Object rhs) {
         if (lhs == rhs) {
             return true;
         }
@@ -107,7 +93,7 @@ public class EqualsBuilderUtils {
 	}
 	
 	private static void reflectionAppend(Object lhs, Object rhs, Class<?> clazz, EqualsBuilder builder) {
-		Field[] classFields = fieldHashMap.get(clazz);
+		Field[] classFields = fieldCache.get(clazz);
 		if (classFields == null) {
 			List<Field> classFieldList = new ArrayList<>();
 			Field[] declaredFields = clazz.getDeclaredFields();
@@ -125,7 +111,7 @@ public class EqualsBuilderUtils {
 	    		}
 	    	}
 			classFields = new Field[classFieldList.size()];
-			fieldHashMap.put(clazz, classFieldList.toArray(classFields));
+			fieldCache.put(clazz, classFieldList.toArray(classFields));
 		}
 		
 		for (int i = 0; i < classFields.length && builder.isEquals(); i++) {

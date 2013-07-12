@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.danielli.xultimate</groupId>
+		<artifactId>xultimate-toolkit</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>xultimate-context</artifactId>
+
+
+	<name>The X-Ultimate Toolkit Context</name>
+	<description>The X-Ultimate Toolkit context project.</description>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/xultimate-context</url>
+
+	<properties>
+		<net.sourceforge.jchardet.version>1.0</net.sourceforge.jchardet.version>
+		<info.monitorenter.cpdetector.version>1.0.10</info.monitorenter.cpdetector.version>
+		<com.ibm.icu.version>51.2</com.ibm.icu.version>
+		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
+		<cglib.version>3.0</cglib.version>
+		<com.jhlabs.filters.version>2.0.235</com.jhlabs.filters.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jchardet</groupId>
+			<artifactId>jchardet</artifactId>
+			<version>${net.sourceforge.jchardet.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>info.monitorenter</groupId>
+			<artifactId>cpdetector</artifactId>
+			<version>${info.monitorenter.cpdetector.version}</version>
+		</dependency>
+		<!-- cpdetector依赖 -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>${org.antlr.antlr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>${com.ibm.icu.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>
+		 -->
+		<!-- 
+		<dependency>
+			<groupId>com.jhlabs</groupId>
+			<artifactId>filters</artifactId>
+			<version>${com.jhlabs.filters.version}</version>
+		</dependency>
+		 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+	</dependencies>
+</project>

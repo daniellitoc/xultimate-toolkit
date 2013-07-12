@@ -1,23 +1,23 @@
 package org.danielli.xultimate.util.builder;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Employee extends Person {
 	
-	public Employee(String name, double salary, Date hireDay) {
+	public Employee(String name, double salary, DateTime hireDay) {
 		super(name);
 		this.salary = salary;
 		this.hireDay = hireDay;
 	}
 
 	private double salary;
-	private Date hireDay;
+	private DateTime hireDay;
 	
 	public double getSalary() {
 		return salary;
 	}
 
-	public Date getHireDay() {
+	public DateTime getHireDay() {
 		return hireDay;
 	}
 

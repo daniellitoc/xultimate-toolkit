@@ -1,5 +1,6 @@
 package org.danielli.xultimate.util.crypto;
 
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -41,11 +42,13 @@ public enum SymmetricAlgorithms {
 	 * 
 	 * @return 该算法的密钥。
 	 */
-	public SecretKey getKey() throws CryptoException {
+	public Key getKey() throws CryptoException {
 		try {
-			KeyGenerator generator = KeyGenerator.getInstance(name);
-			generator.init(new SecureRandom());
-			return generator.generateKey();
+			KeyGenerator generator = KeyGenerator.getInstance(name); 
+			generator.init(128, new SecureRandom()); 
+			SecretKey secretKey = generator.generateKey();
+			byte[] enCodeFormat = secretKey.getEncoded();  
+			return new SecretKeySpec(enCodeFormat, name);
 		} catch (NoSuchAlgorithmException e) {
             throw new CryptoException(e.getMessage(), e);
         }
@@ -57,11 +60,9 @@ public enum SymmetricAlgorithms {
 	 * @param keyString 密钥码。
 	 * @return 该算法的密钥。
 	 */
-	public SecretKey getKey(String keyString) {
+	public Key getKey(String keyString) {
 		try {
-//			SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(name); 
 			byte[] keyBytes = DigestUtils.digest(MessageDigestAlgorithms.MD5.getDigest(), StringUtils.getBytesUtf8(keyString));
-//			return secretKeyFactory.generateSecret(new SecretKeySpec(keyBytes, name));
 			return new SecretKeySpec(keyBytes, name);
 		} catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);

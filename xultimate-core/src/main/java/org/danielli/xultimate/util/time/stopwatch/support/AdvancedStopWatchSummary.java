@@ -4,8 +4,10 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.apache.commons.collections.comparators.ComparableComparator;
+import org.danielli.xultimate.util.time.DateUtils;
+import org.danielli.xultimate.util.time.DurationFormatUtils;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
-import org.danielli.xultimate.util.time.stopwatch.StopWatchSummary;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch.TaskInfo;
 import org.slf4j.Logger;
 
@@ -15,43 +17,46 @@ import org.slf4j.Logger;
  * @author Daniel Li
  * @since 17 Jun 2013
  */
-public class AdvancedStopWatchSummary implements StopWatchSummary {
-	
-	private Logger logger;
+public class AdvancedStopWatchSummary extends AbstractStopWatchSummary {
+
 	private boolean sort;
 	
-	public AdvancedStopWatchSummary(Logger logger, boolean sort) {
-		this.logger = logger;
+	public AdvancedStopWatchSummary(boolean sort) {
 		this.sort = sort;
 	}
 	
+	private static NumberFormat pf = NumberFormat.getPercentInstance();
+	static {
+		pf.setMinimumIntegerDigits(3);
+		pf.setMinimumFractionDigits(5);
+		pf.setGroupingUsed(false);
+	}
+
+	
 	@Override
 	public void summarize(StopWatch stopWatch) {
+		Logger logger = getLogger();
 		if (logger.isDebugEnabled()) {
-			logger.debug("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {} ns, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), stopWatch.getTotalTimeForNS(), stopWatch.getTaskCount() }) ;
+			logger.debug("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {} ({} ns), task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT), stopWatch.getTotalTime(), stopWatch.getTaskCount() }) ;
 			if (stopWatch.getTaskCount() == 0) {
 				logger.debug("No task info kept");
 			} else {
-				NumberFormat pf = NumberFormat.getPercentInstance();
-				pf.setMinimumIntegerDigits(3);
-				pf.setMinimumFractionDigits(5);
-				pf.setGroupingUsed(false);
+				
 				TaskInfo[] taskInfos = stopWatch.getTaskInfo();
 				if (sort) {
 					Arrays.sort(taskInfos, new Comparator<TaskInfo>() {
 
 						@Override
 						public int compare(TaskInfo o1, TaskInfo o2) {
-							return (int) (o2.getTotalTimeForNS() - o1.getTotalTimeForNS());
+							return new ComparableComparator().compare(o2.getTotalTime(), o1.getTotalTime());
 						}
 
 					});
 				}
 				for (TaskInfo task : taskInfos) {
-					logger.debug("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ns ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), task.getTotalTimeForNS(),  pf.format(task.getTotalTimeForNS() / (double) stopWatch.getTotalTimeForNS()) });
+					logger.debug("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ({} ns) ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), DurationFormatUtils.formatDuration(task.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT), task.getTotalTime(), pf.format(task.getTotalTime() / (double) stopWatch.getTotalTime()) });
 				}
 			}
 		}
 	}
-
 }

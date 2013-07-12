@@ -53,7 +53,7 @@ public class PerformanceMonitorTest {
 		}
 		PerformanceMonitor.mark("testWarnStringWithIf");
 		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, true));
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();
 	}
 

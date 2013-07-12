@@ -1,10 +1,9 @@
 package org.danielli.xultimate.util.builder;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ public class ToStringBuilderUtilsTest {
 	
 	@Test
 	public void test1() {
-		Date date = new Date();
+		DateTime date = new DateTime();
 		Employee employee1 = new Employee("Daniel Li", 20, date);
 		Employee employee2 = new Employee("Daniel Li", 20, date);
 		Manager manager1 = new Manager("Daniel Li", 20, date, 0);
@@ -49,7 +48,7 @@ public class ToStringBuilderUtilsTest {
 		LOGGER.info(String.valueOf(ToStringBuilderUtils.reflectionToString(manager2)));
 		PerformanceMonitor.mark("ToStringBuilderUtils.reflectionToString(manager2)");
 		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, false));
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 		PerformanceMonitor.remove();
 	}
 }

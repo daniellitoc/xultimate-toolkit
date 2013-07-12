@@ -36,9 +36,18 @@ public class StopWatchTest {
 		}
 		stopWatch.mark("Task 2");
 		stopWatch.stop();
-		new SimpleStopWatchSummary(LOGGER).summarize(stopWatch);
-		new DefaultStopWatchSummary(LOGGER, true).summarize(stopWatch);
-		new AdvancedStopWatchSummary(LOGGER, true).summarize(stopWatch);
+		
+		SimpleStopWatchSummary simpleStopWatchSummary = new SimpleStopWatchSummary();
+		simpleStopWatchSummary.setLogger(LOGGER);
+		simpleStopWatchSummary.summarize(stopWatch);
+		
+		DefaultStopWatchSummary defaultStopWatchSummary = new DefaultStopWatchSummary(true);
+		defaultStopWatchSummary.setLogger(LOGGER);
+		defaultStopWatchSummary.summarize(stopWatch);
+		
+		AdvancedStopWatchSummary advancedStopWatchSummary = new AdvancedStopWatchSummary(true);
+		advancedStopWatchSummary.setLogger(LOGGER);
+		advancedStopWatchSummary.summarize(stopWatch);
 	}
 
 }

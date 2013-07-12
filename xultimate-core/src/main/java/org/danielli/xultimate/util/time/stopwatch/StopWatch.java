@@ -9,18 +9,7 @@ import java.util.LinkedList;
  * @since 17 Jun 2013
  */
 public class StopWatch {
-	/**
-	 *  纳秒与毫秒的转换值。
-	 */
-    private static final long NS_2_MS = 1000000L;
-    
-    /**
-     * 纳秒与微秒的转换值。
-     */
-    private static final long NS_2_US = 1000L;
-    
-    
-	
+
 	private final String id;	// 唯一标识。
 	
 	/**
@@ -106,27 +95,8 @@ public class StopWatch {
 	/**
 	 * 获取秒表执行时间间隔，时间单位为纳秒。
 	 */
-	public long getTotalTimeForNS() {
-        if (this.state == StopWatchStoppedState.INSTANCE || this.state == StopWatchSuspendedState.INSTANCE) {
-            return this.stopTime - this.startTime;
-        } else if (this.state == StopWatchRunningState.INSTANCE) {
-            return System.nanoTime() - this.startTime;
-        }
-        throw new RuntimeException("Illegal running state has occured. ");
-	}
-	
-	/**
-	 * 获取秒表执行时间间隔，时间单位为微秒。
-	 */
-	public long getTotalTimeForUS() {
-		return getTotalTimeForNS() / NS_2_US;
-	}
-	
-	/**
-	 * 获取秒表执行时间间隔，时间单位为毫秒。
-	 */
-	public long getTotalTimeForMS() {
-		return getTotalTimeForNS() / NS_2_MS;
+	public long getTotalTime() {
+		return state.getTotalTime(this);
 	}
 	
 	/**
@@ -140,10 +110,7 @@ public class StopWatch {
 	 * 获取秒表开始时间。时间单位为纳秒。
 	 */
 	public long getStartTime() {
-        if (this.state == StopWatchUnStartedState.INSTANCE) {
-            throw new IllegalStateException("Stopwatch has not been started");
-        }
-		return startTime;
+		return state.getStartTime(this);
 	}
 
 	/**
@@ -151,10 +118,7 @@ public class StopWatch {
 	 * @return
 	 */
 	public long getStopTime() {
-        if (this.state == StopWatchStoppedState.INSTANCE || this.state == StopWatchSuspendedState.INSTANCE) {
-        	return stopTime;
-        }
-        throw new IllegalStateException("Illegal running state has occured. ");
+		return state.getStopTime(this);
 	}
 	
 	
@@ -201,16 +165,8 @@ public class StopWatch {
 			return stopTime;
 		}
 		
-		public long getTotalTimeForNS() {
+		public long getTotalTime() {
 			return this.stopTime - this.startTime;
-		}
-		
-		public long getTotalTimeForUS() {
-			return getTotalTimeForNS() / NS_2_US;
-		}
-		
-		public long getTotalTimeForMS() {
-			return getTotalTimeForNS() / NS_2_MS;
 		}
 	}
 }

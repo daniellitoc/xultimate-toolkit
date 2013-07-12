@@ -23,6 +23,13 @@
 		<commons-io.version>2.4</commons-io.version>
 		<commons-collections.version>3.2.1</commons-collections.version>
 		<commons-codec.version>1.8</commons-codec.version>
+		<joda-time.version>2.2</joda-time.version>
+		<com.belerweb.pinyin4j.version>2.5.0</com.belerweb.pinyin4j.version>
+		
+		<com.fasterxml.jackson.core.version>2.2.2</com.fasterxml.jackson.core.version>
+		<com.alibaba.fastjson.version>1.1.34</com.alibaba.fastjson.version>
+		
+		<com.dyuproject.protostuff.version>1.0.7</com.dyuproject.protostuff.version>
 	</properties>
 
 	<dependencies>
@@ -56,8 +63,14 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${ch.qos.logback.version}</version>
 		</dependency>
+		<!-- 日期操作 -->
+		<dependency>
+		    <groupId>joda-time</groupId>
+		    <artifactId>joda-time</artifactId>
+		    <version>${joda-time.version}</version>
+		</dependency>
 		
-		
+		<!-- Utils工具类 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -79,6 +92,13 @@
 			<version>${commons-codec.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>com.belerweb</groupId>
+		    <artifactId>pinyin4j</artifactId>
+		    <version>${com.belerweb.pinyin4j.version}</version>
+		</dependency>
+		
+		<!-- 核心 -->
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${org.springframework.version}</version>
@@ -95,10 +115,44 @@
 			<version>${org.springframework.version}</version>
 		</dependency>
 		
-		<!-- Junit -->
+		<!-- JSON -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${com.alibaba.fastjson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${com.fasterxml.jackson.core.version}</version>
+		</dependency>
+		
+		<!-- 序列化 -->
+		<dependency>
+		    <groupId>com.dyuproject.protostuff</groupId>
+		    <artifactId>protostuff-runtime</artifactId>
+		    <version>${com.dyuproject.protostuff.version}</version>
+		</dependency>
+		<dependency>
+	    	<groupId>com.dyuproject.protostuff</groupId>
+		    <artifactId>protostuff-core</artifactId>
+		    <version>${com.dyuproject.protostuff.version}</version>
+		</dependency>
+		
+		<!-- 测试 -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

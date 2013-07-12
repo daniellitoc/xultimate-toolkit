@@ -25,7 +25,7 @@ public class HashCodeBuilderUtils {
 	/**
 	 * 本地缓存。
 	 */
-	private static ConcurrentHashMap<Class<?>, Field[]> fieldHashMap = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Class<?>, Field[]> fieldCache = new ConcurrentHashMap<>();
 	
     /**
      * <p>
@@ -73,7 +73,7 @@ public class HashCodeBuilderUtils {
 	}
 	
 	private static void reflectionAppend(Object object, Class<?> clazz, HashCodeBuilder builder) {
-		Field[] classFields = fieldHashMap.get(clazz);
+		Field[] classFields = fieldCache.get(clazz);
 		if (classFields == null) {
 			List<Field> classFieldList = new ArrayList<>();
 			Field[] declaredFields = clazz.getDeclaredFields();
@@ -91,7 +91,7 @@ public class HashCodeBuilderUtils {
 	    		}
 	    	}
 			classFields = new Field[classFieldList.size()];
-			fieldHashMap.put(clazz, classFieldList.toArray(classFields));
+			fieldCache.put(clazz, classFieldList.toArray(classFields));
 		}
 		
 		for (Field field : classFields) {

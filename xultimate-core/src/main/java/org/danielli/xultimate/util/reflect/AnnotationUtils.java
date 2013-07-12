@@ -17,6 +17,17 @@ public class AnnotationUtils {
 	}
 	
 	/**
+	 * Retrieve the <em>value</em> of a named Annotation attribute, given an annotation instance.
+	 * @param annotation the annotation instance from which to retrieve the value
+	 * @param attributeName the name of the attribute value to retrieve
+	 * @return the attribute value, or {@code null} if not found
+	 * @see #getValue(Annotation)
+	 */
+	public static Object getValue(Annotation annotation, String attributeName) {
+		return org.springframework.core.annotation.AnnotationUtils.getValue(annotation, attributeName);
+	}
+	
+	/**
 	 * Get a single {@link Annotation} of {@code annotationType} from the supplied
 	 * Method, Constructor or Field. Meta-annotations will be searched if the annotation
 	 * is not declared locally on the supplied element.

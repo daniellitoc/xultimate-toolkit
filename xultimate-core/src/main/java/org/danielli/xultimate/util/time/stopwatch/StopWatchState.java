@@ -52,6 +52,24 @@ public interface StopWatchState {
 	 * @param taskName 任务名称。
 	 */
 	void mark(StopWatch stopWatch, String taskName);
+	
+	/**
+	 * 获取秒表执行时间间隔，时间单位为纳秒。
+	 * @param stopWatch 秒表。
+	 */
+	long getTotalTime(StopWatch stopWatch);
+	
+	/**
+	 * 获取秒表开始时间。时间单位为纳秒。
+	 * @param stopWatch 秒表。
+	 */
+	long getStartTime(StopWatch stopWatch);
+	
+	/**
+	 * 获取秒表结束时间。时间单位为纳秒。
+	 * @param stopWatch 秒表。
+	 */
+	long getStopTime(StopWatch stopWatch);
 }
 
 /**
@@ -96,6 +114,21 @@ abstract class AbstractStopWatchState implements StopWatchState {
 		throw new IllegalStateException("Stopwatch is not running. ");
 	}
 	
+	@Override
+	public long getStartTime(StopWatch stopWatch) {
+		return stopWatch.startTime;
+	}
+	
+	@Override
+	public long getStopTime(StopWatch stopWatch) {
+		throw new IllegalStateException("Illegal running state has occured. ");
+	}
+	
+	@Override
+	public long getTotalTime(StopWatch stopWatch) {
+		return stopWatch.stopTime - stopWatch.startTime;
+	}
+	
 }
 
 /**
@@ -115,6 +148,16 @@ class StopWatchUnStartedState extends AbstractStopWatchState {
 		stopWatch.startTime = System.nanoTime();
 		stopWatch.currentTaskStartTime = stopWatch.startTime;
 		stopWatch.state = StopWatchRunningState.INSTANCE;
+	}
+	
+	@Override
+	public long getStartTime(StopWatch stopWatch) {
+		throw new IllegalStateException("Stopwatch has not been started");
+	}
+	
+	@Override
+	public long getTotalTime(StopWatch stopWatch) {
+		throw new RuntimeException("Illegal running state has occured. ");
 	}
 }
 
@@ -149,6 +192,11 @@ class StopWatchRunningState extends AbstractStopWatchState {
 		stopWatch.currentTaskStartTime = currentTime;
 	}
 	
+	@Override
+	public long getTotalTime(StopWatch stopWatch) {
+		return System.nanoTime() - stopWatch.startTime;
+	}
+	
 }
 
 /**
@@ -166,6 +214,16 @@ class StopWatchStoppedState extends AbstractStopWatchState {
 	@Override
 	public void start(StopWatch stopWatch) {
 		throw new IllegalStateException("Stopwatch must be reset before being restarted. ");
+	}
+	
+	@Override
+	public long getStopTime(StopWatch stopWatch) {
+		return stopWatch.stopTime;
+	}
+	
+	@Override
+	public long getTotalTime(StopWatch stopWatch) {
+		return stopWatch.stopTime - stopWatch.startTime;
 	}
 }
 
@@ -192,5 +250,15 @@ class StopWatchSuspendedState extends AbstractStopWatchState {
 		stopWatch.startTime += interval;
 		stopWatch.currentTaskStartTime += interval;
 		stopWatch.state = StopWatchRunningState.INSTANCE;
-	}	
+	}
+	
+	@Override
+	public long getStopTime(StopWatch stopWatch) {
+		return stopWatch.stopTime;
+	}
+	
+	@Override
+	public long getTotalTime(StopWatch stopWatch) {
+		return stopWatch.stopTime - stopWatch.startTime;
+	}
 }

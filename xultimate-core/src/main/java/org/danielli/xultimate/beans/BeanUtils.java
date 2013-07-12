@@ -1,10 +1,11 @@
-package org.danielli.xultimate.util;
+package org.danielli.xultimate.beans;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
+import org.danielli.xultimate.util.ArrayUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
