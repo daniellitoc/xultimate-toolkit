@@ -13,6 +13,7 @@ import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.io.IOUtils;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +29,19 @@ public class CipherUtilsTest {
 		Cipher cipher = SymmetricAlgorithms.AES.getCipher();
 		Key key = SymmetricAlgorithms.AES.getKey("myKey");
 		byte[] result = CipherUtils.encrypt(cipher, key, StringUtils.getBytesUtf8(source));
-		LOGGER.info("{}: {}", new Object[] { source,  StringUtils.newStringUtf8(Base64.encodeBase64(result)) });
 		PerformanceMonitor.mark("AES encrypt");
+		Assert.assertEquals("3L6N9w+NpT46MjzPfp7XWA==", StringUtils.newStringUtf8(Base64.encodeBase64(result)));
+		
 		
 		source = "3L6N9w+NpT46MjzPfp7XWA==";
 		cipher = SymmetricAlgorithms.AES.getCipher();
 		key = SymmetricAlgorithms.AES.getKey("myKey");
 		result = CipherUtils.decrypt(cipher, key, Base64.decodeBase64(StringUtils.getBytesUtf8(source)));
-		LOGGER.info("{}: {}", new Object[] { source,  StringUtils.newStringUtf8(result) });
 		PerformanceMonitor.mark("AES decrypt");
+		Assert.assertEquals("ultimate", StringUtils.newStringUtf8(result));
+		
 		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, false));
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 		PerformanceMonitor.remove();
 	}
 	
@@ -64,7 +67,7 @@ public class CipherUtilsTest {
 			IOUtils.closeQuietly(output);
 			PerformanceMonitor.mark("AES decrypt");
 			PerformanceMonitor.stop();
-			PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, false));
+			PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 			PerformanceMonitor.remove();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -86,8 +89,9 @@ public class CipherUtilsTest {
 		result = CipherUtils.decrypt(cipher, keyPair.getPrivate(), Base64.decodeBase64(StringUtils.getBytesUtf8(source)));
 		LOGGER.info("{}: {}", new Object[] { source,  StringUtils.newStringUtf8(result) });
 		PerformanceMonitor.mark("RSA encrypt");
+		
 		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, false));
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 		PerformanceMonitor.remove();
 	}
 	
@@ -114,7 +118,7 @@ public class CipherUtilsTest {
 		LOGGER.info("{}: {}", new Object[] { source,  StringUtils.newStringUtf8(result) });
 		PerformanceMonitor.mark("AES decrypt");
 		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(PerformanceMonitor.LOGGER, false));
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 		PerformanceMonitor.remove();
 	}
 }

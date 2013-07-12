@@ -1,5 +1,6 @@
 .settings
 .project
+.classpath
 
 *.class
 
@@ -7,3 +8,5 @@
 *.jar
 *.war
 *.ear
+
+target

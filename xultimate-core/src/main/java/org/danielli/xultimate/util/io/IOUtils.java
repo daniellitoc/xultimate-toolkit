@@ -44,6 +44,16 @@ import java.io.Writer;
  */
 public class IOUtils {
 	
+//	private static final int EOF = -1;
+//	
+//    /**
+//     * The default buffer size ({@value}) to use for 
+//     * {@link #copyLarge(InputStream, OutputStream)}
+//     * and
+//     * {@link #copyLarge(Reader, Writer)}
+//     */
+//    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	
     /**
      * Read bytes from an input stream.
      * This implementation guarantees that it will read as many bytes
@@ -58,6 +68,89 @@ public class IOUtils {
 	public static int read(InputStream input, byte[] buffer) throws IOException {
 		return org.apache.commons.io.IOUtils.read(input, buffer);
 	}
+	
+//    /**
+//     * Read bytes from an input stream.
+//     * This implementation guarantees that it will read as many bytes
+//     * as possible before giving up; this may not always be the case for
+//     * subclasses of {@link InputStream}.
+//     * 
+//     * @param input where to read input from
+//     * @param buffer destination
+//     * @return actual length read; may be less than requested if EOF was reached
+//     * @throws IOException if a read error occurs
+//     * @since 2.2
+//     */
+//    public static int read(ReadableByteChannel input, ByteBuffer buffer) throws IOException {
+//        return input.read(buffer);
+//    }
+//    
+//    /**
+//     * Read bytes from an input stream.
+//     * This implementation guarantees that it will read as many bytes
+//     * as possible before giving up; this may not always be the case for
+//     * subclasses of {@link InputStream}.
+//     * 
+//     * @param input where to read input from
+//     * @param buffer destination
+//     * @return actual length read; may be less than requested if EOF was reached
+//     * @throws IOException if a read error occurs
+//     * @since 2.2
+//     */
+//    public static long read(ScatteringByteChannel input, ByteBuffer[] buffer) throws IOException {
+//        return input.read(buffer);
+//    }
+//	
+//    /**
+//     * Read bytes from an input stream.
+//     * This implementation guarantees that it will read as many bytes
+//     * as possible before giving up; this may not always be the case for
+//     * subclasses of {@link InputStream}.
+//     * 
+//     * @param input where to read input from
+//     * @param buffer destination
+//     * @param offset inital offset into buffer
+//     * @param length length to read, must be >= 0
+//     * @return actual length read; may be less than requested if EOF was reached
+//     * @throws IOException if a read error occurs
+//     * @since 2.2
+//     */
+//    public static long read(ScatteringByteChannel input, ByteBuffer[] buffers, int offset, int length) throws IOException {
+//        if (length < 0) {
+//            throw new IllegalArgumentException("Length must not be negative: " + length);
+//        }
+//        return input.read(buffers, offset, length);
+//    }
+	
+    /**
+     * Get the contents of an <code>InputStream</code> as a <code>byte[]</code>.
+     * <p>
+     * This method buffers the input internally, so there is no need to use a
+     * <code>BufferedInputStream</code>.
+     * 
+     * @param input  the <code>InputStream</code> to read from
+     * @return the requested byte array
+     * @throws NullPointerException if the input is null
+     * @throws IOException if an I/O error occurs
+     */
+    public static byte[] toByteArray(InputStream input) throws IOException {
+        return org.apache.commons.io.IOUtils.toByteArray(input);
+    }
+    
+//    /**
+//     * Get the contents of an <code>InputStream</code> as a <code>byte[]</code>.
+//     * <p>
+//     * This method buffers the input internally, so there is no need to use a
+//     * <code>BufferedInputStream</code>.
+//     * 
+//     * @param input  the <code>InputStream</code> to read from
+//     * @return the requested byte array
+//     * @throws NullPointerException if the input is null
+//     * @throws IOException if an I/O error occurs
+//     */
+//    public static byte[] toByteArray(ReadableByteChannel input) throws IOException {
+//        return org.apache.commons.io.IOUtils.toByteArray(input);
+//    }
 	
     /**
      * Writes bytes from a <code>byte[]</code> to an <code>OutputStream</code>.

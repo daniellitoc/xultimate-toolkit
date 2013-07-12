@@ -24,7 +24,7 @@ public class CompareToBuilderUtils {
 	/**
 	 * 本地缓存。
 	 */
-	private static ConcurrentHashMap<Class<?>, Field[]> fieldHashMap = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Class<?>, Field[]> fieldCache = new ConcurrentHashMap<>();
 	
 	/** 
      * <p>Compares two <code>Object</code>s via reflection.</p>
@@ -38,7 +38,7 @@ public class CompareToBuilderUtils {
      * @throws ClassCastException  if <code>rhs</code> is not assignment-compatible
      *  with <code>lhs</code>
      */	
-	public static int reflectionCompareByClass(Object lhs, Object rhs) {
+	public static int reflectionCompareForBothClass(Object lhs, Object rhs) {
 		if (lhs == rhs) {
             return 0;
         }
@@ -63,32 +63,18 @@ public class CompareToBuilderUtils {
      * @throws ClassCastException  if <code>rhs</code> is not assignment-compatible
      *  with <code>lhs</code>
      */
-	public static int reflectionCompareByInstance(Object lhs, Object rhs) {
+	public static int reflectionCompareForLeftClass(Object lhs, Object rhs) {
 		if (lhs == rhs) {
             return 0;
         }
         if (lhs == null || rhs == null) {
             throw new NullPointerException();
         }
-        Class<?> lhsClass = lhs.getClass();
-        Class<?> rhsClass = rhs.getClass();
-        Class<?> testClass;
-        if (lhsClass.isInstance(rhs)) {
-            testClass = lhsClass;
-            if (!rhsClass.isInstance(lhs)) {
-                // rhsClass is a subclass of lhsClass
-                testClass = rhsClass;
-            }
-        } else if (rhsClass.isInstance(lhs)) {
-            testClass = rhsClass;
-            if (!lhsClass.isInstance(rhs)) {
-                // lhsClass is a subclass of rhsClass
-                testClass = lhsClass;
-            }
-        } else {
-        	throw new ClassCastException();
+        Class<?> lhsClazz = lhs.getClass();
+        if (!lhsClazz.isInstance(rhs)) {
+            throw new ClassCastException();
         }
-        return reflectionCompare(lhs, rhs, testClass);
+        return reflectionCompare(lhs, rhs, lhsClazz);
     }
 	
     /** 
@@ -115,7 +101,7 @@ public class CompareToBuilderUtils {
     }
 	 
 	 private static void reflectionAppend(Object lhs, Object rhs, Class<?> clazz, CompareToBuilder builder) {
-		 	Field[] classFields = fieldHashMap.get(clazz);
+		 	Field[] classFields = fieldCache.get(clazz);
 			if (classFields == null) {
 				List<Field> classFieldList = new ArrayList<>();
 				Field[] declaredFields = clazz.getDeclaredFields();
@@ -133,7 +119,7 @@ public class CompareToBuilderUtils {
 		    		}
 		    	}
 				classFields = new Field[classFieldList.size()];
-				fieldHashMap.put(clazz, classFieldList.toArray(classFields));
+				fieldCache.put(clazz, classFieldList.toArray(classFields));
 			}
 		 
 			for (int i = 0; i < classFields.length && builder.toComparison() == 0; i++) {

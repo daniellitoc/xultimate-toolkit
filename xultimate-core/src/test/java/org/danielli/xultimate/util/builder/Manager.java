@@ -1,12 +1,12 @@
 package org.danielli.xultimate.util.builder;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Manager extends Employee {
 	
 	private double bouns;
 	
-	public Manager(String name, double salary, Date hireDay, double bouns) {
+	public Manager(String name, double salary, DateTime hireDay, double bouns) {
 		super(name, salary, hireDay);
 		this.bouns = bouns;
 	}

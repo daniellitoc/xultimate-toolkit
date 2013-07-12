@@ -1,7 +1,7 @@
 package org.danielli.xultimate.util.performance;
 
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
-import org.danielli.xultimate.util.time.stopwatch.StopWatchSummary;
+import org.danielli.xultimate.util.time.stopwatch.support.AbstractStopWatchSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ public class PerformanceMonitor {
 	
 	private static ThreadLocal<StopWatch> stopWatchThreadLocal = new ThreadLocal<>();
 	
-	public static final Logger LOGGER = LoggerFactory.getLogger(PerformanceMonitor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceMonitor.class);
 	
 	/**
 	 * 开始秒表计时。
@@ -89,9 +89,12 @@ public class PerformanceMonitor {
 	/**
 	 * 秒表汇总。
 	 */
-	public static void summarize(StopWatchSummary stopWatchSummary) {
+	public static void summarize(AbstractStopWatchSummary stopWatchSummary) {
 		StopWatch stopWatch = stopWatchThreadLocal.get();
 		LOGGER.debug("Print [{}] Stopwatch Info", stopWatch.getId());
+		if (stopWatchSummary.getLogger() == null) {
+			stopWatchSummary.setLogger(LOGGER);
+		}
 		stopWatchSummary.summarize(stopWatch);
 	}
 }
