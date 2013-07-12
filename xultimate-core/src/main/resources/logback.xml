@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Example LOGBACK Configuration File http://logback.qos.ch/manual/configuration.html -->
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+	<contextName>xultimate</contextName>
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date [%contextName] %level [%thread] %logger [%file:%line] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>logback.host</key>
+			<defaultValue>0.0.0.0</defaultValue>
+		</discriminator>
+		
+		<sift>
+			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}.log</file>
+				<!-- Support multiple-JVM writing to the same log file -->
+				<prudent>true</prudent> 
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<!-- daily rollover -->
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+						<maxFileSize>50MB</maxFileSize>
+					</timeBasedFileNamingAndTriggeringPolicy>
+					<!-- keep 14 days' worth of history -->
+					<maxHistory>14</maxHistory>
+				</rollingPolicy>
+
+				<encoder>
+					<pattern>%date [%contextName] %level [%thread] %logger [%file:%line] - %msg%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+	
+	<!-- 
+	<appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+		<smtpHost>smtp.gmail.com</smtpHost>
+		<smtpPort>465</smtpPort>
+		<SSL>true</SSL>
+		<username>YOUR_USERNAME@gmail.com</username>
+		<password>YOUR_GMAIL_PASSWORD</password>
+		<to>EMAIL-DESTINATION</to>
+		<to>ANOTHER_EMAIL_DESTINATION</to>
+		<from>YOUR_USERNAME@gmail.com</from>
+		<subject>%contextName: %logger{20} - %m</subject>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date %contextName %level [%thread] %logger [%file:%line] -
+				%msg%n</pattern>
+		</layout>
+	</appender>
+	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+		<connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+			<dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<driverClass>com.mysql.jdbc.Driver</driverClass>
+				<jdbcUrl>jdbc:mysql://${serverName}:${port}/${dbName}</jdbcUrl>
+				<user>${user}</user>
+				<password>${password}</password>
+			</dataSource>
+		</connectionSource>
+	</appender>
+
+	<logger name="chapters.configuration" level="INFO" />
+	<logger name="chapters.configuration.Foo" level="DEBUG" />
+	 -->
+	
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+		<!-- 
+		<appender-ref ref="SIFT" />
+		 -->
+	</root>
+</configuration>
