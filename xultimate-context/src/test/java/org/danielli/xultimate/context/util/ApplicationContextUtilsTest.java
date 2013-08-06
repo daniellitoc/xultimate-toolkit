@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/applicationContext-service-util.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml" })
 public class ApplicationContextUtilsTest {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextUtilsTest.class);
@@ -18,7 +18,7 @@ public class ApplicationContextUtilsTest {
 	@Test
 	public void test() {
 		PerformanceMonitor.start("ApplicationContextUtilsTest");
-		LOGGER.info(ApplicationContextUtils.getApplicationContext().toString());
+		LOGGER.info(BeanFactoryContext.currentApplicationContext().toString());
 		PerformanceMonitor.mark("ApplicationContextUtils.getApplicationContext()");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));

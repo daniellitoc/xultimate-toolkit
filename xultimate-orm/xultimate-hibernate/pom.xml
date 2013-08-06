@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.danielli.xultimate</groupId>
+		<artifactId>xultimate-orm</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>xultimate-hibernate</artifactId>
+
+	<name>The X-Ultimate Toolkit ORM Hibernate</name>
+	<description>The X-Ultimate Toolkit orm hibernate project.</description>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-orm/xultimate-hibernate</url>
+	
+	<properties>
+		<org.hibernate.hibernate-core.version>4.2.0.Final</org.hibernate.hibernate-core.version>
+		<org.springframework.data.spring-data-jpa.version>1.4.2.RELEASE</org.springframework.data.spring-data-jpa.version>
+		<com.google.hibernate-memcached.version>1.3</com.google.hibernate-memcached.version>
+	</properties>
+	
+	<dependencies>
+	   	<dependency>
+			<groupId>org.danielli.xultimate</groupId>
+			<artifactId>xultimate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.danielli.xultimate</groupId>
+			<artifactId>xultimate-context</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.danielli.xultimate</groupId>
+			<artifactId>xultimate-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.danielli.xultimate</groupId>
+			<artifactId>xultimate-context-support</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Spring ORM -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${org.springframework.data.spring-data-jpa.version}</version>
+		</dependency>
+		<!-- Hibernate and JPA -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${org.hibernate.hibernate-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${org.hibernate.hibernate-core.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.googlecode</groupId>
+		    <artifactId>hibernate-memcached</artifactId>
+		    <version>${com.google.hibernate-memcached.version}</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>spy</groupId>
+			   		<artifactId>spymemcached</artifactId>
+		    	</exclusion>
+		    	<exclusion>
+		    		<groupId>org.hibernate</groupId>
+			        <artifactId>hibernate</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+		
+		<!-- TEST -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <configuration>
+			        <compilerArgument>-proc:none</compilerArgument>
+			    </configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.bsc.maven</groupId>
+			    <artifactId>maven-processor-plugin</artifactId>
+			    <version>2.2.4</version>
+			    <executions>
+			        <execution>
+			            <id>process</id>
+			            <goals>
+			                <goal>process</goal>
+			            </goals>
+			            <phase>generate-sources</phase>
+			            <configuration>
+			            	<outputDirectory>src/main/generated</outputDirectory>
+			                <processors>                                
+			                    <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+			                </processors>
+			            </configuration>
+			        </execution>
+			    </executions>
+			    <dependencies>
+			        <dependency>
+			            <groupId>org.hibernate</groupId>
+			            <artifactId>hibernate-jpamodelgen</artifactId>
+			            <version>1.2.0.Final</version>
+			        </dependency>
+			    </dependencies>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.bsc.maven</groupId>
+										<artifactId>
+											maven-processor-plugin
+										</artifactId>
+										<versionRange>
+											[2.2.1,)
+										</versionRange>
+										<goals>
+											<goal>process</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

@@ -7,8 +7,7 @@ package org.danielli.xultimate.core;
  * @since 18 Jun 2013
  */
 public interface ClassTypeSupporter {
-	
-	
+
 	/**
 	 * 是否支持此类型。
 	 * @param classType 类型。

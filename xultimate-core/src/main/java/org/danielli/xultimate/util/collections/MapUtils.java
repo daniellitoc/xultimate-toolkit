@@ -41,6 +41,19 @@ import org.apache.commons.collections.Transformer;
 public class MapUtils {
 
     /**
+     * Null-safe check if the specified map is empty.
+     * <p>
+     * Null returns true.
+     * 
+     * @param map  the map to check, may be null
+     * @return true if empty or null
+     * @since Commons Collections 3.2
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+    	return org.apache.commons.collections.MapUtils.isEmpty(map);
+    }
+	
+    /**
      * Null-safe check if the specified map is not empty.
      * <p>
      * Null returns false.

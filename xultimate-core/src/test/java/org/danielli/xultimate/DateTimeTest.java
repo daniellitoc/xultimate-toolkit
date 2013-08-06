@@ -49,9 +49,6 @@ public class DateTimeTest {
 		LOGGER.info("{}", dateTime);
 		
 
-		
-
-		
 		String timeString = "2006-01-26T13:30:00-06:00";
 		dateTime = new DateTime(timeString);
 		LOGGER.info("{}", dateTime);

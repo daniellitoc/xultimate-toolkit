@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 导入SMTP相关属性信息-->
+	<util:properties id="smtpProperties" location="classpath:/mail/mail.properties" />
+	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
+		<array value-type="java.util.Properties">
+			<ref bean="smtpProperties"/>
+		</array>
+	</util:list>
+	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
+		<property name="encryptPropertyNames">
+			<array>
+				<value>mail.username</value>
+				<value>mail.password</value>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+		p:protocol="${mail.protocol}" p:host="${mail.host}" p:port="${mail.port}"
+		p:defaultEncoding="utf-8"
+		p:username="${mail.username}"
+		p:password="${mail.password}">
+		<property name="javaMailProperties">
+			<value>
+				mail.${mail.protocol}.auth=${mail.smtp-auth}
+				mail.debug=${mail.debug}
+			</value>
+		</property>	
+	</bean>
+	
+	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage"
+		p:from="daniellitoc@danielli.org" p:replyTo="daniellitoc@danielli.org">
+		<property name="to">
+			<array>
+				<value>daniellitoc@yahoo.com</value>
+			</array>
+		</property>	
+		<!-- 抄送地址。邮件中可以看到。 -->
+		<property name="cc">
+			<array>
+				<value>daniellitoc@msn.com</value>
+			</array>
+		</property>
+		<!-- 暗抄地址。邮件中看不到。 -->
+		<property name="bcc">
+			<array>
+				<value>wiccue@msn.com</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 在Web项目中使用VelocityConfigurer代替 -->
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" p:resourceLoaderPath="classpath:/org/danielli/xultimate/context/mail/template/">
+		<property name="velocityProperties">
+			<value>
+				file.resource.loader.cache=true
+				input.encoding=UTF-8
+				output.encoding=UTF-8
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" 
+		p:corePoolSize="5" p:queueCapacity="1000" p:maxPoolSize="50" p:keepAliveSeconds="200" p:allowCoreThreadTimeOut="true"
+		p:daemon="true" p:threadPriority="5" p:threadNamePrefix="mail" 
+		p:awaitTerminationSeconds="10000000" p:waitForTasksToCompleteOnShutdown="true">
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
+		</property>
+	</bean>
+</beans>

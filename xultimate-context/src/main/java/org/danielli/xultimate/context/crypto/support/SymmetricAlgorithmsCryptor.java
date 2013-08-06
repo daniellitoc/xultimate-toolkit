@@ -2,9 +2,6 @@ package org.danielli.xultimate.context.crypto.support;
 
 import java.security.Key;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.danielli.xultimate.context.crypto.Decryptor;
 import org.danielli.xultimate.context.crypto.DecryptorException;
 import org.danielli.xultimate.context.crypto.Encryptor;
@@ -12,6 +9,8 @@ import org.danielli.xultimate.context.crypto.EncryptorException;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.crypto.CipherUtils;
 import org.danielli.xultimate.util.crypto.SymmetricAlgorithms;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 对称加密和解密器。
@@ -20,7 +19,7 @@ import org.danielli.xultimate.util.crypto.SymmetricAlgorithms;
  * @since 18 Jun 2013
  *
  */
-public class SymmetricAlgorithmsCryptor implements Encryptor<byte[], byte[]>, Decryptor<byte[], byte[]> {
+public class SymmetricAlgorithmsCryptor implements Encryptor<byte[], byte[]>, Decryptor<byte[], byte[]>, InitializingBean, DisposableBean {
 
 	/** 密钥 */
 	private Key key;
@@ -30,20 +29,6 @@ public class SymmetricAlgorithmsCryptor implements Encryptor<byte[], byte[]>, De
 	
 	/** 加密算法 */
 	private SymmetricAlgorithms symmetricAlgorithms;
-	
-	@PostConstruct
-	public void init() {
-		if (StringUtils.isNotEmpty(secretKeyString)) {
-			key = symmetricAlgorithms.getKey(secretKeyString);
-		} else {
-			key = symmetricAlgorithms.getKey();
-		}
-	}
-	
-	@PreDestroy
-	public void destroy() {
-		key = null;
-	}
 	
 	@Override
 	public byte[] decrypt(byte[] source) throws DecryptorException {
@@ -78,6 +63,20 @@ public class SymmetricAlgorithmsCryptor implements Encryptor<byte[], byte[]>, De
 	 */
 	public void setSymmetricAlgorithms(SymmetricAlgorithms symmetricAlgorithms) {
 		this.symmetricAlgorithms = symmetricAlgorithms;
+	}
+	
+	@Override
+	public void destroy() throws Exception {
+		key = null;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		if (StringUtils.isNotEmpty(secretKeyString)) {
+			key = symmetricAlgorithms.getKey(secretKeyString);
+		} else {
+			key = symmetricAlgorithms.getKey();
+		}
 	}
 
 }

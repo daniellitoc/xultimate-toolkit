@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.danielli.xultimate</groupId>
+		<artifactId>xultimate-toolkit</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>xultimate-jdbc</artifactId>
+	
+	<name>The X-Ultimate Toolkit JDBC</name>
+	<description>The X-Ultimate Toolkit jdbc project.</description>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-jdbc</url>
+	
+	<properties>
+		<com.alibaba.druid.version>0.2.23</com.alibaba.druid.version>
+		<com.mchange.c3p0.version>0.9.5-pre3</com.mchange.c3p0.version>
+		<mysql.version>5.1.21</mysql.version>
+		
+		<!-- 测试使用 -->
+		<javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
+		<javax.servlet.jsp.javax.servlet.jsp-api.version>2.3.1</javax.servlet.jsp.javax.servlet.jsp-api.version>
+		<javax.servlet.jstl.version>1.2</javax.servlet.jstl.version>
+		<taglibs.standard.version>1.1.2</taglibs.standard.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-context</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>druid</artifactId>
+		    <version>${com.alibaba.druid.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		
+		<!-- 测试使用 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet.javax.servlet-api.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>${javax.servlet.jsp.javax.servlet.jsp-api.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${javax.servlet.jstl.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>${taglibs.standard.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${org.springframework.version}</version>
+			<!-- 启动Web时打开 -->
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.mchange</groupId>
+		    <artifactId>c3p0</artifactId>
+		    <version>${com.mchange.c3p0.version}</version>
+		    <scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.danielli.xultimate</groupId>
+		<artifactId>xultimate-toolkit</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>xultimate-context-support</artifactId>
+
+	<name>The X-Ultimate Toolkit Context Support</name>
+	<description>The X-Ultimate Toolkit context support project.</description>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-context-support</url>
+
+	<properties>
+		<org.quartz-scheduler.quartz.version>2.2.0</org.quartz-scheduler.quartz.version>
+		<javax.mail.mail.version>1.4.6-rc1</javax.mail.mail.version>
+		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
+		<com.googlecode.xmemcached.version>1.4.2</com.googlecode.xmemcached.version>
+		<com.thimbleware.jmemcached.version>1.0.0</com.thimbleware.jmemcached.version>
+		<redis.clients.jedis.version>2.1.0</redis.clients.jedis.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-context</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xultimate-web</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.danielli.xultimate</groupId>
+			<artifactId>xultimate-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${org.quartz-scheduler.quartz.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>c3p0</groupId>
+					<artifactId>c3p0</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>${javax.mail.mail.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.xmemcached</groupId>
+		    <artifactId>xmemcached</artifactId>
+		    <version>${com.googlecode.xmemcached.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${redis.clients.jedis.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		
+	    <dependency>
+			<groupId>com.thimbleware.jmemcached</groupId>
+			<artifactId>jmemcached-core</artifactId>
+			<version>${com.thimbleware.jmemcached.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

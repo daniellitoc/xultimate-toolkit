@@ -115,6 +115,31 @@ public class StringUtils {
 	}
 	
     /**
+     * <p>Compares two CharSequences, returning {@code true} if they are equal ignoring
+     * the case.</p>
+     *
+     * <p>{@code null}s are handled without exceptions. Two {@code null}
+     * references are considered equal. Comparison is case insensitive.</p>
+     *
+     * <pre>
+     * StringUtils.equalsIgnoreCase(null, null)   = true
+     * StringUtils.equalsIgnoreCase(null, "abc")  = false
+     * StringUtils.equalsIgnoreCase("abc", null)  = false
+     * StringUtils.equalsIgnoreCase("abc", "abc") = true
+     * StringUtils.equalsIgnoreCase("abc", "ABC") = true
+     * </pre>
+     *
+     * @param str1  the first CharSequence, may be null
+     * @param str2  the second CharSequence, may be null
+     * @return {@code true} if the CharSequence are equal, case insensitive, or
+     *  both {@code null}
+     * @since 3.0 Changed signature from equalsIgnoreCase(String, String) to equalsIgnoreCase(CharSequence, CharSequence)
+     */
+    public static boolean equalsIgnoreCase(CharSequence str1, CharSequence str2) {
+		return org.apache.commons.lang3.StringUtils.equalsIgnoreCase(str1, str2);
+	}
+	
+    /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the UTF-8 charset.
      *
      * @param bytes
@@ -213,6 +238,33 @@ public class StringUtils {
      */
     public static String replaceChars(String str, char searchChar, char replaceChar) {
     	return org.apache.commons.lang3.StringUtils.replaceChars(str, searchChar, replaceChar);
+    }
+    
+    /**
+     * <p>Replaces all occurrences of a String within another String.</p>
+     *
+     * <p>A {@code null} reference passed to this method is a no-op.</p>
+     *
+     * <pre>
+     * StringUtils.replace(null, *, *)        = null
+     * StringUtils.replace("", *, *)          = ""
+     * StringUtils.replace("any", null, *)    = "any"
+     * StringUtils.replace("any", *, null)    = "any"
+     * StringUtils.replace("any", "", *)      = "any"
+     * StringUtils.replace("aba", "a", null)  = "aba"
+     * StringUtils.replace("aba", "a", "")    = "b"
+     * StringUtils.replace("aba", "a", "z")   = "zbz"
+     * </pre>
+     *
+     * @see #replace(String text, String searchString, String replacement, int max)
+     * @param text  text to search and replace in, may be null
+     * @param searchString  the String to search for, may be null
+     * @param replacement  the String to replace it with, may be null
+     * @return the text with any replacements processed,
+     *  {@code null} if null String input
+     */
+    public static String replace(String text, String searchString, String replacement) {
+        return org.apache.commons.lang3.StringUtils.replace(text, searchString, replacement);
     }
     
     /**
@@ -436,4 +488,305 @@ public class StringUtils {
     public static String capitalize(String str) {
     	return org.apache.commons.lang3.StringUtils.capitalize(str);
     }
+    
+    /**
+     * <p>Checks if CharSequence contains a search character, handling {@code null}.
+     * This method uses {@link String#indexOf(int)} if possible.</p>
+     *
+     * <p>A {@code null} or empty ("") CharSequence will return {@code false}.</p>
+     *
+     * <pre>
+     * StringUtils.contains(null, *)    = false
+     * StringUtils.contains("", *)      = false
+     * StringUtils.contains("abc", 'a') = true
+     * StringUtils.contains("abc", 'z') = false
+     * </pre>
+     *
+     * @param seq  the CharSequence to check, may be null
+     * @param searchChar  the character to find
+     * @return true if the CharSequence contains the search character,
+     *  false if not or {@code null} string input
+     * @since 2.0
+     * @since 3.0 Changed signature from contains(String, int) to contains(CharSequence, int)
+     */
+    public static boolean contains(CharSequence seq, int searchChar) {
+    	return org.apache.commons.lang3.StringUtils.contains(seq, searchChar);
+    }
+
+    /**
+     * <p>Checks if CharSequence contains a search CharSequence, handling {@code null}.
+     * This method uses {@link String#indexOf(String)} if possible.</p>
+     *
+     * <p>A {@code null} CharSequence will return {@code false}.</p>
+     *
+     * <pre>
+     * StringUtils.contains(null, *)     = false
+     * StringUtils.contains(*, null)     = false
+     * StringUtils.contains("", "")      = true
+     * StringUtils.contains("abc", "")   = true
+     * StringUtils.contains("abc", "a")  = true
+     * StringUtils.contains("abc", "z")  = false
+     * </pre>
+     *
+     * @param seq  the CharSequence to check, may be null
+     * @param searchSeq  the CharSequence to find, may be null
+     * @return true if the CharSequence contains the search CharSequence,
+     *  false if not or {@code null} string input
+     * @since 2.0
+     * @since 3.0 Changed signature from contains(String, String) to contains(CharSequence, CharSequence)
+     */
+    public static boolean contains(CharSequence seq, CharSequence searchSeq) {
+    	return org.apache.commons.lang3.StringUtils.contains(seq, searchSeq);
+    }
+
+    /**
+     * <p>Checks if CharSequence contains a search CharSequence irrespective of case,
+     * handling {@code null}. Case-insensitivity is defined as by
+     * {@link String#equalsIgnoreCase(String)}.
+     *
+     * <p>A {@code null} CharSequence will return {@code false}.</p>
+     *
+     * <pre>
+     * StringUtils.contains(null, *) = false
+     * StringUtils.contains(*, null) = false
+     * StringUtils.contains("", "") = true
+     * StringUtils.contains("abc", "") = true
+     * StringUtils.contains("abc", "a") = true
+     * StringUtils.contains("abc", "z") = false
+     * StringUtils.contains("abc", "A") = true
+     * StringUtils.contains("abc", "Z") = false
+     * </pre>
+     *
+     * @param str  the CharSequence to check, may be null
+     * @param searchStr  the CharSequence to find, may be null
+     * @return true if the CharSequence contains the search CharSequence irrespective of
+     * case or false if not or {@code null} string input
+     * @since 3.0 Changed signature from containsIgnoreCase(String, String) to containsIgnoreCase(CharSequence, CharSequence)
+     */
+    public static boolean containsIgnoreCase(CharSequence str, CharSequence searchStr) {
+    	return org.apache.commons.lang3.StringUtils.containsIgnoreCase(str, searchStr);
+    }
+
+    /**
+     * Check whether the given CharSequence contains any whitespace characters.
+     * @param seq the CharSequence to check (may be {@code null})
+     * @return {@code true} if the CharSequence is not empty and
+     * contains at least 1 whitespace character
+     * @see java.lang.Character#isWhitespace
+     * @since 3.0
+     */
+    public static boolean containsWhitespace(CharSequence seq) {
+       return org.apache.commons.lang3.StringUtils.containsWhitespace(seq);
+    }
+    
+    /**
+     * <p>Gets the substring before the first occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A {@code null} string input will return {@code null}.
+     * An empty ("") string input will return the empty string.
+     * A {@code null} separator will return the input string.</p>
+     *
+     * <p>If nothing is found, the string input is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringBefore(null, *)      = null
+     * StringUtils.substringBefore("", *)        = ""
+     * StringUtils.substringBefore("abc", "a")   = ""
+     * StringUtils.substringBefore("abcba", "b") = "a"
+     * StringUtils.substringBefore("abc", "c")   = "ab"
+     * StringUtils.substringBefore("abc", "d")   = "abc"
+     * StringUtils.substringBefore("abc", "")    = ""
+     * StringUtils.substringBefore("abc", null)  = "abc"
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring before the first occurrence of the separator,
+     *  {@code null} if null String input
+     * @since 2.0
+     */
+    public static String substringBefore(String str, String separator) {
+    	return org.apache.commons.lang3.StringUtils.substringBefore(str, separator);
+    }
+
+    /**
+     * <p>Gets the substring after the first occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A {@code null} string input will return {@code null}.
+     * An empty ("") string input will return the empty string.
+     * A {@code null} separator will return the empty string if the
+     * input string is not {@code null}.</p>
+     *
+     * <p>If nothing is found, the empty string is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringAfter(null, *)      = null
+     * StringUtils.substringAfter("", *)        = ""
+     * StringUtils.substringAfter(*, null)      = ""
+     * StringUtils.substringAfter("abc", "a")   = "bc"
+     * StringUtils.substringAfter("abcba", "b") = "cba"
+     * StringUtils.substringAfter("abc", "c")   = ""
+     * StringUtils.substringAfter("abc", "d")   = ""
+     * StringUtils.substringAfter("abc", "")    = "abc"
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring after the first occurrence of the separator,
+     *  {@code null} if null String input
+     * @since 2.0
+     */
+    public static String substringAfter(String str, String separator) {
+    	return org.apache.commons.lang3.StringUtils.substringAfter(str, separator);
+    }
+
+    /**
+     * <p>Gets the substring before the last occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A {@code null} string input will return {@code null}.
+     * An empty ("") string input will return the empty string.
+     * An empty or {@code null} separator will return the input string.</p>
+     *
+     * <p>If nothing is found, the string input is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringBeforeLast(null, *)      = null
+     * StringUtils.substringBeforeLast("", *)        = ""
+     * StringUtils.substringBeforeLast("abcba", "b") = "abc"
+     * StringUtils.substringBeforeLast("abc", "c")   = "ab"
+     * StringUtils.substringBeforeLast("a", "a")     = ""
+     * StringUtils.substringBeforeLast("a", "z")     = "a"
+     * StringUtils.substringBeforeLast("a", null)    = "a"
+     * StringUtils.substringBeforeLast("a", "")      = "a"
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring before the last occurrence of the separator,
+     *  {@code null} if null String input
+     * @since 2.0
+     */
+    public static String substringBeforeLast(String str, String separator) {
+    	return org.apache.commons.lang3.StringUtils.substringBeforeLast(str, separator);
+    }
+
+    /**
+     * <p>Gets the substring after the last occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A {@code null} string input will return {@code null}.
+     * An empty ("") string input will return the empty string.
+     * An empty or {@code null} separator will return the empty string if
+     * the input string is not {@code null}.</p>
+     *
+     * <p>If nothing is found, the empty string is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringAfterLast(null, *)      = null
+     * StringUtils.substringAfterLast("", *)        = ""
+     * StringUtils.substringAfterLast(*, "")        = ""
+     * StringUtils.substringAfterLast(*, null)      = ""
+     * StringUtils.substringAfterLast("abc", "a")   = "bc"
+     * StringUtils.substringAfterLast("abcba", "b") = "a"
+     * StringUtils.substringAfterLast("abc", "c")   = ""
+     * StringUtils.substringAfterLast("a", "a")     = ""
+     * StringUtils.substringAfterLast("a", "z")     = ""
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring after the last occurrence of the separator,
+     *  {@code null} if null String input
+     * @since 2.0
+     */
+    public static String substringAfterLast(String str, String separator) {
+    	return org.apache.commons.lang3.StringUtils.substringAfterLast(str, separator);
+    }
+
+    /**
+     * <p>Gets the String that is nested in between two instances of the
+     * same String.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.
+     * A {@code null} tag returns {@code null}.</p>
+     *
+     * <pre>
+     * StringUtils.substringBetween(null, *)            = null
+     * StringUtils.substringBetween("", "")             = ""
+     * StringUtils.substringBetween("", "tag")          = null
+     * StringUtils.substringBetween("tagabctag", null)  = null
+     * StringUtils.substringBetween("tagabctag", "")    = ""
+     * StringUtils.substringBetween("tagabctag", "tag") = "abc"
+     * </pre>
+     *
+     * @param str  the String containing the substring, may be null
+     * @param tag  the String before and after the substring, may be null
+     * @return the substring, {@code null} if no match
+     * @since 2.0
+     */
+    public static String substringBetween(String str, String tag) {
+    	return org.apache.commons.lang3.StringUtils.substringBetween(str, tag);
+    }
+
+    /**
+     * <p>Gets the String that is nested in between two Strings.
+     * Only the first match is returned.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.
+     * A {@code null} open/close returns {@code null} (no match).
+     * An empty ("") open and close returns an empty string.</p>
+     *
+     * <pre>
+     * StringUtils.substringBetween("wx[b]yz", "[", "]") = "b"
+     * StringUtils.substringBetween(null, *, *)          = null
+     * StringUtils.substringBetween(*, null, *)          = null
+     * StringUtils.substringBetween(*, *, null)          = null
+     * StringUtils.substringBetween("", "", "")          = ""
+     * StringUtils.substringBetween("", "", "]")         = null
+     * StringUtils.substringBetween("", "[", "]")        = null
+     * StringUtils.substringBetween("yabcz", "", "")     = ""
+     * StringUtils.substringBetween("yabcz", "y", "z")   = "abc"
+     * StringUtils.substringBetween("yabczyabcz", "y", "z")   = "abc"
+     * </pre>
+     *
+     * @param str  the String containing the substring, may be null
+     * @param open  the String before the substring, may be null
+     * @param close  the String after the substring, may be null
+     * @return the substring, {@code null} if no match
+     * @since 2.0
+     */
+    public static String substringBetween(String str, String open, String close) {
+    	return org.apache.commons.lang3.StringUtils.substringBetween(str, open, close);
+    }
+
+    /**
+     * <p>Searches a String for substrings delimited by a start and end tag,
+     * returning all matching substrings in an array.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.
+     * A {@code null} open/close returns {@code null} (no match).
+     * An empty ("") open/close returns {@code null} (no match).</p>
+     *
+     * <pre>
+     * StringUtils.substringsBetween("[a][b][c]", "[", "]") = ["a","b","c"]
+     * StringUtils.substringsBetween(null, *, *)            = null
+     * StringUtils.substringsBetween(*, null, *)            = null
+     * StringUtils.substringsBetween(*, *, null)            = null
+     * StringUtils.substringsBetween("", "[", "]")          = []
+     * </pre>
+     *
+     * @param str  the String containing the substrings, null returns null, empty returns empty
+     * @param open  the String identifying the start of the substring, empty returns null
+     * @param close  the String identifying the end of the substring, empty returns null
+     * @return a String Array of substrings, or {@code null} if no match
+     * @since 2.3
+     */
+    public static String[] substringsBetween(String str, String open, String close) {
+        return org.apache.commons.lang3.StringUtils.substringsBetween(str, open, close);
+    }
+    
+    
 }

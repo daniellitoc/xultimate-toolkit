@@ -17,8 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/applicationContext-service-json.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-json.xml" })
 public class JSONTemplateTest {
 	
 	@Resource
@@ -30,7 +33,36 @@ public class JSONTemplateTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JSONTemplateTest.class);
 	
 	@Test
-	public void testReadValue1() {
+	public void testReadWriteValue() {
+		PerformanceMonitor.start("JSONTemplateTest");
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 50000; j++) {
+				String value = testWriteValueAsString1(fastJSONTemplate);
+				fastJSONTemplate.readValue(value, new ValueType<List<User>>() {});
+				
+				value = testWriteValueAsString2(fastJSONTemplate);
+				fastJSONTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
+			}
+			PerformanceMonitor.mark("fastJSONTemplate" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 50000; j++) {
+				String value = testWriteValueAsString1(jacksonTemplate);
+				jacksonTemplate.readValue(value, new ValueType<List<User>>() {});
+				
+				value = testWriteValueAsString2(jacksonTemplate);
+				jacksonTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
+			}
+			PerformanceMonitor.mark("jacksonTemplate" + i);
+		}
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
+		PerformanceMonitor.remove();
+	}
+	
+//	@Test
+	public void test() {
 		String value = testWriteValueAsString1(fastJSONTemplate);
 		LOGGER.info("JSON String:{}", value);
 		List<User> users = fastJSONTemplate.readValue(value, new ValueType<List<User>>() {});
@@ -70,54 +102,7 @@ public class JSONTemplateTest {
 				LOGGER.info("\t\t{}", order.getAmount());
 			}
 		}
-		
-		
-		PerformanceMonitor.start("JSONTemplateTest");
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 500; j++) {
-				value = testWriteValueAsString1(fastJSONTemplate);
-				fastJSONTemplate.readValue(value, new ValueType<List<User>>() {});
-				
-				value = testWriteValueAsString2(fastJSONTemplate);
-				fastJSONTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
-			}
-			
-			for (int j = 0; j < 500; j++) {
-				value = testWriteValueAsString1(jacksonTemplate);
-				jacksonTemplate.readValue(value, new ValueType<List<User>>() {});
-				
-				value = testWriteValueAsString2(jacksonTemplate);
-				jacksonTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
-			}
-		}
-		
-		PerformanceMonitor.mark("Init");
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 50000; j++) {
-				value = testWriteValueAsString1(fastJSONTemplate);
-				fastJSONTemplate.readValue(value, new ValueType<List<User>>() {});
-				
-				value = testWriteValueAsString2(fastJSONTemplate);
-				fastJSONTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
-			}
-			PerformanceMonitor.mark("fastJSONTemplate" + i);
-		}
-		
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 50000; j++) {
-				value = testWriteValueAsString1(jacksonTemplate);
-				jacksonTemplate.readValue(value, new ValueType<List<User>>() {});
-				
-				value = testWriteValueAsString2(jacksonTemplate);
-				jacksonTemplate.readValue(value, new ValueType<List<UserWithList>>() {});
-			}
-			PerformanceMonitor.mark("jacksonTemplate" + i);
-		}
-		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
-		PerformanceMonitor.remove();
 	}
-	
 
 	public String testWriteValueAsString2(JSONTemplate jsonTemplate) {
 		Order jackOrder1 = new Order();
@@ -180,5 +165,72 @@ public class JSONTemplateTest {
 		users.add(johnUser);
 		String value = jsonTemplate.writeValueAsString(users);
 		return value;
+	}
+}
+
+class User {
+	private String username;
+	private String password;
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+
+@JsonIgnoreProperties(value = { "amount", "hibernateLazyInitializer" })
+class Order {
+	
+	private BigDecimal amount;
+	
+	private String some1;
+	private String some2;
+
+	@JSONField(deserialize = false, serialize = false)
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	@JSONField(deserialize = false, serialize = false)
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public String getSome1() {
+		return some1;
+	}
+
+	public void setSome1(String some1) {
+		this.some1 = some1;
+	}
+
+	public String getSome2() {
+		return some2;
+	}
+
+	public void setSome2(String some2) {
+		this.some2 = some2;
+	}
+
+
+}
+
+class UserWithList extends User {
+	private List<Order> orders;
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 }

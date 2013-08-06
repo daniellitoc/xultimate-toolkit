@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.danielli.xultimate</groupId>
+		<artifactId>xultimate-toolkit</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>xultimate-orm</artifactId>
+	<packaging>pom</packaging>
+
+	<name>The X-Ultimate Toolkit ORM</name>
+	<description>The X-Ultimate Toolkit orm project.</description>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-orm</url>
+	<modules>
+		<module>xultimate-hibernate</module>
+		<module>xultimate-mybatis</module>
+	</modules>
+</project>

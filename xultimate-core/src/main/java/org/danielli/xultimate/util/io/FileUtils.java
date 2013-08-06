@@ -50,4 +50,17 @@ public class FileUtils {
 	public static FileInputStream openInputStream(File file) throws IOException {
 		return org.apache.commons.io.FileUtils.openInputStream(file);
 	}
+	
+	/**
+     * Reads the contents of a file into a byte array.
+     * The file is always closed.
+     *
+     * @param file  the file to read, must not be <code>null</code>
+     * @return the file contents, never <code>null</code>
+     * @throws IOException in case of an I/O error
+     * @since 1.1
+     */
+    public static byte[] readFileToByteArray(File file) throws IOException {
+    	return org.apache.commons.io.FileUtils.readFileToByteArray(file);
+    }
 }

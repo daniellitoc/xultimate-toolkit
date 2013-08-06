@@ -15,15 +15,16 @@
 
 	<name>The X-Ultimate Toolkit Context</name>
 	<description>The X-Ultimate Toolkit context project.</description>
-	<url>https://github.com/daniellitoc/xultimate-toolkit/xultimate-context</url>
+	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-context</url>
 
 	<properties>
 		<net.sourceforge.jchardet.version>1.0</net.sourceforge.jchardet.version>
 		<info.monitorenter.cpdetector.version>1.0.10</info.monitorenter.cpdetector.version>
 		<com.ibm.icu.version>51.2</com.ibm.icu.version>
 		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
-		<cglib.version>3.0</cglib.version>
-		<com.jhlabs.filters.version>2.0.235</com.jhlabs.filters.version>
+		
+		<org.aspectj.aspectjweaver.version>1.7.3</org.aspectj.aspectjweaver.version>
+		<org.im4java.version>1.4.0</org.im4java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,11 +37,13 @@
 			<artifactId>jchardet</artifactId>
 			<version>${net.sourceforge.jchardet.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>info.monitorenter</groupId>
 			<artifactId>cpdetector</artifactId>
 			<version>${info.monitorenter.cpdetector.version}</version>
 		</dependency>
+		 -->
 		<!-- cpdetector依赖 -->
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -51,26 +54,34 @@
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
 			<version>${com.ibm.icu.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		<!-- 
 		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>${cglib.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${org.springframework.version}</version>
 		</dependency>
-		 -->
-		<!-- 
 		<dependency>
-			<groupId>com.jhlabs</groupId>
-			<artifactId>filters</artifactId>
-			<version>${com.jhlabs.filters.version}</version>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj.aspectjweaver.version}</version>
 		</dependency>
-		 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.im4java</groupId>
+			<artifactId>im4java</artifactId>
+			<version>${org.im4java.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

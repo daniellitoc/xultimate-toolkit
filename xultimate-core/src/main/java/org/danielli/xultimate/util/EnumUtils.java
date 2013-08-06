@@ -1,5 +1,7 @@
 package org.danielli.xultimate.util;
 
+import java.util.List;
+
 /**
  * <p>Utility library to provide helper methods for Java enums.</p>
  *
@@ -24,6 +26,22 @@ public class EnumUtils {
      */
 	public static <E extends Enum<E>> E getEnum(Class<E> enumClass, String enumName) {
 		return org.apache.commons.lang3.EnumUtils.getEnum(enumClass, enumName);
+	}
+	
+    /**
+     * <p>Gets the enum for the class, returning {@code null} if not found.</p>
+     *
+     * @param <E> the type of the enumeration
+     * @param enumClass  the class of the enum to query, not null
+     * @param ordinal   the enum index
+     * @return the enum, null if not found
+     */
+	public static <E extends Enum<E>> E getEnum(Class<E> enumClass, int ordinal) {
+		List<E> enumList = org.apache.commons.lang3.EnumUtils.getEnumList(enumClass);
+		if (ordinal < 0 || ordinal >= enumList.size()) {
+		      return null;
+		}
+		return enumList.get(ordinal);
 	}
 	
 }

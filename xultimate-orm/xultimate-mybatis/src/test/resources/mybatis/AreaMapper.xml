@@ -1,0 +1,126 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.danielli.xultimate.orm.mybatis.area.dao.AreaDAO">
+	<!-- 
+		如果一个方法有多个参数，使用param1、param2、param3代替
+	 -->
+	<insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO ULTIMATE_AREA (id, create_time, update_time, entity_version, name, display_name, boost, parent_id) VALUES (#{id}, #{createTime}, #{updateTime}, #{version}, #{name}, #{displayName}, #{boost}, #{parentId})
+	</insert>
+	
+	<update id="update">
+		UPDATE ULTIMATE_AREA SET update_time=#{updateTime}, entity_version=entity_version + 1, name=#{name}, display_name=#{displayName}, boost=#{boost}, parent_id=#{parentId} WHERE id=#{id} AND entity_version=#{version}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM ULTIMATE_AREA WHERE id = #{id} AND entity_version=#{version}
+	</delete>
+	
+	<select id="findIdByName" resultType="java.lang.Long">
+		SELECT id FROM ULTIMATE_AREA WHERE name = #{name}
+	</select>
+	
+	<select id="findIdAndNameMap" resultMap="areaMappingAuto">
+		SELECT id, name FROM ULTIMATE_AREA
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.orm.mybatis.area.model.Area" id="areaMappingAuto" autoMapping="true" />
+	
+	<select id="findOneMap" resultType="hashmap">
+		SELECT id, create_time, update_time, entity_version, name, display_name, boost, parent_id FROM ULTIMATE_AREA WHERE id = #{id}
+	</select>
+	
+	<select id="findOne" resultMap="areaMapping">
+		SELECT id, create_time, update_time, entity_version, name, display_name, boost, parent_id FROM ULTIMATE_AREA WHERE id = #{id}
+	</select>
+	
+	<select id="findAll" resultMap="areaMapping">
+		SELECT id, create_time, update_time, entity_version, name, display_name, boost, parent_id FROM ULTIMATE_AREA 
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.orm.mybatis.area.model.Area" id="areaMapping">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="display_Name" property="displayName"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="boost" property="boost"/>
+		<result column="entity_version" property="version"/>
+	</resultMap>
+	
+	<select id="findByItems" resultType="org.danielli.xultimate.orm.mybatis.area.model.Area">
+		select id, create_time as createTime, update_time as updateTime, entity_version as version, name, display_name as displayName, boost, parent_id as parentId 
+		from ULTIMATE_AREA
+		<where>
+			<foreach collection="list" item="item" index="item_index">
+				<choose>
+					<when test="item.logicalOperator.name() == 'OR' and item_index != 0">
+						or (
+					</when>
+					<when test="item.logicalOperator.name() == 'AND' and item_index != 0">
+						and (
+					</when>
+					<when test="item.logicalOperator.name() == 'NOT' and item_index != 0">
+						! (
+					</when>
+				</choose>
+				${item.key}
+				<choose>
+					<when test="item.comparsionOperator.name() == 'EQ'">
+						= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'NOT_EQ'">
+						!= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LIKE'">
+						like #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'NOT_LIKE'">
+						not like #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'GT'">
+						> #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LT'">
+					<![CDATA[ 
+						< 
+					]]> #{item.value.value}
+					
+					</when>
+					<when test="item.comparsionOperator.name() == 'GE'">
+						>= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LE'">
+					<![CDATA[ 
+						<= 
+					]]> #{item.value.value}
+					
+					</when>
+					<when test="item.comparsionOperator.name() == 'IN'">
+						in 
+						<foreach item="v" index="index" collection="item.value" open="(" separator="," close=")">
+        					#{v}
+  						</foreach>
+					</when>
+					<when test="item.comparsionOperator.name() == 'BETWEEN'">
+						between #{item.value.value.first} and #{item.value.value.second}
+					</when>
+				</choose>
+				<choose>
+					<when test="item.logicalOperator.name() == 'OR' and item_index != 0">
+						)
+					</when>
+					<when test="item.logicalOperator.name() == 'AND' and item_index != 0">
+						)
+					</when>
+					<when test="item.logicalOperator.name() == 'NOT' and item_index != 0">
+						)
+					</when>
+				</choose>
+			</foreach>
+		</where>
+	</select>
+</mapper> 

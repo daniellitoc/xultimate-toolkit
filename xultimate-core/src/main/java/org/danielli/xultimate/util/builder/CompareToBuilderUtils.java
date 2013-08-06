@@ -106,11 +106,11 @@ public class CompareToBuilderUtils {
 				List<Field> classFieldList = new ArrayList<>();
 				Field[] declaredFields = clazz.getDeclaredFields();
 				AccessibleObject.setAccessible(declaredFields, true);
-				boolean classHas = ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(AnnotationUtils.getAnnotation(clazz, Buildable.class)), BuildType.COMPARE_TO);
+				Buildable classBuildable = AnnotationUtils.getAnnotation(clazz, Buildable.class);
+				boolean classHas = ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(classBuildable), BuildType.COMPARE_TO);
 				for (Field field : declaredFields) {
 		    		Buildable fieldBuildable = AnnotationUtils.getAnnotation(field, Buildable.class);
-		    		if (ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(fieldBuildable), BuildType.COMPARE_TO) 
-		    				|| classHas && fieldBuildable == null 
+		    		if ((classBuildable == null && fieldBuildable == null || classHas && fieldBuildable == null || ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(fieldBuildable), BuildType.COMPARE_TO)) 
 		    				&& (field.getName().indexOf('$') == -1) 
 		    				&& (!Modifier.isTransient(field.getModifiers())) 
 		    				&& (!Modifier.isStatic(field.getModifiers()))

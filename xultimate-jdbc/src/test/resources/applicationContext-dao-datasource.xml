@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		
+	<bean id="statFilter" class="com.alibaba.druid.filter.stat.StatFilter" p:logSlowSql="true" p:mergeSql="true" p:slowSqlMillis="1000" />
+	<bean id="wallFilter" class="com.alibaba.druid.wall.WallFilter" p:dbType="mysql" p:logViolation="true" p:throwException="false" />
+	<bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter" p:statementExecutableSqlLogEnable="true" />
+	<bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8" />
+	    <property name="username" value="primary_key_user" />
+	    <property name="password" value="primary_key_user" />
+	    
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="20" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="10" />
+	    <property name="minIdle" value="10" />   	    
+	    <property name="maxWait" value="60000" />
+	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+	    <property name="minEvictableIdleTimeMillis" value="300000" />
+	 
+	    <property name="validationQuery" value="SELECT 'x'" />
+	    <property name="testWhileIdle" value="true" />
+	    <property name="testOnBorrow" value="false" />
+	    <property name="testOnReturn" value="false" />
+
+	    <property name="timeBetweenLogStatsMillis" value="300000" />
+	    
+	    <property name="removeAbandoned" value="true" /> <!-- 打开removeAbandoned功能 -->
+    	<property name="removeAbandonedTimeout" value="1800" /> <!-- 1800秒，也就是30分钟 -->
+    	<property name="logAbandoned" value="true" /> <!-- 关闭abanded连接时输出错误日志 -->
+	    
+	    <property name="poolPreparedStatements" value="false" />
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+	    
+	    <property name="proxyFilters">
+	        <list>
+	        	<!-- <ref bean="wallFilter"/> -->
+	            <ref bean="statFilter" />
+	            <!-- <ref bean="logFilter" /> -->
+	        </list>
+	    </property>
+	    <property name="useGloalDataSourceStat" value="false" />
+	</bean>
+	
+	<bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" 
+		p:user="primary_key_user" 
+		p:password="primary_key_user"
+		p:driverClass="com.mysql.jdbc.Driver" 
+		p:jdbcUrl="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8"
+		p:initialPoolSize="10" 
+		p:minPoolSize="10"
+		p:maxPoolSize="20" 
+		p:idleConnectionTestPeriod="60000"
+		p:maxIdleTime="300000"
+		p:preferredTestQuery="SELECT 'x'"
+		p:testConnectionOnCheckout="false"
+		p:testConnectionOnCheckin="false"
+		p:unreturnedConnectionTimeout="1800"
+		p:debugUnreturnedConnectionStackTraces="true"
+	/>
+	
+	
+</beans>

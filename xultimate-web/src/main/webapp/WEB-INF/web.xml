@@ -3,6 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
+	<!-- 日志查看 -->
 	<servlet>
 		<servlet-name>ViewStatusMessagesServlet</servlet-name>
 		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
@@ -13,7 +14,26 @@
 		<url-pattern>/lbClassicStatus</url-pattern>
 	</servlet-mapping>
 	
+	<!-- 日志配置 -->
+	<context-param>
+		<param-name>logbackHostKey</param-name>
+		<param-value>logback.host</param-value>
+	</context-param>
 	<listener>
 		<listener-class>org.danielli.xultimate.web.listener.LogbackHostListener</listener-class>
 	</listener>
+	
+	<!-- 压缩 -->
+	<filter>
+		<filter-class>org.danielli.xultimate.web.filter.GzipCompressFilter</filter-class>
+		<filter-name>gzipCompressFilter</filter-name>
+		<init-param>
+			<param-name>isGzipEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>gzipCompressFilter</filter-name>
+		<servlet-name>spring</servlet-name>
+	</filter-mapping>
 </web-app>

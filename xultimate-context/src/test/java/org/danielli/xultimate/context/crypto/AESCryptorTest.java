@@ -12,7 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/applicationContext-service-crypto.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-crypto.xml" })
 public class AESCryptorTest {
 	
 	@Resource(name = "stringStringAESCryptor")
@@ -21,7 +21,7 @@ public class AESCryptorTest {
 	private Decryptor<String, String> decryptor;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AESCryptorTest.class);
-	
+
 	@Test
 	public void test() {
 		String source = "ultimate";

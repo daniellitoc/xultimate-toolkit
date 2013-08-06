@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	<!-- 集群任务事务管理器 -->	
+	<bean id="quartzTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="quartzDataSource" />
+	
+	<!-- 任务线程池 -->
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" 
+		p:corePoolSize="5" p:queueCapacity="1000" p:maxPoolSize="50" p:keepAliveSeconds="200" p:allowCoreThreadTimeOut="true"
+		p:daemon="true" p:threadPriority="5" p:threadNamePrefix="mail" 
+		p:awaitTerminationSeconds="10000000" p:waitForTasksToCompleteOnShutdown="true">
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
+		</property>
+	</bean>
+	
+	<!-- 抽象任务调度器 -->
+	<bean id="quartzScheduler" abstract="true" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" p:taskExecutor-ref="taskExecutor" />
+	<!-- 非集群任务调度器
+	<bean id="quartzNonClusteredScheduler" parent="quartzScheduler" p:dataSource-ref="quartzDataSource" 
+		p:beanName="QuartzNonClusteredScheduler" p:transactionManager-ref="quartzTransactionManager">
+		<property name="quartzProperties">
+			<value>      
+				org.quartz.scheduler.instanceId = NON_CLUSTERED  
+				org.quartz.jobStore.misfireThreshold = 60000 
+				org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate   
+				org.quartz.jobStore.tablePrefix = QRTZ_
+			</value>
+		</property>
+	</bean>
+	<bean id="quartzNonClusteredSchedulerTest" parent="quartzScheduler" p:dataSource-ref="quartzDataSource" 
+		p:beanName="QuartzNonClusteredSchedulerTest" p:transactionManager-ref="quartzTransactionManager">
+		<property name="quartzProperties">
+			<value>      
+				org.quartz.scheduler.instanceId = NON_CLUSTERED  
+				org.quartz.jobStore.misfireThreshold = 60000 
+				org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate   
+				org.quartz.jobStore.tablePrefix = QRTZ_
+			</value>
+		</property>
+	</bean>
+	 -->
+	
+	<bean id="exampleBusinessObject" class="org.danielli.xultimate.context.scheduling.quartz.ExampleBusinessObject" /> 
+	<bean id="exampleBusinessObjectMethodInvoking" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" p:targetObject-ref="exampleBusinessObject" p:targetMethod="doIt" p:singleton="false" />
+	<bean id="exampleBusinessObjectJobDetail" class="org.danielli.xultimate.context.scheduling.quartz.MethodInvokingJobDetailFactoryBean" p:methodInvokingBeanName="exampleBusinessObjectMethodInvoking" />
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+	    <!-- see the example of method invoking job above -->
+	    <property name="jobDetail" ref="exampleBusinessObjectJobDetail" />
+	    <!-- 0 seconds -->
+	    <property name="startDelay" value="0" />
+	    <!-- repeat every 3 seconds -->
+	    <property name="repeatInterval" value="3000" />
+	</bean>
+	
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" ref="exampleBusinessObjectJobDetail" />
+	    <!-- run every morning at 12 AM -->
+	    <property name="cronExpression" value="0 0 12 * * ?" />
+	</bean>
+	
+	<!-- 集群任务调度器 -->
+	<bean id="quartzClusteredScheduler" parent="quartzScheduler" p:dataSource-ref="quartzDataSource" 
+		p:beanName="QuartzClusteredScheduler" p:transactionManager-ref="quartzTransactionManager">
+		<property name="quartzProperties">
+			<value>      
+				org.quartz.scheduler.instanceId = AUTO
+				org.quartz.scheduler.instanceIdGenerator.class = org.quartz.simpl.SimpleInstanceIdGenerator  
+				# 发现一个应该执行却没有执行的任务，检测其与当前时间是否差60秒，如果是，才会执行。 
+				org.quartz.jobStore.misfireThreshold = 60000 
+				org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate   
+				org.quartz.jobStore.tablePrefix = QRTZ_
+				org.quartz.jobStore.isClustered = true
+				# 检测周期
+				org.quartz.jobStore.clusterCheckinInterval = 20000 
+			</value>
+		</property>
+		 <property name="triggers">
+	        <list>
+	            <ref bean="cronTrigger" />
+	            <ref bean="simpleTrigger" />
+	        </list>
+	    </property>
+	</bean>
+	<bean id="quartzClusteredSchedulerTest" parent="quartzScheduler" p:dataSource-ref="quartzDataSource" 
+		p:beanName="QuartzClusteredScheduler" p:transactionManager-ref="quartzTransactionManager">
+		<property name="quartzProperties">
+			<value>      
+				org.quartz.scheduler.instanceId = QuartzClusteredSchedulerTest
+				org.quartz.scheduler.instanceIdGenerator.class = org.quartz.simpl.SimpleInstanceIdGenerator   
+				org.quartz.jobStore.misfireThreshold = 60000 
+				org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate   
+				org.quartz.jobStore.tablePrefix = QRTZ_
+				org.quartz.jobStore.isClustered = true
+				org.quartz.jobStore.clusterCheckinInterval = 20000
+			</value>
+		</property>
+	</bean>
+	
+</beans>

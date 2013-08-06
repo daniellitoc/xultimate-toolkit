@@ -78,12 +78,12 @@ public class HashCodeBuilderUtils {
 			List<Field> classFieldList = new ArrayList<>();
 			Field[] declaredFields = clazz.getDeclaredFields();
 			AccessibleObject.setAccessible(declaredFields, true);
-			boolean classHas = ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(AnnotationUtils.getAnnotation(clazz, Buildable.class)), BuildType.HASH_CODE);
+	    	Buildable classBuildable = AnnotationUtils.getAnnotation(clazz, Buildable.class);
+			boolean classHas = ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(classBuildable), BuildType.HASH_CODE);
 			for (Field field : declaredFields) {
 	    		Buildable fieldBuildable = AnnotationUtils.getAnnotation(field, Buildable.class);
-	    		if (ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(fieldBuildable), BuildType.HASH_CODE) 
-	    				|| classHas && fieldBuildable == null 
-	    				&& (field.getName().indexOf('$') == -1) 
+	    		if ((classBuildable == null && fieldBuildable == null || classHas && fieldBuildable == null || ArrayUtils.contains((BuildType[]) AnnotationUtils.getValue(fieldBuildable), BuildType.HASH_CODE))
+	    				 && (field.getName().indexOf('$') == -1) 
 	    				&& (!Modifier.isTransient(field.getModifiers())) 
 	    				&& (!Modifier.isStatic(field.getModifiers()))
 	    				) {

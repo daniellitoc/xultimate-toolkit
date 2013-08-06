@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <!-- 会引发JedisConnectionException -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" p:maxActive="500" p:maxIdle="300" p:maxWait="10000" p:testOnBorrow="true" />
+	<util:list id="jedisShardInfos">
+		<!-- 会引发SocketTimeoutException -->
+		<bean class="redis.clients.jedis.JedisShardInfo" c:host="127.0.0.1" c:port="6380" c:timeout="10000" c:weight="1" />
+		<!-- 会引发SocketTimeoutException -->
+		<bean class="redis.clients.jedis.JedisShardInfo" c:host="127.0.0.1" c:port="6381" c:timeout="10000" c:weight="1" />
+	</util:list>
+	<util:constant id="jedisAlgo" static-field="redis.clients.util.Hashing.MURMUR_HASH" />
+	<util:constant id="jedisKeyTagPattern" static-field="redis.clients.util.Sharded.DEFAULT_KEY_TAG_PATTERN" />
+	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" c:poolConfig-ref="jedisPoolConfig" c:shards-ref="jedisShardInfos" c:algo-ref="jedisAlgo" c:keyTagPattern-ref="jedisKeyTagPattern" destroy-method="destroy" />	
+
+	<bean id="shardedJedisTemplate" class="org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate" p:shardedJedisPool-ref="shardedJedisPool" />
+
+	<!-- 步进设置为2是因为使用了两个Jedis。其中Jedis1和Jedis2中的初始值为连续的，如Jedis1表中的初始值为0，Jedis2表中的初始值为1。-->
+	<bean id="primaryKey1Incrementer1" class="org.danielli.xultimate.jdbc.support.incrementer.ShardedJedisMaxValueIncrementer"
+		p:step="2" p:cacheSize="100" p:keyName="primary_key_1" p:shardedJedisTemplate-ref="shardedJedisTemplate" />
+	<!--  -->
+	<bean id="primaryKey1Incrementer2" class="org.danielli.xultimate.jdbc.support.incrementer.ShardedJedisMaxValueIncrementer"
+		p:step="2" p:cacheSize="100" p:keyName="primary_key_2" p:shardedJedisTemplate-ref="shardedJedisTemplate" />
+	
+</beans>
