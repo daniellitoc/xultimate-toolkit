@@ -5,12 +5,12 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 	
 部分介绍
 	xultimate-core
-		1.整合utils。包括commons-lang3、commons-io、commons-collections、commons-codec、pinyin4j、tamper、Spring(Utils)等，并封装加密与结算。
-		2.整合日志，包括commons-logging、JUL、log4j。统一使用slf4j + logback。
-		3.提供JSONTemplate，包括fastjson和jackson的封装。
-		4.提供Serializer和Deserializer。包括对JAVA（基本数据类型、对象）、kryo、protostuff的封装。
-		5.对joda-time、cglib、reflectasm的使用。
-		6.一个秒表类，主要用于测试方法执行时间。见测试类。
+整合utils。包括commons-lang3、commons-io、commons-collections、commons-codec、pinyin4j、tamper、Spring(Utils)等，并封装加密与结算。
+整合日志，包括commons-logging、JUL、log4j。统一使用slf4j + logback。
+提供JSONTemplate，包括fastjson和jackson的封装。
+提供Serializer和Deserializer。包括对JAVA（基本数据类型、对象）、kryo、protostuff的封装。
+对joda-time、cglib、reflectasm的使用。
+一个秒表类，主要用于测试方法执行时间。见测试类。
 	xultimate-context
 		1.提供CharsetDetector，包括对icu4j、jchardet、cpdetector的封装。
 		2.提供Encoder和Decoder，包括对Base64、Hex、Url的封装。
