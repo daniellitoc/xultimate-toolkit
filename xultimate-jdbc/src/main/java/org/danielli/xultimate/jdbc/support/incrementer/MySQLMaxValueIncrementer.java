@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.DataSource;
 
+import org.danielli.xultimate.util.Assert;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -33,6 +35,8 @@ public class MySQLMaxValueIncrementer extends AbstractColumnMaxValueIncrementer 
 	
 	/** 此次请求的步进 */
 	private long step = 1;
+	
+	private ReentrantLock reentrantLock = new ReentrantLock();
 
 
 	/**
@@ -55,49 +59,58 @@ public class MySQLMaxValueIncrementer extends AbstractColumnMaxValueIncrementer 
 		super(dataSource, incrementerName, columnName);
 	}
 
+	@Override
+	public void afterPropertiesSet() {
+		Assert.isTrue(this.step > 0, "Property 'step' must greater than 0");
+		Assert.isTrue(this.getCacheSize() > 0, "Property 'cacheSize' must greater than 0");
+		super.afterPropertiesSet();
+	}
 
 	@Override
-	protected synchronized long getNextKey() throws DataAccessException {
-		if (this.maxId <= this.nextId + this.step) {
-			/*
-			* Need to use straight JDBC code because we need to make sure that the insert and select
-			* are performed on the same connection (otherwise we can't be sure that last_insert_id()
-			* returned the correct value)
-			*/
-			Connection con = DataSourceUtils.getConnection(getDataSource());
-			Statement stmt = null;
-			try {
-				stmt = con.createStatement();
-				DataSourceUtils.applyTransactionTimeout(stmt, getDataSource());
-				// Increment the sequence column...
-				String columnName = getColumnName();
-				stmt.executeUpdate("update "+ getIncrementerName() + " set " + columnName +
-						" = last_insert_id(" + columnName + " + " + (getCacheSize() * this.step) + ")");
-				// Retrieve the new max of the sequence column...
-				ResultSet rs = stmt.executeQuery(VALUE_SQL);
+	protected long getNextKey() throws DataAccessException {
+		reentrantLock.lock();
+		try {
+			this.nextId += this.step;
+			if (this.maxId < this.nextId) {
+				/*
+				* Need to use straight JDBC code because we need to make sure that the insert and select
+				* are performed on the same connection (otherwise we can't be sure that last_insert_id()
+				* returned the correct value)
+				*/
+				Connection con = DataSourceUtils.getConnection(getDataSource());
+				Statement stmt = null;
 				try {
-					if (!rs.next()) {
-						throw new DataAccessResourceFailureException("last_insert_id() failed after executing an update");
+					stmt = con.createStatement();
+					DataSourceUtils.applyTransactionTimeout(stmt, getDataSource());
+					// Increment the sequence column...
+					String columnName = getColumnName();
+					stmt.executeUpdate("update "+ getIncrementerName() + " set " + columnName +
+							" = last_insert_id(" + columnName + " + " + (getCacheSize() * this.step) + ")");
+					// Retrieve the new max of the sequence column...
+					ResultSet rs = stmt.executeQuery(VALUE_SQL);
+					try {
+						if (!rs.next()) {
+							throw new DataAccessResourceFailureException("last_insert_id() failed after executing an update");
+						}
+						this.maxId = rs.getLong(1);
 					}
-					this.maxId = rs.getLong(1);
+					finally {
+						JdbcUtils.closeResultSet(rs);
+					}
+					this.nextId = this.maxId - getCacheSize() * this.step + 1;
+				}
+				catch (SQLException ex) {
+					throw new DataAccessResourceFailureException("Could not obtain last_insert_id()", ex);
 				}
 				finally {
-					JdbcUtils.closeResultSet(rs);
+					JdbcUtils.closeStatement(stmt);
+					DataSourceUtils.releaseConnection(con, getDataSource());
 				}
-				this.nextId = this.maxId - getCacheSize() * this.step + 1;
 			}
-			catch (SQLException ex) {
-				throw new DataAccessResourceFailureException("Could not obtain last_insert_id()", ex);
-			}
-			finally {
-				JdbcUtils.closeStatement(stmt);
-				DataSourceUtils.releaseConnection(con, getDataSource());
-			}
+			return this.nextId;
+		} finally {
+			reentrantLock.unlock();
 		}
-		else {
-			this.nextId = this.nextId + this.step;
-		}
-		return this.nextId;
 	}
 
 	/**

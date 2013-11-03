@@ -53,6 +53,7 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>${org.freemarker.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

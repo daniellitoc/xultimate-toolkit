@@ -17,6 +17,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-context-support</url>
 
 	<properties>
+		<org.freemarker.version>2.3.19</org.freemarker.version>
 		<org.quartz-scheduler.quartz.version>2.2.0</org.quartz-scheduler.quartz.version>
 		<javax.mail.mail.version>1.4.6-rc1</javax.mail.mail.version>
 		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
@@ -81,6 +82,13 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>${redis.clients.jedis.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${org.freemarker.version}</version>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>

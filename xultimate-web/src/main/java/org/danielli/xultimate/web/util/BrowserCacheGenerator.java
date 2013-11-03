@@ -13,7 +13,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
-import org.springframework.web.servlet.mvc.LastModified;
 
 public class BrowserCacheGenerator extends WebApplicationObjectSupport {
 

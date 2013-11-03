@@ -3,6 +3,7 @@ package org.danielli.xultimate.util.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -50,6 +51,58 @@ public class FileUtils {
 	public static FileInputStream openInputStream(File file) throws IOException {
 		return org.apache.commons.io.FileUtils.openInputStream(file);
 	}
+	
+    /**
+     * Opens a {@link FileOutputStream} for the specified file, checking and
+     * creating the parent directory if it does not exist.
+     * <p>
+     * At the end of the method either the stream will be successfully opened,
+     * or an exception will have been thrown.
+     * <p>
+     * The parent directory will be created if it does not exist.
+     * The file will be created if it does not exist.
+     * An exception is thrown if the file object exists but is a directory.
+     * An exception is thrown if the file exists but cannot be written to.
+     * An exception is thrown if the parent directory cannot be created.
+     * 
+     * @param file  the file to open for output, must not be {@code null}
+     * @return a new {@link FileOutputStream} for the specified file
+     * @throws IOException if the file object is a directory
+     * @throws IOException if the file cannot be written to
+     * @throws IOException if a parent directory needs creating but that fails
+     * @since 1.3
+     */
+    public static FileOutputStream openOutputStream(File file) throws IOException {
+    	return org.apache.commons.io.FileUtils.openOutputStream(file);
+    }
+    
+    /**
+     * Opens a {@link FileOutputStream} for the specified file, checking and
+     * creating the parent directory if it does not exist.
+     * <p>
+     * At the end of the method either the stream will be successfully opened,
+     * or an exception will have been thrown.
+     * <p>
+     * The parent directory will be created if it does not exist.
+     * The file will be created if it does not exist.
+     * An exception is thrown if the file object exists but is a directory.
+     * An exception is thrown if the file exists but cannot be written to.
+     * An exception is thrown if the parent directory cannot be created.
+     * 
+     * @param file  the file to open for output, must not be {@code null}
+     * @param append if {@code true}, then bytes will be added to the
+     * end of the file rather than overwriting
+     * @return a new {@link FileOutputStream} for the specified file
+     * @throws IOException if the file object is a directory
+     * @throws IOException if the file cannot be written to
+     * @throws IOException if a parent directory needs creating but that fails
+     * @since 2.1
+     */
+    public static FileOutputStream openOutputStream(File file, boolean append) throws IOException {
+    	return org.apache.commons.io.FileUtils.openOutputStream(file, append);
+    }
+	
+	
 	
 	/**
      * Reads the contents of a file into a byte array.

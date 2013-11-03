@@ -1,5 +1,7 @@
 package org.danielli.xultimate.jdbc.support.incrementer;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.danielli.xultimate.util.Assert;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
@@ -29,6 +31,8 @@ public abstract class AbstractKeyMaxValueIncrementer extends AbstractDataFieldMa
 	/** 此次请求的步进 */
 	private long step = 1;
 	
+	private ReentrantLock reentrantLock = new ReentrantLock();
+	
 	/**
 	 * Default constructor for bean property style usage.
 	 * @see #setKeyName
@@ -46,14 +50,18 @@ public abstract class AbstractKeyMaxValueIncrementer extends AbstractDataFieldMa
 	}
 	
 	@Override
-	protected synchronized long getNextKey() throws DataAccessException {
-		if (this.maxId <= this.nextId + this.step) {
-			maxId = getNextMaxId();
-			this.nextId = this.maxId - this.cacheSize * this.step;
-		} else {
-			this.nextId = this.nextId + this.step;
+	protected long getNextKey() throws DataAccessException {
+		reentrantLock.lock();
+		try {
+			this.nextId += this.step;
+			if (this.maxId < this.nextId) {
+				maxId = getNextMaxId();
+				this.nextId = this.maxId - this.cacheSize * this.step + 1;
+			}
+			return this.nextId;
+		} finally {
+			reentrantLock.unlock();
 		}
-		return this.nextId;
 	}
 	
 	protected abstract long getNextMaxId() throws DataAccessException;
@@ -88,6 +96,8 @@ public abstract class AbstractKeyMaxValueIncrementer extends AbstractDataFieldMa
 
 	@Override
 	public void afterPropertiesSet() {
+		Assert.isTrue(this.step > 0, "Property 'step' must greater than 0");
+		Assert.isTrue(this.cacheSize > 0, "Property 'cacheSize' must greater than 0");
 		super.afterPropertiesSet();
 		if (this.keyName == null) {
 			throw new IllegalArgumentException("Property 'keyName' is required");

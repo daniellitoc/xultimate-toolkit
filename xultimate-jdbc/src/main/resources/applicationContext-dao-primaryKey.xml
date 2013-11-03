@@ -132,7 +132,7 @@
 		<jdbc:script separator=";" execution="DESTROY" location="classpath:primary_key_2_destroy.sql"/>
 	</jdbc:initialize-database>
 	
-	<!-- 步进设置为2是因为使用了两个数据源。其中数据源1和数据源2序列的初始值为连续的，如数据源1的初始值为0，数据源的初始值为1。
+	<!-- 步进设置为2是因为使用了两个数据源。其中数据源1和数据源2序列的初始值为连续的，如数据源1的初始值为0，数据源2的初始值为1。
 		 序列的实际步进为step * cacheSize。 
 	<bean id="primaryKey1Incrementer" class="org.danielli.xultimate.jdbc.support.incrementer.OracleSequenceMaxValueIncrementer" 
 		p:step="2" p:cacheSize="100" p:incrementerName="primary_key_sequence_1" p:dataSource-ref="primaryKeyDataSource" />
