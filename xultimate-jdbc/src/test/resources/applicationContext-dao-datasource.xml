@@ -81,9 +81,12 @@
 		p:preferredTestQuery="SELECT 'x'"
 		p:testConnectionOnCheckout="false"
 		p:testConnectionOnCheckin="false"
-		p:unreturnedConnectionTimeout="1800"
-		p:debugUnreturnedConnectionStackTraces="true"
+		p:unreturnedConnectionTimeout="1800"		
+		p:debugUnreturnedConnectionStackTraces="true" 
+		p:maxStatements="20"
 	/>
-	
-	
+	<!-- maxStatements: 如果用Oracle，则配置，mysql可以不配置。分库分表较多的数据库，建议不配置。 -->
+	<!-- maxIdleTime: 连接的最大空闲时间，如果超过这个时间，某个数据库连接还没有被使用，则会断开掉这个连接 -->
+	<!-- unreturnedConnectionTimeout: 某个查询耗时超过1800秒，则根据debugUnreturnedConnectionStackTraces配置做处理 -->
+	<!-- debugUnreturnedConnectionStackTraces: 如果为true并且unreturnedConnectionTimeout设为大于0的值。表示每个从连接池拿出去的数据库连接，如果一段时间内没有归还，C3P0就会强制关闭这个连接，并获取连接时的stack trace，以抛出异常的方式显示出来 -->
 </beans>

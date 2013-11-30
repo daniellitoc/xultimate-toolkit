@@ -3,7 +3,7 @@ package org.danielli.xultimate.context.image;
 import java.io.File;
 
 import org.danielli.xultimate.context.image.model.Gravity;
-import org.danielli.xultimate.context.image.model.ImageSize;
+import org.danielli.xultimate.context.image.model.ImageGeometry;
 
 /**
  * 图片缩放模板工具类。
@@ -14,41 +14,29 @@ import org.danielli.xultimate.context.image.model.ImageSize;
 public interface ImageResizeTemplate {
 	
 	/**
-	 * 按尺寸缩放图片。图片不会等比例缩放。
+	 * 按尺寸缩放图片。
 	 * 
 	 * @param srcImageFile
 	 * 				原图片文件。
 	 * @param destImageFile
 	 * 				目标图片文件。
-	 * @param imageSize
-	 * 				图片尺寸。
+	 * @param imageGeometry
+	 * 				图片几何方位。包含图片尺寸和几何操作。
 	 */
-	void resizeImageAsFixed(File srcImageFile, File destImageFile, ImageSize imageSize) throws ImageException;
+	void resizeImage(File srcImageFile, File destImageFile, ImageGeometry imageGeometry) throws ImageException;
 	
 	/**
-	 * 按尺寸缩放图片。图片会等比例缩放。
+	 * 按尺寸缩放图片。进行缩放后在指定方位以指定宽度与高度截取图片。
 	 * 
 	 * @param srcImageFile
 	 * 				原图片文件。
 	 * @param destImageFile
 	 * 				目标图片文件。
-	 * @param ImageSize
-	 * 				图片尺寸。
-	 */
-	void resizeImageAsAutomatic(File srcImageFile, File destImageFile, ImageSize imageSize) throws ImageException;
-	
-	/**
-	 * 按尺寸缩放图片。图片会等比例缩放，在指定方位以指定宽度与高度截取图片。
-	 * 
-	 * @param srcImageFile
-	 * 				原图片文件。
-	 * @param destImageFile
-	 * 				目标图片文件。
-	 * @param imageSize
-	 * 				图片尺寸。
+	 * @param imageGeometry
+	 * 				图片几何方位。包含图片尺寸和几何操作。
 	 * @param gravity
 	 * 				截取图片位置。
 	 * 				
 	 */
-	void resizeImageAsAutomatic(File srcImageFile, File destImageFile, ImageSize imageSize, Gravity gravity) throws ImageException;
+	void resizeImageAsFixed(File srcImageFile, File destImageFile, ImageGeometry imageGeometry, Gravity gravity) throws ImageException;
 }

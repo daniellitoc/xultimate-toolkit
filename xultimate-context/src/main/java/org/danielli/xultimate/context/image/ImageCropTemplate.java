@@ -3,7 +3,7 @@ package org.danielli.xultimate.context.image;
 import java.io.File;
 
 import org.danielli.xultimate.context.image.model.Gravity;
-import org.danielli.xultimate.context.image.model.ImageCoordinate;
+import org.danielli.xultimate.context.image.model.ImageGeometryCoordinate;
 import org.danielli.xultimate.context.image.model.ImageSize;
 
 /**
@@ -35,10 +35,8 @@ public interface ImageCropTemplate {
 	 * 				原图片文件。
 	 * @param destImageFile
 	 * 				目标图片文件。
-	 * @param imageSize
-	 * 				图片尺寸。
-	 * @param imageCoordinate
-	 * 				剪裁图片位置。
+	 * @param imageGeometryCoordinate
+	 * 				图片剪裁几何坐标，包含图片尺寸和剪裁图片位置。		。
 	 */
-	void cropImage(File srcImageFile, File destImageFile, ImageSize imageSize, ImageCoordinate imageCoordinate) throws ImageException;
+	void cropImage(File srcImageFile, File destImageFile, ImageGeometryCoordinate imageGeometryCoordinate) throws ImageException;
 }

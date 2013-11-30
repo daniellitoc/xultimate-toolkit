@@ -5,7 +5,9 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.danielli.xultimate.context.image.model.GeometryOperator;
 import org.danielli.xultimate.context.image.model.Gravity;
+import org.danielli.xultimate.context.image.model.ImageGeometry;
 import org.danielli.xultimate.context.image.model.ImageSize;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
@@ -25,19 +27,19 @@ public class ImageResizeTemplateTest {
 	@Resource
 	private ImageResizeTemplate im4javaImageResizeTemplate;
 	
-//	@Test
+	@Test
 	public void test1() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageResizeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageSize(640, 480));
+				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
 			}
 			PerformanceMonitor.mark("awtImageResizeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageSize(640, 480));
+				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
 			}
 			PerformanceMonitor.mark("im4javaImageResizeTemplate" + i);
 		}
@@ -51,14 +53,14 @@ public class ImageResizeTemplateTest {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImageAsAutomatic(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageSize(600, 480));
+				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImageAsAutomatic(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageSize(600, 480));
+				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}
@@ -67,19 +69,19 @@ public class ImageResizeTemplateTest {
 		PerformanceMonitor.remove();
 	}
 	
-	@Test
+//	@Test
 	public void test3() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImageAsAutomatic(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageSize(600, 480), Gravity.Center);
+				awtImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum) , Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImageAsAutomatic(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageSize(600, 480), Gravity.Center);
+				im4javaImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum), Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}

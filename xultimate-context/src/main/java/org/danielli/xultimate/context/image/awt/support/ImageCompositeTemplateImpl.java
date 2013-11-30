@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
+import org.danielli.xultimate.context.image.AbstractImageTemplate;
 import org.danielli.xultimate.context.image.ImageCompositeTemplate;
 import org.danielli.xultimate.context.image.ImageException;
 import org.danielli.xultimate.context.image.awt.ImageUtils;
@@ -13,7 +14,7 @@ import org.danielli.xultimate.context.image.model.Gravity;
 import org.danielli.xultimate.context.image.model.ImageCoordinate;
 import org.danielli.xultimate.context.image.model.ImageInfo;
 import org.danielli.xultimate.context.image.model.ImageSize;
-import org.springframework.util.Assert;
+import org.danielli.xultimate.util.Assert;
 
 /**
  * AWT图片组合模板工具实现类。
@@ -21,8 +22,20 @@ import org.springframework.util.Assert;
  * @author Daniel Li
  * @since 18 Jun 2013
  */
-public class ImageCompositeTemplateImpl implements ImageCompositeTemplate {
+public class ImageCompositeTemplateImpl extends AbstractImageTemplate implements ImageCompositeTemplate {
 
+	/** 水印图片透明度 */
+	private Integer alpha = 100;
+	
+	/**
+	 * 设置水印图片透明度
+	 * @param alpha
+	 * 				水印图片透明度
+	 */
+	public void setAlpha(Integer alpha) {
+		this.alpha = alpha;
+	}
+	
 	@Override
 	public void addWatermarkImage(File srcImageFile, File destImageFile, File watermarkImageFile, Gravity gravity) throws ImageException {
 		BufferedImage srcBufferedImage = ImageUtils.createBufferedImage(srcImageFile);
@@ -33,10 +46,10 @@ public class ImageCompositeTemplateImpl implements ImageCompositeTemplate {
 			if (gravity != Gravity.None) {
 				BufferedImage watermarkBufferedImage = ImageUtils.createBufferedImage(watermarkImageFile);
 				ImageCoordinate imageCoordinate = new ImageCoordinate(srcImageInfo.getImageSize(), new ImageSize(watermarkBufferedImage), gravity);
-				srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, 100);
+				srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, alpha, backgroundColor);
 			}
 		}
-		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile);
+		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile, quality);
 	}
 
 	@Override
@@ -47,10 +60,10 @@ public class ImageCompositeTemplateImpl implements ImageCompositeTemplate {
 		if (watermarkImageFile != null) {
 			Assert.notNull(imageCoordinate, "this imageCoordinate is required; it must not be null");
 			BufferedImage watermarkBufferedImage = ImageUtils.createBufferedImage(watermarkImageFile);
-			srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, 100);
+			srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, alpha, backgroundColor);
 		}
 		
-		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile);
+		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile, quality);
 	}
 
 	@Override
@@ -64,11 +77,11 @@ public class ImageCompositeTemplateImpl implements ImageCompositeTemplate {
 				ImageSize watermarkImageSize = ImageUtils.getFontAsImageWidth(watermarkText, watermarkTextFont);
 				BufferedImage watermarkBufferedImage = ImageUtils.createTransluentBufferedImage(watermarkImageSize, watermarkText, watermarkTextFont, watermarkTextColor);
 				ImageCoordinate imageCoordinate = new ImageCoordinate(new ImageSize(srcBufferedImage), watermarkImageSize, gravity);
-				srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, 100);
+				srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, alpha, backgroundColor);
 			}
 		}
 		
-		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile);
+		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile, quality);
 	}
 
 	@Override
@@ -81,10 +94,10 @@ public class ImageCompositeTemplateImpl implements ImageCompositeTemplate {
 			ImageSize watermarkImageSize = ImageUtils.getFontAsImageWidth(watermarkText, watermarkTextFont);
 			BufferedImage watermarkBufferedImage = ImageUtils.createTransluentBufferedImage(watermarkImageSize, watermarkText, watermarkTextFont, watermarkTextColor);
 			
-			srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, 100);
+			srcBufferedImage = ImageUtils.addWatermarkImage(srcBufferedImage, watermarkBufferedImage, imageCoordinate, alpha, backgroundColor);
 		}
 		
-		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile);
+		ImageUtils.writeBufferedImage(srcBufferedImage, srcImageInfo.getImageFormat(), destImageFile, quality);
 	}
 
 }

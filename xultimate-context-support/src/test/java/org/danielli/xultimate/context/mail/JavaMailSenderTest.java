@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -12,7 +13,9 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.danielli.xultimate.ui.velocity.VelocityEngineUtils;
 import org.danielli.xultimate.util.CharsetUtils;
+import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.reflect.BeanUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;
@@ -29,6 +32,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.alibaba.tamper.BeanMapping;
 import com.alibaba.tamper.core.builder.BeanMappingBuilder;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-config.xml", "classpath:/mail/applicationContext-service-crypto.xml", "classpath:/mail/applicationContext-service-mail.xml" })
@@ -39,6 +44,9 @@ public class JavaMailSenderTest {
 	
 	@Resource(name = "simpleMailMessage")
 	private SimpleMailMessage simpleMailMessage;
+	
+	@Resource(name = "greenMail")
+	private GreenMail greenMail;
 	
 	private BeanMapping mapping = null;
 	{
@@ -57,12 +65,14 @@ public class JavaMailSenderTest {
 		mapping = new BeanMapping(builder);
 	}
 	
-//	@Test
+	@Test
 	public void test1() {
 		SimpleMailMessage msg = new SimpleMailMessage();
 		BeanUtils.copyProperties(simpleMailMessage, msg);
-		msg.setSubject("Test Simple Mail Message");
-		msg.setText("This is a simple mail");
+		String subject = "Test Simple Mail Message";
+		msg.setSubject(subject);
+		String text = "This is a simple mail";
+		msg.setText(text);
 		try {
 			javaMailSender.send(msg); 
 		} catch (MailParseException e) {
@@ -74,6 +84,15 @@ public class JavaMailSenderTest {
 		} catch (MailException e) {
 			e.printStackTrace();	// 其他异常
 		}
+		try {
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(text, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
+		} catch (InterruptedException | MessagingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 //	@Test
@@ -82,7 +101,8 @@ public class JavaMailSenderTest {
 			MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , false, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message");
+			String subject = "Test Mime Message";
+			helper.setSubject(subject);
 			String htmlText =	"<html>" +
 									"<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
 									"<body>" +
@@ -91,7 +111,15 @@ public class JavaMailSenderTest {
 								"</html>";
 			helper.setText(htmlText, true);
 			javaMailSender.send(msg);
+			
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
 		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} 
 	}
@@ -102,7 +130,8 @@ public class JavaMailSenderTest {
 			MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , true, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message With inline element");
+			String subject = "Test Mime Message With inline element";
+			helper.setSubject(subject);
 			String htmlText =	"<html>" +
 									"<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
 									"<body>" +
@@ -113,7 +142,15 @@ public class JavaMailSenderTest {
 			ClassPathResource img = new ClassPathResource("/mail/img01.png");
 			helper.addInline("img01",img);
 			javaMailSender.send(msg);
+			
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
 		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -124,7 +161,8 @@ public class JavaMailSenderTest {
 			MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , true, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message With Attachment");
+			String subject = "Test Mime Message With Attachment";
+			helper.setSubject(subject);
 			String htmlText =	"<html>" +
 									"<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
 									"<body>" +
@@ -137,7 +175,15 @@ public class JavaMailSenderTest {
 			ClassPathResource file2 = new ClassPathResource("/mail/file2.doc");
 			helper.addAttachment("file02.doc",file2.getFile());
 			javaMailSender.send(msg);
+			
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
 		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -150,7 +196,8 @@ public class JavaMailSenderTest {
 			MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , true, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message");
+			String subject = "Test Mime Message";
+			helper.setSubject(subject);
 			String htmlText =	"<html>" +
 									"<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
 									"<body>" +
@@ -159,7 +206,15 @@ public class JavaMailSenderTest {
 								"</html>";
 			helper.setText("This is a simple mail", htmlText);
 			javaMailSender.send(msg);
+			
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
 		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -174,7 +229,8 @@ public class JavaMailSenderTest {
 			MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , false, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message");
+			String subject = "Test Mime Message";
+			helper.setSubject(subject);
 			
 			Template template = velocityEngine.getTemplate("hello_world.vm", CharsetUtils.CharEncoding.UTF_8);
 			Map<String, String> map = new HashMap<String, String>();
@@ -183,6 +239,12 @@ public class JavaMailSenderTest {
 			
 			helper.setText(htmlText, true);
 			javaMailSender.send(msg);
+			
+			greenMail.waitForIncomingEmail(2000, 1);
+			Message[] messages = greenMail.getReceivedMessages();
+			Assert.assertEquals(1, messages.length);
+			Assert.assertEquals(subject, messages[0].getSubject());
+			Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -194,18 +256,19 @@ public class JavaMailSenderTest {
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
-	@Test
+//	@Test
 	public void test7() {
 		try {
 			final MimeMessage msg = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(msg , false, CharsetUtils.UTF_8.name());
 			mapping.mapping(simpleMailMessage, helper);
-			helper.setSubject("Test Mime Message");
+			final String subject = "Test Mime Message";
+			helper.setSubject(subject);
 			
 			Template template = velocityEngine.getTemplate("hello_world.vm", CharsetUtils.CharEncoding.UTF_8);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("userName", "Daniel Li");
-			String htmlText = VelocityEngineUtils.processTemplateIntoString(template, map);
+			final String htmlText = VelocityEngineUtils.processTemplateIntoString(template, map);
 			
 			helper.setText(htmlText, true);
 			taskExecutor.execute(new Runnable() {
@@ -215,9 +278,13 @@ public class JavaMailSenderTest {
 					try {
 						javaMailSender.send(msg);
 						
-					} catch (MailException e) {
+						greenMail.waitForIncomingEmail(2000, 1);
+						Message[] messages = greenMail.getReceivedMessages();
+						Assert.assertEquals(1, messages.length);
+						Assert.assertEquals(subject, messages[0].getSubject());
+						Assert.assertEquals(htmlText, StringUtils.trim(GreenMailUtil.getBody(messages[0])));
+					} catch (MessagingException e) {
 						e.printStackTrace();
-						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

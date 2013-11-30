@@ -99,6 +99,15 @@ public class ImageGeometry {
 	}
 	
 	/**
+	 * 获取图片大小。
+	 * 
+	 * @return		图片大小。
+	 */
+	public ImageSize getImageSize() {
+		return imageSize;
+	}
+	
+	/**
 	 * 获取几何操作。
 	 * 
 	 * @return		几何操作。

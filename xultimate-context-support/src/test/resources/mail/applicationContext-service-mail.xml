@@ -50,14 +50,15 @@
 		p:password="${mail.password}">
 		<property name="javaMailProperties">
 			<value>
-				mail.${mail.protocol}.auth=${mail.smtp-auth}
+				mail.${mail.protocol}.auth=${mail.auth}
 				mail.debug=${mail.debug}
 			</value>
 		</property>	
 	</bean>
 	
-	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage"
-		p:from="daniellitoc@danielli.org" p:replyTo="daniellitoc@danielli.org">
+	<bean id="from" class="javax.mail.internet.InternetAddress" c:address="daniellitoc@danielli.org" c:personal="Daniel Li" c:charset="UTF-8" />
+	
+	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" p:from-ref="from" p:replyTo-ref="from">		
 		<property name="to">
 			<array>
 				<value>daniellitoc@yahoo.com</value>
@@ -94,6 +95,17 @@
 		p:awaitTerminationSeconds="10000000" p:waitForTasksToCompleteOnShutdown="true">
 		<property name="rejectedExecutionHandler">
 			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
+		</property>
+	</bean>
+	
+	<bean id="greenMail" class="com.icegreen.greenmail.util.GreenMail" init-method="start" destroy-method="stop">
+		<constructor-arg name="config">
+			<util:constant static-field="com.icegreen.greenmail.util.ServerSetup.SMTP"/>
+		</constructor-arg>
+		<property name="users">
+			<value>
+				${mail.username}=${mail.password}
+			</value>
 		</property>
 	</bean>
 </beans>

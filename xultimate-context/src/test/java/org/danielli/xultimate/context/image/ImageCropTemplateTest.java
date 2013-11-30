@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.danielli.xultimate.context.image.model.Gravity;
 import org.danielli.xultimate.context.image.model.ImageCoordinate;
+import org.danielli.xultimate.context.image.model.ImageGeometryCoordinate;
 import org.danielli.xultimate.context.image.model.ImageSize;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
@@ -26,7 +27,7 @@ public class ImageCropTemplateTest {
 	@Resource
 	private ImageCropTemplate im4javaImageCropTemplateImpl;
 	
-//	@Test
+	@Test
 	public void test1() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageCropTemplateTest");
 		for (int i = 0; i < 5; i++) {
@@ -47,19 +48,19 @@ public class ImageCropTemplateTest {
 		PerformanceMonitor.remove();
 	}
 	
-	@Test
+//	@Test
 	public void test2() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageCropTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageSize(640, 480), new ImageCoordinate(100, 30));
+				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
 			}
 			PerformanceMonitor.mark("awtImageCropTemplateImpl" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageSize(640, 480), new ImageCoordinate(100, 30));
+				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
 			}
 			PerformanceMonitor.mark("im4javaImageCropTemplateImpl" + i);
 		}

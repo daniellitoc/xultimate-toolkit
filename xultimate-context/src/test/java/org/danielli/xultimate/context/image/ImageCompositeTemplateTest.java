@@ -69,7 +69,7 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.remove();
 	}
 	
-//	@Test
+	@Test
 	public void test3() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
@@ -90,7 +90,7 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.remove();
 	}
 	
-	@Test
+//	@Test
 	public void test4() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {

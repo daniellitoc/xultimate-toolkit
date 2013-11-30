@@ -28,18 +28,18 @@ public class ImageInfoTemplateTest {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfoTemplateTest.class);
 	
-//	@Test
+	@Test
 	public void testGetImageInfo() throws ImageInfoException, IOException {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 500; j++) {
+			for (int j = 0; j < 50; j++) {
 				awtImageInfoTemplate.getImageInfo(new ClassPathResource("image/test.jpg").getFile());
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 500; j++) {
+			for (int j = 0; j < 50; j++) {
 				im4javaImageInfoTemplate.getImageInfo(new ClassPathResource("image/test.jpg").getFile());
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
@@ -51,7 +51,7 @@ public class ImageInfoTemplateTest {
 		LOGGER.info(ToStringBuilderUtils.reflectionToString(im4javaImageInfoTemplate.getImageInfo(new ClassPathResource("image/test.jpg").getFile())));
 	}
 
-	@Test
+//	@Test
 	public void testConvertImage() throws ImageException, IOException {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {

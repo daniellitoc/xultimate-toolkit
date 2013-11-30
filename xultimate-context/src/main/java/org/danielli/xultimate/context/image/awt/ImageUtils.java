@@ -22,12 +22,14 @@ import org.danielli.xultimate.context.image.model.Gravity;
 import org.danielli.xultimate.context.image.model.ImageCoordinate;
 import org.danielli.xultimate.context.image.model.ImageFormat;
 import org.danielli.xultimate.context.image.model.ImageGeometry;
+import org.danielli.xultimate.context.image.model.ImageGeometryCoordinate;
 import org.danielli.xultimate.context.image.model.ImageInfo;
 import org.danielli.xultimate.context.image.model.ImageSize;
 import org.danielli.xultimate.util.ArrayUtils;
 import org.danielli.xultimate.util.Assert;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.io.FilenameUtils;
+import org.danielli.xultimate.util.io.IOUtils;
 
 /**
  * 图片工具。
@@ -40,23 +42,29 @@ public class ImageUtils {
 	 * 获取图片信息。
 	 * 
 	 * @param imageFile
-	 * 				图片文件。图片文件必须存在。
+	 * 				图片文件。
 	 * @return		图片信息。
 	 */
 	public static ImageInfo getImageInfo(File imageFile) throws ImageInfoException {
 		Assert.notNull(imageFile, "this argument imageFile is required; it must not be null");
+		ImageInputStream imageInputStream = null;
+		ImageReader imageReader = null;
 		try {
-			ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
+			imageInputStream = ImageIO.createImageInputStream(imageFile);
 			Iterator<ImageReader> iterator = ImageIO.getImageReaders(imageInputStream);
-			ImageReader imageReader = iterator.next();
+			imageReader = iterator.next();
 			imageReader.setInput(imageInputStream, true);
 			Integer imageWidth = imageReader.getWidth(0);
 			Integer imageHeight = imageReader.getHeight(0);
 			String imageFormat = imageReader.getFormatName(); 
-			imageInputStream.close();
 			return new ImageInfo(imageWidth, imageHeight, ImageFormat.valueOf(StringUtils.upperCase(imageFormat)));
 		} catch (Exception e) {
 			throw new ImageInfoException(e.getMessage(), e);
+		} finally {
+			if (imageReader != null) {
+				imageReader.dispose();
+			}
+			IOUtils.closeQuietly(imageInputStream);
 		}
 	}
 	
@@ -104,11 +112,14 @@ public class ImageUtils {
 	 * 				默认格式。若目标图片文件的格式为非标准图片格式，将使用默认格式。
 	 * @param destImageFile
 	 * 				目标图片文件。
+	 * @param quality
+	 * 				目标图片品质(取值范围: 0 - 100)
 	 */
-	public static void writeBufferedImage(BufferedImage srcBufferedImage, ImageFormat defaultFormat, File destImageFile) {
+	public static void writeBufferedImage(BufferedImage srcBufferedImage, ImageFormat defaultFormat, File destImageFile, Integer quality) {
 		Assert.notNull(srcBufferedImage, "this argument srcBufferedImage is required; it must not be null");
 		Assert.notNull(defaultFormat, "this argument defaultFormat is required; it must not be null");
 		Assert.notNull(destImageFile, "this argument destImageFile is required; it must not be null");
+		Assert.isTrue(quality >= 0 && quality <= 100, "this argument quality is required; it must between 0 and 100");
 		
 		ImageFormat imageFormat;
 		try {
@@ -128,13 +139,17 @@ public class ImageUtils {
 	 * 剪裁图片。
 	 * @param srcBufferedImage
 	 * 				原缓冲图片对象。 
-	 * @param size
+	 * @param imageGeometryCoordinate
 	 * 				目标缓冲图片对象的尺寸。
-	 * @param coordinate
+	 * @param imageGeometryCoordinate
 	 * 				目标缓冲图片在原缓冲图片对象上剪裁坐标。
+	 * @param backgroundColor
+	 * 				背景颜色。
 	 * @return		目标缓冲图片对象。
 	 */
-	public static BufferedImage cropImage(BufferedImage srcBufferedImage, ImageSize imageSize, ImageCoordinate imageCoordinate) {
+	public static BufferedImage cropImage(BufferedImage srcBufferedImage, ImageGeometryCoordinate imageGeometryCoordinate, Color backgroundColor) {
+		ImageSize imageSize = imageGeometryCoordinate.getImageSize();
+		ImageCoordinate imageCoordinate = imageGeometryCoordinate.getImageCoordinate();
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
 		Assert.notNull(imageSize, "this size is required; it must not be null");
 		
@@ -152,7 +167,7 @@ public class ImageUtils {
 			
 			BufferedImage destBufferedImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2D = destBufferedImage.createGraphics();
-			graphics2D.setBackground(Color.white);
+			graphics2D.setBackground(backgroundColor);
 			graphics2D.clearRect(0, 0, destWidth, destHeight);
 			graphics2D.drawImage(srcBufferedImage.getSubimage(imageCoordinate.getLatitude(), imageCoordinate.getLongitude(), destWidth, destHeight), 0, 0, null);
 			graphics2D.dispose();
@@ -167,20 +182,22 @@ public class ImageUtils {
 	 * 
 	 * @param srcBufferedImage
 	 * 				原缓冲图片。
-	 * @param imageSize
-	 * 				图片尺寸。
+	 * @param imageGeometry
+	 * 				图片几何方位。
+	 * @param backgroundColor
+	 * 				背景颜色。
 	 * @return		目标缓冲图片。
 	 */
-	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageSize imageSize, GeometryOperator operator) {
+	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Color backgroundColor) {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
-		Assert.notNull(imageSize, "this size is required; it must not be null");
+		Assert.notNull(imageGeometry.getImageSize(), "this size is required; it must not be null");
 		try {
-			ImageSize destImageSize = new ImageGeometry(imageSize, operator).convertImageSize(new ImageSize(srcBufferedImage));
+			ImageSize destImageSize = imageGeometry.convertImageSize(new ImageSize(srcBufferedImage));
 			Integer destWidth = destImageSize.getWidth();
 			Integer destHeight = destImageSize.getHeight();
 			BufferedImage destBufferedImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2D = destBufferedImage.createGraphics();
-			graphics2D.setBackground(Color.white);
+			graphics2D.setBackground(backgroundColor);
 			graphics2D.clearRect(0, 0, destWidth, destHeight);
 			graphics2D.drawImage(srcBufferedImage.getScaledInstance(destWidth, destHeight, Image.SCALE_SMOOTH), 0, 0, null);
 			graphics2D.dispose();
@@ -191,30 +208,34 @@ public class ImageUtils {
 	}
 	
 	/**
-	 * 按尺寸缩放图片。图片会等比例缩放，在指定方位以指定尺寸截取图片。
+	 * 按尺寸缩放图片。进行缩放后在指定方位以指定宽度与高度截取图片。
 	 * 
 	 * @param srcBufferedImage
 	 * 				原缓冲图片。
-	 * @param imageSize
-	 * 				图片尺寸。
+	 * @param imageGeometry
+	 * 				图片几何方位。包含图片尺寸和几何操作。
+	 * @param gravity
+	 * 				截取图片位置。
+	 * @param backgroundColor
+	 * 				背景颜色。
 	 * @return		目标缓冲图片。
 	 */
-	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageSize imageSize, Gravity gravity) {
+	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Gravity gravity, Color backgroundColor) {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
-		Assert.notNull(imageSize, "this size is required; it must not be null");
+		Assert.notNull(imageGeometry.getImageSize(), "this size is required; it must not be null");
 		
 		try {
 			ImageSize srcImageSize = new ImageSize(srcBufferedImage);
-			ImageSize destImageSize = new ImageGeometry(imageSize, GeometryOperator.Emphasize).convertImageSize(srcImageSize);
+			ImageSize destImageSize = new ImageGeometry(imageGeometry.getImageSize(), GeometryOperator.Emphasize).convertImageSize(srcImageSize);
 			Integer destWidth = destImageSize.getWidth();
 			Integer destHeight = destImageSize.getHeight();
-			ImageSize destImageresizeSize = new ImageGeometry(imageSize, GeometryOperator.Maximum).convertImageSize(srcImageSize);
+			ImageSize destImageResizeSize = imageGeometry.convertImageSize(srcImageSize);
 			BufferedImage destBufferedImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2D = destBufferedImage.createGraphics();
-			graphics2D.setBackground(Color.white);
+			graphics2D.setBackground(backgroundColor);
 			graphics2D.clearRect(0, 0, destWidth, destHeight);
-			ImageCoordinate coordinate = new ImageCoordinate(destImageSize, destImageresizeSize, gravity);
-			graphics2D.drawImage(srcBufferedImage.getScaledInstance(destImageresizeSize.getWidth(), destImageresizeSize.getHeight(), Image.SCALE_SMOOTH), coordinate.getLatitude(), coordinate.getLongitude(), null);
+			ImageCoordinate coordinate = new ImageCoordinate(destImageSize, destImageResizeSize, gravity);
+			graphics2D.drawImage(srcBufferedImage.getScaledInstance(destImageResizeSize.getWidth(), destImageResizeSize.getHeight(), Image.SCALE_SMOOTH), coordinate.getLatitude(), coordinate.getLongitude(), null);
 			graphics2D.dispose();
 			return destBufferedImage;
 		} catch (Exception e) {
@@ -233,19 +254,22 @@ public class ImageUtils {
 	 * 				小印缓冲图片对象的坐标。    
 	 * @param alpha
 	 * 				水印图片透明度
+	 * @param backgroundColor
+	 * 				背景颜色。
 	 * @return		目标缓冲图片对象。
 	 */
-	public static BufferedImage addWatermarkImage(BufferedImage srcBufferedImage, BufferedImage watermarkBufferedImage, ImageCoordinate imageCoordinate, int alpha) {
+	public static BufferedImage addWatermarkImage(BufferedImage srcBufferedImage, BufferedImage watermarkBufferedImage, ImageCoordinate imageCoordinate, int alpha, Color backgroundColor) {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
 		Assert.notNull(watermarkBufferedImage, "this watermarkBufferedImage is required; it must not be null");
 		Assert.notNull(imageCoordinate, "this imageCoordinate is required; it must not be null");
+		Assert.isTrue(alpha >= 0 && alpha <= 100, "this argument alpha is required; it must between 0 and 100");
 		
 		try {
 			ImageSize srcImageSize = new ImageSize(srcBufferedImage);
 			
 			BufferedImage destBufferedImage = new BufferedImage(srcImageSize.getWidth(), srcImageSize.getHeight(), BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2D = destBufferedImage.createGraphics();
-			graphics2D.setBackground(Color.white);
+			graphics2D.setBackground(backgroundColor);
 			graphics2D.clearRect(0, 0, srcImageSize.getWidth(), srcImageSize.getHeight());
 			graphics2D.drawImage(srcBufferedImage, 0, 0, null);
 			graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha / 100.0F));
@@ -308,5 +332,28 @@ public class ImageUtils {
 		graphics.drawString(message, 0, 0 + messageFont.getSize());
 		graphics.dispose();
 		return finalBufferedImage;
+	}
+	
+	/**
+	 * 转换颜色为十六进制代码
+	 * 
+	 * @param color
+	 *            颜色
+	 * @return 十六进制代码
+	 */
+	public static String toHexEncoding(Color color) {
+		String R, G, B;
+		StringBuilder stringBuilder = new StringBuilder();
+		R = Integer.toHexString(color.getRed());
+		G = Integer.toHexString(color.getGreen());
+		B = Integer.toHexString(color.getBlue());
+		R = R.length() == 1 ? "0" + R : R;
+		G = G.length() == 1 ? "0" + G : G;
+		B = B.length() == 1 ? "0" + B : B;
+		stringBuilder.append("#");
+		stringBuilder.append(R);
+		stringBuilder.append(G);
+		stringBuilder.append(B);
+		return stringBuilder.toString();
 	}
 }

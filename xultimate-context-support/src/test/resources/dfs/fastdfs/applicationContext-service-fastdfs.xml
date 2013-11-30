@@ -26,19 +26,20 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-	<bean id="imageCommandPostProcessor" class="org.danielli.xultimate.context.image.im4java.support.RunCommandPostProcessor" />
-
+		
+	<bean class="org.danielli.xultimate.context.dfs.fastdfs.support.ClientGlobalInitializer" p:configResource="classpath:/dfs/fastdfs/fdfs_client.conf" />
 	
-	<bean id="awtImageInfoTemplate" class="org.danielli.xultimate.context.image.awt.support.ImageInfoTemplateImpl" />
-	<bean id="im4javaImageInfoTemplate" class="org.danielli.xultimate.context.image.im4java.support.ImageInfoTemplateImpl" p:useGraphicsMagick="true" p:imageCommandPostProcessor-ref="imageCommandPostProcessor" />
-
-	<bean id="awtImageResizeTemplate" class="org.danielli.xultimate.context.image.awt.support.ImageResizeTemplateImpl" />
-	<bean id="im4javaImageResizeTemplate" class="org.danielli.xultimate.context.image.im4java.support.ImageResizeTemplateImpl" p:useGraphicsMagick="true" p:imageCommandPostProcessor-ref="imageCommandPostProcessor" />
-
-	<bean id="awtImageCropTemplateImpl" class="org.danielli.xultimate.context.image.awt.support.ImageCropTemplateImpl" />
-	<bean id="im4javaImageCropTemplateImpl" class="org.danielli.xultimate.context.image.im4java.support.ImageCropTemplateImpl" p:useGraphicsMagick="true" p:imageCommandPostProcessor-ref="imageCommandPostProcessor" />
-
-	<bean id="awtImageCompositeTemplate" class="org.danielli.xultimate.context.image.awt.support.ImageCompositeTemplateImpl" />
-	<bean id="im4javaImageCompositeTemplate" class="org.danielli.xultimate.context.image.im4java.support.ImageCompositeTemplateImpl" p:useGraphicsMagick="true" p:imageCommandPostProcessor-ref="imageCommandPostProcessor" />
+	<bean id="trackerClient" class="org.csource.fastdfs.TrackerClient" />
+	
+	<!-- 
+	<bean id="trackerGroup" class="org.csource.fastdfs.TrackerGroup">
+		<constructor-arg name="tracker_servers">
+			<bean class="net.rubyeye.xmemcached.utils.AddrUtil" factory-method="getOneAddress">
+				<constructor-arg index="0" value="127.0.0.1:22122" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean id="trackerClient" class="org.csource.fastdfs.TrackerClient" c:tracker_group-ref="trackerGroup" />
+	 -->
+	<bean id="storageClientTemplate" class="org.danielli.xultimate.context.dfs.fastdfs.support.StorageClientTemplate" p:trackerClient="trackerClient" />
 </beans>

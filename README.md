@@ -25,8 +25,9 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 ## xultimate-context-support ##
 
 * 提供Formatter，包括对FreeMarker、MessageFormat、Spel、StringTemplateV3、StrpingTemplateV4、Velocity的封装。
-* 包括对XMemcached的封装，主要有XMemcachedTemplate、支持Spring Cache、替换默认的序列化机制为protostuff。
+* 包括对XMemcached的封装，主要有XMemcachedTemplate、支持Spring Cache、替换默认的序列化机制为protostuff或Kryo。
 * 包括对Jedis的封装，主要有JedisTemplate、ShardedJedisTemplate、数据库主键最大值生成器。
+* 包括对FastDFS Java Api的封装，主要有ClientGlobalInitializer、StorageClientTemplate、FastDFSUtils。
 * 提供quartz的集群实例，同时，支持类似与JobDetailFactoryBean的形式。
 * 包括Freemarker、StringTemeplateV3、StringTemplateV4、Velocity的模板处理Utils类。
 * 提供Spring Mail的使用，包括各种使用情况、如用Velocity模板做邮件模板、加密SMTP用户密码、收件人等默认值、使用TaskExecutor异步处理。

@@ -5,11 +5,14 @@ import java.io.File;
 import org.danielli.xultimate.context.image.ImageException;
 import org.danielli.xultimate.context.image.ImageInfoException;
 import org.danielli.xultimate.context.image.ImageInfoTemplate;
-import org.danielli.xultimate.context.image.im4java.AbstractImageTemplate;
+import org.danielli.xultimate.context.image.awt.ImageUtils;
+import org.danielli.xultimate.context.image.im4java.AbstractIm4javaImageTemplate;
 import org.danielli.xultimate.context.image.model.ImageFormat;
 import org.danielli.xultimate.context.image.model.ImageInfo;
 import org.danielli.xultimate.util.Assert;
+import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
+import org.im4java.core.ImageCommand;
 import org.im4java.core.Info;
 
 /**
@@ -18,8 +21,13 @@ import org.im4java.core.Info;
  * @author Daniel Li
  * @since 18 Jun 2013
  */
-public class ImageInfoTemplateImpl extends AbstractImageTemplate implements ImageInfoTemplate {
+public class ImageInfoTemplateImpl extends AbstractIm4javaImageTemplate implements ImageInfoTemplate {
 
+	@Override
+	public ImageCommand createImageCommand(IMOperation operation, Object... params) {
+		return new ConvertCmd(useGraphicsMagick);
+	}
+	
 	@Override
 	public ImageInfo getImageInfo(File imageFile) throws ImageInfoException {
 		Assert.notNull(imageFile, "this argument imageFile is required; it must not be null");
@@ -37,8 +45,9 @@ public class ImageInfoTemplateImpl extends AbstractImageTemplate implements Imag
 		Assert.notNull(destImageFile, "this argument destImageFile is required; it must not be null");
 		
 		IMOperation op = new IMOperation();
-		op.addImage(srcImageFile.getPath());
+		op.addRawArgs("-background", ImageUtils.toHexEncoding(backgroundColor));
 		op.addRawArgs("-quality", quality.toString()); 
+		op.addImage(srcImageFile.getPath());
 		op.addImage(destImageFile.getPath());
 		
 		runOperation(op);

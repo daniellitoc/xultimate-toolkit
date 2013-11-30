@@ -24,6 +24,8 @@
 		<com.googlecode.xmemcached.version>1.4.2</com.googlecode.xmemcached.version>
 		<com.thimbleware.jmemcached.version>1.0.0</com.thimbleware.jmemcached.version>
 		<redis.clients.jedis.version>2.1.0</redis.clients.jedis.version>
+		<org.csource.fastdfs.version>1.24</org.csource.fastdfs.version>
+		<com.icegreen.greenmail.version>1.3.1b</com.icegreen.greenmail.version>
 	</properties>
 
 	<dependencies>
@@ -92,6 +94,12 @@
 		</dependency>
 		
 		<dependency>
+		  <groupId>org.csource.fastdfs</groupId>
+		  <artifactId>fastdfs-client</artifactId>
+		  <version>${org.csource.fastdfs.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
@@ -100,6 +108,12 @@
 			<artifactId>spring-test</artifactId>
 		</dependency>
 		
+		<dependency>
+		    <groupId>com.icegreen</groupId>
+		    <artifactId>greenmail</artifactId>
+		    <version>${com.icegreen.greenmail.version}</version>
+		    <scope>test</scope>
+		</dependency>
 	    <dependency>
 			<groupId>com.thimbleware.jmemcached</groupId>
 			<artifactId>jmemcached-core</artifactId>
