@@ -11,6 +11,7 @@ import org.danielli.xultimate.context.format.support.SpelFormatter;
 import org.danielli.xultimate.context.format.support.StringTemplateV3Formatter;
 import org.danielli.xultimate.context.format.support.StringTemplateV4Formatter;
 import org.danielli.xultimate.context.format.support.VelocityEngineFormatter;
+import org.danielli.xultimate.util.ArrayUtils;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class FormatterTest {
 //	@Test
 	public void test() {
 		LOGGER.info(freeMarkerTemplateFormatter.format("Hello World, ${userName}", data));
-		LOGGER.info(messageFormatter.format("Hello World, {0}", new Object[] { "Daniel Li" }));
+		LOGGER.info(messageFormatter.format("Hello World, {0}", ArrayUtils.toArray("Daniel Li")));
 		LOGGER.info(spelFormatter.format("Hello World, ${#userName}", data));
 		LOGGER.info(stringTemplateV3Formatter.format("Hello World, $userName$", data));
 		LOGGER.info(stringTemplateV4Formatter.format("Hello World, <userName>", data));

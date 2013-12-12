@@ -30,12 +30,15 @@
 	<bean id="icpu4jInputStreamCharsetDetector" class="org.danielli.xultimate.context.chardet.icu4j.InputStreamCharsetDetector" />
 	<bean id="jchardetInputStreamCharsetDetector" class="org.danielli.xultimate.context.chardet.jchardet.InputStreamCharsetDetector" />
 	<bean id="cpdetectorInputStreamCharsetDetector" class="org.danielli.xultimate.context.chardet.cpdetector.InputStreamCharsetDetector" />
+	<bean id="juniversalchardetInputStreamCharsetDetector" class="org.danielli.xultimate.context.chardet.juniversalchardet.InputStreamCharsetDetector" />
 	
 	<bean id="icpu4jFileCharsetDetector" class="org.danielli.xultimate.context.chardet.support.FileCharsetDetector" p:charsetDetector-ref="icpu4jInputStreamCharsetDetector" />
 	<bean id="jchardetFileCharsetDetector" class="org.danielli.xultimate.context.chardet.support.FileCharsetDetector" p:charsetDetector-ref="jchardetInputStreamCharsetDetector" />
 	<bean id="cpdetectorFileCharsetDetector" class="org.danielli.xultimate.context.chardet.support.FileCharsetDetector" p:charsetDetector-ref="cpdetectorInputStreamCharsetDetector" />
+	<bean id="juniversalchardetFileCharsetDetector" class="org.danielli.xultimate.context.chardet.support.FileCharsetDetector" p:charsetDetector-ref="juniversalchardetInputStreamCharsetDetector" />
 	
 	<bean id="icpu4jUrlCharsetDetector" class="org.danielli.xultimate.context.chardet.support.URLCharsetDetector" p:charsetDetector-ref="icpu4jInputStreamCharsetDetector" />
 	<bean id="jchardetUrlCharsetDetector" class="org.danielli.xultimate.context.chardet.support.URLCharsetDetector" p:charsetDetector-ref="jchardetInputStreamCharsetDetector" />
 	<bean id="cpdetectorUrlCharsetDetector" class="org.danielli.xultimate.context.chardet.support.URLCharsetDetector" p:charsetDetector-ref="cpdetectorInputStreamCharsetDetector" />
+	<bean id="juniversalchardetUrlCharsetDetector" class="org.danielli.xultimate.context.chardet.support.URLCharsetDetector" p:charsetDetector-ref="juniversalchardetInputStreamCharsetDetector" />
 </beans>

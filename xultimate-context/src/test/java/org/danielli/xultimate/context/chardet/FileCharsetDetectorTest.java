@@ -25,10 +25,12 @@ public class FileCharsetDetectorTest {
 	private FileCharsetDetector jchardetFileCharsetDetector;
 	@Resource
 	private FileCharsetDetector cpdetectorFileCharsetDetector;
+	@Resource
+	private FileCharsetDetector juniversalchardetFileCharsetDetector;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileCharsetDetectorTest.class);
 	
-//	@Test
+	@Test
 	public void test() {
 		try {
 			for (Charset charset : cpdetectorFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
@@ -51,9 +53,16 @@ public class FileCharsetDetectorTest {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		try {
+			for (Charset charset : juniversalchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
+				LOGGER.info(charset.displayName());
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 	
-	@Test
+//	@Test
 	public void testDetect() {
 		PerformanceMonitor.start("FileCharsetDetectorTest");
 //		for (int i = 0; i < 5; i++) {
@@ -87,6 +96,17 @@ public class FileCharsetDetectorTest {
 				}
 			}
 			PerformanceMonitor.mark("icpu4jFileCharsetDetector.detect()" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 10000; j++) {
+				try {
+					juniversalchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile());
+				} catch (Exception e) {
+					
+				}
+			}
+			PerformanceMonitor.mark("juniversalchardetFileCharsetDetector.detect()" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));

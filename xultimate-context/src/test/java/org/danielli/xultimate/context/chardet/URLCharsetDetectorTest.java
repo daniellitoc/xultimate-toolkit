@@ -28,26 +28,36 @@ public class URLCharsetDetectorTest {
 	@Resource
 	private URLCharsetDetector cpdetectorUrlCharsetDetector;
 	
+	@Resource
+	private URLCharsetDetector juniversalchardetUrlCharsetDetector;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(URLCharsetDetectorTest.class);
 	
-//	@Test
+	@Test
 	public void test() {
 		try {
-			for (Charset charset : icpu4jUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"))) {
+			for (Charset charset : icpu4jUrlCharsetDetector.detect(new URL("http://www.taobao.com/"))) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
-			for (Charset charset : jchardetUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"))) {
+			for (Charset charset : jchardetUrlCharsetDetector.detect(new URL("http://www.taobao.com/"))) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
-			for (Charset charset : cpdetectorUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"))) {
+			for (Charset charset : cpdetectorUrlCharsetDetector.detect(new URL("http://www.taobao.com/"))) {
+				LOGGER.info(charset.displayName());
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		try {
+			for (Charset charset : juniversalchardetUrlCharsetDetector.detect(new URL("http://www.taobao.com/"))) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
@@ -55,28 +65,33 @@ public class URLCharsetDetectorTest {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void testDetect() {
 		PerformanceMonitor.start("URLCharsetDetectorTest");
 		try {
-			icpu4jUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"));
+			icpu4jUrlCharsetDetector.detect(new URL("http://www.taobao.com/"));
 		} catch (Exception e) {
 
 		}
 		PerformanceMonitor.mark("icpu4jUrlCharsetDetector.detect()");
 		try {
-			jchardetUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"));
+			jchardetUrlCharsetDetector.detect(new URL("http://www.taobao.com/"));
 		} catch (Exception e) {
 			
 		}
 		PerformanceMonitor.mark("jchardetUrlCharsetDetector.detect()");
 //		try {
-//			cpdetectorUrlCharsetDetector.detect(new URL("http://www-archive.mozilla.org/projects/intl/chardet.html"));
+//			cpdetectorUrlCharsetDetector.detect(new URL("http://www.taobao.com/"));
 //		} catch (Exception e) {
 //			
 //		}
 //		PerformanceMonitor.mark("cpdetectorUrlCharsetDetector.detect()");
-
+		try {
+			juniversalchardetUrlCharsetDetector.detect(new URL("http://www.taobao.com/"));
+		} catch (Exception e) {
+			
+		}
+		PerformanceMonitor.mark("juniversalchardetUrlCharsetDetector.detect()");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();

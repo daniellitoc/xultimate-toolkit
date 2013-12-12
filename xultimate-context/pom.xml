@@ -18,6 +18,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-context</url>
 
 	<properties>
+		<com.googlecode.juniversalchardet.version>1.0.3</com.googlecode.juniversalchardet.version>
 		<net.sourceforge.jchardet.version>1.0</net.sourceforge.jchardet.version>
 		<info.monitorenter.cpdetector.version>1.0.10</info.monitorenter.cpdetector.version>
 		<com.ibm.icu.version>51.2</com.ibm.icu.version>
@@ -31,6 +32,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>xultimate-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.juniversalchardet</groupId>
+		    <artifactId>juniversalchardet</artifactId>
+		    <version>${com.googlecode.juniversalchardet.version}</version>
+		    <optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.jchardet</groupId>

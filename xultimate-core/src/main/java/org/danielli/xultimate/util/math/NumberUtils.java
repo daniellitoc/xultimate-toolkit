@@ -1,5 +1,7 @@
 package org.danielli.xultimate.util.math;
 
+import org.apache.commons.lang3.math.IEEE754rUtils;
+
 /**
  * <p>Provides extra functionality for Java Number classes.</p>
  *
@@ -120,4 +122,152 @@ public class NumberUtils {
 			return false;
 		return org.apache.commons.lang3.math.NumberUtils.isDigits(number.toString()) && number.byteValue() > 0;
 	}
+	
+	/**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static long min(long[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static int min(int[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static short min(short[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static byte min(byte[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     * @see IEEE754rUtils#min(double[]) IEEE754rUtils for a version of this method that handles NaN differently
+     */
+    public static double min(double[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the minimum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     * @see IEEE754rUtils#min(float[]) IEEE754rUtils for a version of this method that handles NaN differently
+     */
+    public static float min(float[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.min(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static long max(long[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static int max(int[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static short max(short[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     */
+    public static byte max(byte[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     * @see IEEE754rUtils#max(double[]) IEEE754rUtils for a version of this method that handles NaN differently
+     */
+    public static double max(double[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
+    
+    /**
+     * <p>Returns the maximum value in an array.</p>
+     * 
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
+     * @throws IllegalArgumentException if <code>array</code> is empty
+     * @see IEEE754rUtils#max(float[]) IEEE754rUtils for a version of this method that handles NaN differently
+     */
+    public static float max(float[] array) {
+    	return org.apache.commons.lang3.math.NumberUtils.max(array);
+    }
 }
