@@ -1,5 +1,8 @@
 package org.danielli.xultimate.context.mail;
 
+import httl.Engine;
+import httl.Template;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +12,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.app.VelocityEngine;
-import org.danielli.xultimate.ui.velocity.VelocityEngineUtils;
+import org.danielli.xultimate.ui.httl.HTTLEngineUtils;
 import org.danielli.xultimate.util.CharsetUtils;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.reflect.BeanUtils;
@@ -220,8 +221,8 @@ public class JavaMailSenderTest {
 	}
 	
 	// 通过模板定制邮件内容
-	@Resource(name = "velocityEngine")
-	private VelocityEngine velocityEngine;
+	@Resource(name = "httlEngine")
+	private Engine httlEngine;
 	
 //	@Test
 	public void test6() {
@@ -231,11 +232,10 @@ public class JavaMailSenderTest {
 			mapping.mapping(simpleMailMessage, helper);
 			String subject = "Test Mime Message";
 			helper.setSubject(subject);
-			
-			Template template = velocityEngine.getTemplate("hello_world.vm", CharsetUtils.CharEncoding.UTF_8);
+			Template template = httlEngine.getTemplate("/org/danielli/xultimate/context/mail/template/hello_world.httl", CharsetUtils.CharEncoding.UTF_8);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("userName", "Daniel Li");
-			String htmlText = VelocityEngineUtils.processTemplateIntoString(template, map);
+			String htmlText = HTTLEngineUtils.processTemplateIntoString(template, map);
 			
 			helper.setText(htmlText, true);
 			javaMailSender.send(msg);
@@ -265,12 +265,13 @@ public class JavaMailSenderTest {
 			final String subject = "Test Mime Message";
 			helper.setSubject(subject);
 			
-			Template template = velocityEngine.getTemplate("hello_world.vm", CharsetUtils.CharEncoding.UTF_8);
+			Template template = httlEngine.getTemplate("/org/danielli/xultimate/context/mail/template/hello_world.httl", CharsetUtils.CharEncoding.UTF_8);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("userName", "Daniel Li");
-			final String htmlText = VelocityEngineUtils.processTemplateIntoString(template, map);
+			final String htmlText = HTTLEngineUtils.processTemplateIntoString(template, map);
 			
 			helper.setText(htmlText, true);
+			System.out.println(htmlText);
 			taskExecutor.execute(new Runnable() {
 				@Override
 				public void run() {

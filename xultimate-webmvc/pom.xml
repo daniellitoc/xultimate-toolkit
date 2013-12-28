@@ -16,6 +16,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-webmvc</url>
 	
 	<properties>
+		<com.github.httl.version>1.0.11</com.github.httl.version>
 		<org.hibernate.hibernate-validator.version>5.1.0.Alpha1</org.hibernate.hibernate-validator.version>
 		<javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
 	</properties>
@@ -51,6 +52,11 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>com.github.httl</groupId>
+            <artifactId>httl-springmvc</artifactId>
+            <version>${com.github.httl.version}</version>
+        </dependency>
 		<dependency>
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-validator</artifactId>

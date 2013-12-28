@@ -57,8 +57,8 @@
 	</bean>
 	
 	<bean id="from" class="javax.mail.internet.InternetAddress" c:address="daniellitoc@danielli.org" c:personal="Daniel Li" c:charset="UTF-8" />
-	
-	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" p:from-ref="from" p:replyTo-ref="from">		
+	<bean id="fromStr" factory-bean="from" factory-method="toString" />
+	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" p:from-ref="fromStr" p:replyTo-ref="fromStr">		
 		<property name="to">
 			<array>
 				<value>daniellitoc@yahoo.com</value>
@@ -78,15 +78,16 @@
 		</property>
 	</bean>
 	
-	<!-- 在Web项目中使用VelocityConfigurer代替 -->
-	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" p:resourceLoaderPath="classpath:/org/danielli/xultimate/context/mail/template/">
-		<property name="velocityProperties">
+	<bean id="httlEngine" class="httl.Engine" factory-method="getEngine" >
+		<constructor-arg type="java.util.Properties">
 			<value>
-				file.resource.loader.cache=true
+				loaders=httl.spi.loaders.ClasspathLoader
+				template.directory=
 				input.encoding=UTF-8
 				output.encoding=UTF-8
+				reloadable=false
 			</value>
-		</property>
+		</constructor-arg>
 	</bean>
 	
 	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" 

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.danielli.xultimate.context.format.support.FreeMarkerTemplateFormatter;
+import org.danielli.xultimate.context.format.support.HTTLEngineFormatter;
 import org.danielli.xultimate.context.format.support.MessageFormatter;
 import org.danielli.xultimate.context.format.support.SpelFormatter;
 import org.danielli.xultimate.context.format.support.StringTemplateV3Formatter;
@@ -43,6 +44,9 @@ public class FormatterTest {
 	@Resource(name = "velocityEngineFormatter")
 	private VelocityEngineFormatter velocityEngineFormatter;
 	
+	@Resource(name = "httlEngineFormatter")
+	private HTTLEngineFormatter httlEngineFormatter;
+	
 	private Map<String, Object> data = new HashMap<String, Object>();
 	{
 		data.put("userName", "Daniel Li");
@@ -58,52 +62,61 @@ public class FormatterTest {
 		LOGGER.info(stringTemplateV3Formatter.format("Hello World, $userName$", data));
 		LOGGER.info(stringTemplateV4Formatter.format("Hello World, <userName>", data));
 		LOGGER.info(velocityEngineFormatter.format("Hello World, ${userName}", data));
+		LOGGER.info(httlEngineFormatter.format("Hello World, ${userName}", data));
 	}
 	
 	@Test
 	public void testFormat() {
 		PerformanceMonitor.start("FormatterTest");
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				freeMarkerTemplateFormatter.format("Hello World, ${userName}", data);
 			}
 			PerformanceMonitor.mark("freeMarkerTemplateFormatter" + i);
 		}
 
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				messageFormatter.format("Hello World, {0}", new Object[] { "Daniel Li" });
 			}
 			PerformanceMonitor.mark("messageFormatter" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				spelFormatter.format("Hello World, ${#userName}", data);
 			}
 			PerformanceMonitor.mark("spelFormatter" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				stringTemplateV3Formatter.format("Hello World, $userName$", data);
 			}
 			PerformanceMonitor.mark("stringTemplateV3Formatter" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				stringTemplateV4Formatter.format("Hello World, <userName>", data);
 			}
 			PerformanceMonitor.mark("stringTemplateV4Formatter" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
+			for (int j = 0; j < 100000; j++) {
 				velocityEngineFormatter.format("Hello World, ${userName}", data);
 			}
 			PerformanceMonitor.mark("velocityEngineFormatter" + i);
 		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				httlEngineFormatter.format("Hello World, ${userName}", data);
+			}
+			PerformanceMonitor.mark("httlEngineFormatter" + i);
+		}
+		
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();

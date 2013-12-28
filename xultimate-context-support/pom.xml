@@ -18,6 +18,7 @@
 
 	<properties>
 		<org.freemarker.version>2.3.19</org.freemarker.version>
+		<org.apache.velocity.velocity.version>1.7</org.apache.velocity.velocity.version>
 		<org.quartz-scheduler.quartz.version>2.2.0</org.quartz-scheduler.quartz.version>
 		<javax.mail.mail.version>1.4.6-rc1</javax.mail.mail.version>
 		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
@@ -92,7 +93,12 @@
 			<version>${org.freemarker.version}</version>
 			<optional>true</optional>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${org.apache.velocity.velocity.version}</version>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 		  <groupId>org.csource.fastdfs</groupId>
 		  <artifactId>fastdfs-client</artifactId>

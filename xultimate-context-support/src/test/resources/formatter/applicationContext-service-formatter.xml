@@ -47,4 +47,6 @@
 	<bean id="stringTemplateV3Formatter" class="org.danielli.xultimate.context.format.support.StringTemplateV3Formatter" />
 	<bean id="stringTemplateV4Formatter" class="org.danielli.xultimate.context.format.support.StringTemplateV4Formatter" />
 	<bean id="velocityEngineFormatter" class="org.danielli.xultimate.context.format.support.VelocityEngineFormatter" />
+	<bean id="httlEngineFormatter" class="org.danielli.xultimate.context.format.support.HTTLEngineFormatter" p:engine-ref="httlEngine" />
+	<bean id="httlEngine" class="httl.Engine" factory-method="getEngine" />
 </beans>

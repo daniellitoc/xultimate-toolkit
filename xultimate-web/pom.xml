@@ -16,6 +16,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-web</url>
 
 	<properties>
+		<com.github.httl.version>1.0.11</com.github.httl.version>
 		<org.freemarker.version>2.3.19</org.freemarker.version>
 		<org.apache.velocity.velocity.version>1.7</org.apache.velocity.velocity.version>
 		<javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
@@ -38,6 +39,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>com.github.httl</groupId>
+		    <artifactId>httl</artifactId>
+		    <version>${com.github.httl.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>${org.apache.velocity.velocity.version}</version>
@@ -47,6 +53,7 @@
 					<artifactId>commons-lang</artifactId>
 				</exclusion>
 			</exclusions>
+			<optional>true</optional>
 		</dependency>
 		<!-- 性能没有Velocity好 -->
 		<dependency>

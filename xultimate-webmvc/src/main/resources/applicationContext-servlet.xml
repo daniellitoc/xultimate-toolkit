@@ -79,8 +79,18 @@
 			</list>
 		</property>
 	</bean>
-	
-	<!-- Velocity视图解析器 -->
+	<bean class="org.danielli.xultimate.web.support.HTTLConfigurer" lazy-init="false">
+		<property name="httlProperties">
+			<value>
+				import.packages+=org.danielli.xultimate.model
+				template.directory=/WEB-INF/template/httl,/WEB-INF/template/error
+				input.encoding=UTF-8
+				output.encoding=UTF-8
+			</value>
+		</property>
+	</bean>
+	<bean class="httl.web.springmvc.HttlViewResolver" p:order="80" p:contentType="text/html; charset=utf8" p:suffix=".httl" />
+	<!-- Velocity视图解析器 
 	<bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer" p:resourceLoaderPath="/WEB-INF/template/velocity/">
 		<property name="velocityProperties">
 			<value>
@@ -91,6 +101,17 @@
 		</property>	
 	</bean>
 	<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" p:order="80" p:contentType="text/html; charset=utf8" p:suffix=".vm" />
+	 -->
+	<!-- 
+	<bean id="freemarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer" p:templateLoaderPath="/WEB-INF/template/freemarker/">
+		<property name="freemarkerSettings">
+			<value>
+
+			</value>
+		</property>
+	</bean>
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver" p:order="80" p:contentType="text/html; charset=utf8" p:suffix=".ftl" />
+	 -->
 	<!-- Jasper Report视图解析器
 	<bean class="org.springframework.web.servlet.view.jasperreports.JasperReportsViewResolver" p:viewClass="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView" p:order="90" p:prefix="/WEB-INF/template/jasperreports" p:suffix=".jasper" />
 	 -->
