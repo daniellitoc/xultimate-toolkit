@@ -45,6 +45,11 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 一些Utils类，主要是对Spring(Utils的封装)，Cookie生成器等。	
 * httpClient的Spring Bean形式，同时提供一个RestTemplate的使用。
 
+## xultimate-webmvc ##
+
+* 包含一套Spring MVC的使用Demo。
+* 使用XMemcached实现的访问限制器VisitLimiter。
+
 
 ## xultimate-hibernate ##
 
