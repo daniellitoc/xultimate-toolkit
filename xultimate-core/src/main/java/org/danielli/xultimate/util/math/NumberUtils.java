@@ -1,5 +1,8 @@
 package org.danielli.xultimate.util.math;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.apache.commons.lang3.math.IEEE754rUtils;
 
 /**
@@ -51,6 +54,96 @@ public class NumberUtils {
     public static long toLong(String str) {
     	return org.apache.commons.lang3.math.NumberUtils.toLong(str);
     }
+    
+    /**
+     * <p>Convert a <code>String</code> to a <code>float</code>, returning
+     * <code>0.0f</code> if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>,
+     * <code>0.0f</code> is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toFloat(null)   = 0.0f
+     *   NumberUtils.toFloat("")     = 0.0f
+     *   NumberUtils.toFloat("1.5")  = 1.5f
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @return the float represented by the string, or <code>0.0f</code>
+     *  if conversion fails
+     * @since 2.1
+     */
+    public static float toFloat(String str) {
+        return org.apache.commons.lang3.math.NumberUtils.toFloat(str);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>float</code>, returning a
+     * default value if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>, the default
+     * value is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toFloat(null, 1.1f)   = 1.0f
+     *   NumberUtils.toFloat("", 1.1f)     = 1.1f
+     *   NumberUtils.toFloat("1.5", 0.0f)  = 1.5f
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @param defaultValue the default value
+     * @return the float represented by the string, or defaultValue
+     *  if conversion fails
+     * @since 2.1
+     */
+    public static float toFloat(String str, float defaultValue) {
+    	return org.apache.commons.lang3.math.NumberUtils.toFloat(str, defaultValue);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>double</code>, returning
+     * <code>0.0d</code> if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>,
+     * <code>0.0d</code> is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toDouble(null)   = 0.0d
+     *   NumberUtils.toDouble("")     = 0.0d
+     *   NumberUtils.toDouble("1.5")  = 1.5d
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @return the double represented by the string, or <code>0.0d</code>
+     *  if conversion fails
+     * @since 2.1
+     */
+    public static double toDouble(String str) {
+    	return org.apache.commons.lang3.math.NumberUtils.toDouble(str);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>double</code>, returning a
+     * default value if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>, the default
+     * value is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toDouble(null, 1.1d)   = 1.1d
+     *   NumberUtils.toDouble("", 1.1d)     = 1.1d
+     *   NumberUtils.toDouble("1.5", 0.0d)  = 1.5d
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @param defaultValue the default value
+     * @return the double represented by the string, or defaultValue
+     *  if conversion fails
+     * @since 2.1
+     */
+    public static double toDouble(String str, double defaultValue) {
+    	return org.apache.commons.lang3.math.NumberUtils.toDouble(str, defaultValue);
+    }
 	
     /**
      * <p>Convert a <code>String</code> to a <code>Integer</code>, handling
@@ -78,6 +171,58 @@ public class NumberUtils {
      */
     public static Long createLong(String str) {
     	return org.apache.commons.lang3.math.NumberUtils.createLong(str);
+    }
+    
+    /**
+     * <p>Convert a <code>String</code> to a <code>BigInteger</code>.</p>
+     *
+     * <p>Returns <code>null</code> if the string is <code>null</code>.</p>
+     * 
+     * @param str  a <code>String</code> to convert, may be null
+     * @return converted <code>BigInteger</code>
+     * @throws NumberFormatException if the value cannot be converted
+     */
+    public static BigInteger createBigInteger(String str) {
+    	return org.apache.commons.lang3.math.NumberUtils.createBigInteger(str);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>BigDecimal</code>.</p>
+     * 
+     * <p>Returns <code>null</code> if the string is <code>null</code>.</p>
+     *
+     * @param str  a <code>String</code> to convert, may be null
+     * @return converted <code>BigDecimal</code>
+     * @throws NumberFormatException if the value cannot be converted
+     */
+    public static BigDecimal createBigDecimal(String str) {
+    	return org.apache.commons.lang3.math.NumberUtils.createBigDecimal(str);
+    }
+    
+    /**
+     * <p>Convert a <code>String</code> to a <code>Float</code>.</p>
+     *
+     * <p>Returns <code>null</code> if the string is <code>null</code>.</p>
+     * 
+     * @param str  a <code>String</code> to convert, may be null
+     * @return converted <code>Float</code>
+     * @throws NumberFormatException if the value cannot be converted
+     */
+    public static Float createFloat(String str) {
+    	return org.apache.commons.lang3.math.NumberUtils.createFloat(str);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>Double</code>.</p>
+     * 
+     * <p>Returns <code>null</code> if the string is <code>null</code>.</p>
+     *
+     * @param str  a <code>String</code> to convert, may be null
+     * @return converted <code>Double</code>
+     * @throws NumberFormatException if the value cannot be converted
+     */
+    public static Double createDouble(String str) {
+    	return org.apache.commons.lang3.math.NumberUtils.createDouble(str);
     }
 	
     /**
