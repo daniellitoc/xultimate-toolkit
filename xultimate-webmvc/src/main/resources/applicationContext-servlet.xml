@@ -30,7 +30,9 @@
 	<context:property-placeholder location="classpath:springmvc.properties"/>
 
 	<!-- 自动扫描com.baobaotao.web 包下的@Controller标注的类控制器类 -->
-	<context:component-scan base-package="org.danielli.xultimate.controller" />
+	<context:component-scan base-package="org.danielli.xultimate.controller">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
 	<!--
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" p:messageConverters-ref="messageConverters">
 		<property name="webBindingInitializer">

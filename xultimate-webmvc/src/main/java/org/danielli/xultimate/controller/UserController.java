@@ -137,7 +137,7 @@ public class UserController {
 		return "redirect:http://www.google.com";
 	}
 	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/to_upload" })
+	@RequestMapping(method = { RequestMethod.POST }, value = { "/to_upload" })
 	public String toUpload(MultipartFile file, ModelMap modelMap) {
 		return "upload";
 	}

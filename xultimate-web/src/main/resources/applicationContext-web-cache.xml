@@ -27,27 +27,5 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	
-	<util:properties id="cookieProperties" location="classpath:/cookie.properties" />
-	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
-		<ref bean="cookieProperties"/>
-	</util:list>
-	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
-		<property name="encryptPropertyNames">
-			<array>
-				
-			</array>
-		</property>
-	</bean>
-	
-	<bean id="rememberMeCookieGenerator" parent="cookieGenerator" c:cookieName="login_token" p:cookieMaxAge="604800" />
-	<bean id="rememberMeService" class="org.danielli.xultimate.web.util.RememberMeService" 
-		p:webKeyPassword="ultimate" 
-		p:rememberMeCookieGenerator-ref="rememberMeCookieGenerator"
-		p:base64Cryptor-ref="base64Cyrptor" />
-	
-	
-	<bean id="cookieGenerator" class="org.danielli.xultimate.web.util.CookieGenerator"
-		p:cookieDomain="${cookie.domain}" p:cookiePath="${cookie.defaultPath}" 
-		p:cookieMaxAge="${cookie.defaultMaxAge}"
-		p:cookieSecure="${cookie.secure}" p:cookieHttpOnly="${cookie.httpOnly}" />
+	<bean id="browserCacheGenerator" class="org.danielli.xultimate.web.util.BrowserCacheGenerator" />
 </beans>

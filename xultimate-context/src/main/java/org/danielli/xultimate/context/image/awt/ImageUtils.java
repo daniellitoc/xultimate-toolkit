@@ -75,7 +75,7 @@ public class ImageUtils {
 	 * 				图片文件。
 	 * @return		图片文件的缓冲图片对象。
 	 */
-	public static BufferedImage createBufferedImage(File imageFile) {
+	public static BufferedImage createBufferedImage(File imageFile) throws ImageInfoException {
 		Assert.notNull(imageFile, "this argument imageFile is required; it must not be null");
 		try {
 			return ImageIO.read(imageFile);
@@ -91,9 +91,28 @@ public class ImageUtils {
 	 * 				图片文件。与图片文件是否存在无关。
 	 * @return		图片文件的扩展名。
 	 */
-	private static ImageFormat getExtension(File imageFile) {
+	public static ImageFormat getExtension(File imageFile) throws ImageInfoException {
 		Assert.notNull(imageFile, "this argument imageFile is required; it must not be null");
 		String extension = StringUtils.upperCase(FilenameUtils.getExtension(imageFile.getName()));
+		ImageFormat[] imageFormats = ImageFormat.values();
+		for (ImageFormat imageFormat : imageFormats) {
+			if (ArrayUtils.contains(imageFormat.getExtensions(), extension)) {
+				return imageFormat;
+			}	
+		}
+		throw new ImageInfoException("the argument imageFile must have correct image extension");
+	}
+	
+	/**
+	 * 获取图片文件的扩展名。
+	 * 
+	 * @param imageFile
+	 * 				图片文件。与图片文件是否存在无关。
+	 * @return		图片文件的扩展名。
+	 */
+	public static ImageFormat getExtension(String imageFilePath) throws ImageInfoException {
+		Assert.notNull(imageFilePath, "this argument imageFile is required; it must not be null");
+		String extension = StringUtils.upperCase(FilenameUtils.getExtension(imageFilePath));
 		ImageFormat[] imageFormats = ImageFormat.values();
 		for (ImageFormat imageFormat : imageFormats) {
 			if (ArrayUtils.contains(imageFormat.getExtensions(), extension)) {
@@ -115,7 +134,7 @@ public class ImageUtils {
 	 * @param quality
 	 * 				目标图片品质(取值范围: 0 - 100)
 	 */
-	public static void writeBufferedImage(BufferedImage srcBufferedImage, ImageFormat defaultFormat, File destImageFile, Integer quality) {
+	public static void writeBufferedImage(BufferedImage srcBufferedImage, ImageFormat defaultFormat, File destImageFile, Integer quality) throws ImageInfoException {
 		Assert.notNull(srcBufferedImage, "this argument srcBufferedImage is required; it must not be null");
 		Assert.notNull(defaultFormat, "this argument defaultFormat is required; it must not be null");
 		Assert.notNull(destImageFile, "this argument destImageFile is required; it must not be null");
@@ -147,7 +166,7 @@ public class ImageUtils {
 	 * 				背景颜色。
 	 * @return		目标缓冲图片对象。
 	 */
-	public static BufferedImage cropImage(BufferedImage srcBufferedImage, ImageGeometryCoordinate imageGeometryCoordinate, Color backgroundColor) {
+	public static BufferedImage cropImage(BufferedImage srcBufferedImage, ImageGeometryCoordinate imageGeometryCoordinate, Color backgroundColor) throws ImageInfoException {
 		ImageSize imageSize = imageGeometryCoordinate.getImageSize();
 		ImageCoordinate imageCoordinate = imageGeometryCoordinate.getImageCoordinate();
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
@@ -188,7 +207,7 @@ public class ImageUtils {
 	 * 				背景颜色。
 	 * @return		目标缓冲图片。
 	 */
-	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Color backgroundColor) {
+	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Color backgroundColor) throws ImageInfoException {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
 		Assert.notNull(imageGeometry.getImageSize(), "this size is required; it must not be null");
 		try {
@@ -220,7 +239,7 @@ public class ImageUtils {
 	 * 				背景颜色。
 	 * @return		目标缓冲图片。
 	 */
-	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Gravity gravity, Color backgroundColor) {
+	public static BufferedImage resizeImage(BufferedImage srcBufferedImage, ImageGeometry imageGeometry, Gravity gravity, Color backgroundColor) throws ImageInfoException {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
 		Assert.notNull(imageGeometry.getImageSize(), "this size is required; it must not be null");
 		
@@ -258,7 +277,7 @@ public class ImageUtils {
 	 * 				背景颜色。
 	 * @return		目标缓冲图片对象。
 	 */
-	public static BufferedImage addWatermarkImage(BufferedImage srcBufferedImage, BufferedImage watermarkBufferedImage, ImageCoordinate imageCoordinate, int alpha, Color backgroundColor) {
+	public static BufferedImage addWatermarkImage(BufferedImage srcBufferedImage, BufferedImage watermarkBufferedImage, ImageCoordinate imageCoordinate, int alpha, Color backgroundColor) throws ImageInfoException {
 		Assert.notNull(srcBufferedImage, "this srcBufferedImage is required; it must not be null");
 		Assert.notNull(watermarkBufferedImage, "this watermarkBufferedImage is required; it must not be null");
 		Assert.notNull(imageCoordinate, "this imageCoordinate is required; it must not be null");

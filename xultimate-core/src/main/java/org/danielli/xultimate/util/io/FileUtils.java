@@ -116,4 +116,38 @@ public class FileUtils {
     public static byte[] readFileToByteArray(File file) throws IOException {
     	return org.apache.commons.io.FileUtils.readFileToByteArray(file);
     }
+    
+    /**
+     * Writes a byte array to a file creating the file if it does not exist.
+     * <p>
+     * NOTE: As from v1.3, the parent directories of the file will be created
+     * if they do not exist.
+     *
+     * @param file  the file to write to
+     * @param data  the content to write to the file
+     * @throws IOException in case of an I/O error
+     * @since 1.1
+     */
+    public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
+    	org.apache.commons.io.FileUtils.writeByteArrayToFile(file, data);;
+    }
+    
+    /**
+     * Deletes a file, never throwing an exception. If file is a directory, delete it and all sub-directories.
+     * <p>
+     * The difference between File.delete() and this method are:
+     * <ul>
+     * <li>A directory to be deleted does not have to be empty.</li>
+     * <li>No exceptions are thrown when a file or directory cannot be deleted.</li>
+     * </ul>
+     *
+     * @param file  file or directory to delete, can be {@code null}
+     * @return {@code true} if the file or directory was deleted, otherwise
+     * {@code false}
+     *
+     * @since 1.4
+     */
+    public static boolean deleteQuietly(File file) {
+    	return org.apache.commons.io.FileUtils.deleteQuietly(file);
+    }
 }

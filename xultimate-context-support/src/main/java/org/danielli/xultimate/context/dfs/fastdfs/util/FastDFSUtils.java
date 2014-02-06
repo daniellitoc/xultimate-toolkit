@@ -8,6 +8,8 @@ import org.csource.fastdfs.StorageClient;
 import org.csource.fastdfs.StorageClient1;
 import org.csource.fastdfs.StorageServer;
 import org.csource.fastdfs.TrackerServer;
+import org.danielli.xultimate.util.ArrayUtils;
+import org.danielli.xultimate.util.collections.MapUtils;
 
 public class FastDFSUtils {
 
@@ -20,6 +22,9 @@ public class FastDFSUtils {
 	}
 	
 	public static NameValuePair[] newNameValuePairs(Map<String, String> metaInformation) {
+		if (MapUtils.isNotEmpty(metaInformation)) {
+			return null;
+		}
 		NameValuePair[] nameValuePairs = new NameValuePair[metaInformation.size()];
 		int i = 0;
 		for (Map.Entry<String, String> entry : metaInformation.entrySet()) {
@@ -30,8 +35,10 @@ public class FastDFSUtils {
 	
 	public static Map<String, String> newMapFromNameValuePairs(NameValuePair[] nameValuePairs) {
 		Map<String, String> metaInformation = new HashMap<String, String>();
-		for (NameValuePair entry : nameValuePairs) {
-			metaInformation.put(entry.getName(), entry.getValue());
+		if (ArrayUtils.isNotEmpty(nameValuePairs)) {
+			for (NameValuePair entry : nameValuePairs) {
+				metaInformation.put(entry.getName(), entry.getValue());
+			}
 		}
 		return metaInformation;
 	}
