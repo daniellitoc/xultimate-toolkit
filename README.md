@@ -49,6 +49,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 
 * 包含一套Spring MVC的使用Demo。
 * 使用XMemcached实现的访问限制器VisitLimiter。
+* Session跨域处理。
 
 
 ## xultimate-hibernate ##
