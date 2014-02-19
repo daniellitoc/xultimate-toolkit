@@ -33,12 +33,11 @@ public class DefaultStopWatchSummary extends AbstractStopWatchSummary {
 	}
 	
 	@Override
-	public void summarize(StopWatch stopWatch) {
-		Logger logger = getLogger();
-		if (logger.isDebugEnabled()) {
-			logger.debug("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT), stopWatch.getTaskCount() }) ;
+	public void summarize(StopWatch stopWatch, Logger logger) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT), stopWatch.getTaskCount() }) ;
 			if (stopWatch.getTaskCount() == 0) {
-				logger.debug("No task info kept");
+				logger.trace("No task info kept");
 			} else {
 				TaskInfo[] taskInfos = stopWatch.getTaskInfo();
 				if (sort) {
@@ -52,7 +51,7 @@ public class DefaultStopWatchSummary extends AbstractStopWatchSummary {
 					});
 				}
 				for (TaskInfo task : taskInfos) {
-					logger.debug("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), DurationFormatUtils.formatDuration(task.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT),  pf.format(task.getTotalTime() / (double) stopWatch.getTotalTime()) });
+					logger.trace("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), DurationFormatUtils.formatDuration(task.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT),  pf.format(task.getTotalTime() / (double) stopWatch.getTotalTime()) });
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package org.danielli.xultimate.util.performance;
 
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
+import org.danielli.xultimate.util.time.stopwatch.StopWatchContext;
 import org.danielli.xultimate.util.time.stopwatch.support.AbstractStopWatchSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PerformanceMonitor {
 	
-	private static ThreadLocal<StopWatch> stopWatchThreadLocal = new ThreadLocal<>();
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceMonitor.class);
 	
 	/**
@@ -22,7 +21,7 @@ public class PerformanceMonitor {
 	 */
 	public static void start(String stopWatchId) {
 		StopWatch stopWatch = new StopWatch(stopWatchId);
-		stopWatchThreadLocal.set(stopWatch);
+		StopWatchContext.set(stopWatch);
 		LOGGER.debug("Begin [{}] Stopwatch", stopWatch.getId());
 		stopWatch.start();
 	}
@@ -31,7 +30,7 @@ public class PerformanceMonitor {
 	 * 结束秒表计时。
 	 */
 	public static void stop() {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Stop [{}] Stopwatch", stopWatch.getId());
 		stopWatch.stop();
 	}
@@ -40,7 +39,7 @@ public class PerformanceMonitor {
 	 * 重置秒表计时。
 	 */
 	public static void reset() {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Reset [{}] Stopwatch", stopWatch.getId());
 		stopWatch.reset();
 	}
@@ -49,7 +48,7 @@ public class PerformanceMonitor {
 	 * 暂停秒表计时。
 	 */
 	public static void suspend() {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Suspend [{}] Stopwatch", stopWatch.getId());
 		stopWatch.suspend();
 	}
@@ -58,7 +57,7 @@ public class PerformanceMonitor {
 	 * 恢复秒表计时。
 	 */
 	public static void resume() {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Resume [{}] Stopwatch", stopWatch.getId());
 		stopWatch.resume();
 	}
@@ -67,21 +66,21 @@ public class PerformanceMonitor {
 	 * 获取当前线程中的StopWatch。
 	 */
 	public static StopWatch get() {
-		return stopWatchThreadLocal.get();
+		return StopWatchContext.get();
 	}
 	
 	/**
 	 * 移除当前线程中的StopWatch。
 	 */
 	public static void remove() {
-		stopWatchThreadLocal.remove();
+		StopWatchContext.remove();
 	}
 	
 	/**
 	 * 标记任务。
 	 */
 	public static void mark(String taskName) {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Add [{}] Task", taskName);
 		stopWatch.mark(taskName);
 	}
@@ -90,7 +89,7 @@ public class PerformanceMonitor {
 	 * 秒表汇总。
 	 */
 	public static void summarize(AbstractStopWatchSummary stopWatchSummary) {
-		StopWatch stopWatch = stopWatchThreadLocal.get();
+		StopWatch stopWatch = StopWatchContext.get();
 		LOGGER.debug("Print [{}] Stopwatch Info", stopWatch.getId());
 		if (stopWatchSummary.getLogger() == null) {
 			stopWatchSummary.setLogger(LOGGER);

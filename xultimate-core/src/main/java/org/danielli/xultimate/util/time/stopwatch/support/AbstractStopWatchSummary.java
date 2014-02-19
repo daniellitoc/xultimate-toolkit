@@ -1,5 +1,6 @@
 package org.danielli.xultimate.util.time.stopwatch.support;
 
+import org.danielli.xultimate.util.time.stopwatch.StopWatch;
 import org.danielli.xultimate.util.time.stopwatch.StopWatchSummary;
 import org.slf4j.Logger;
 
@@ -20,4 +21,11 @@ public abstract class AbstractStopWatchSummary implements StopWatchSummary {
 	public Logger getLogger() {
 		return logger;
 	}
+	
+	@Override
+	public void summarize(StopWatch stopWatch) {
+		summarize(stopWatch, logger);
+	}
+	
+	public abstract void summarize(StopWatch stopWatch, Logger logger);
 }

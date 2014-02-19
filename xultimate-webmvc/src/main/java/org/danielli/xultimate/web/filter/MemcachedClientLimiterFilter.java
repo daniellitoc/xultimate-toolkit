@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.danielli.xultimate.web.util.VisitLimiter;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.MemcachedClientLimiter;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
@@ -16,13 +16,13 @@ import org.springframework.web.filter.GenericFilterBean;
  * @author Daniel Li
  * @since 15 Jun 2013
  */
-public abstract class VisitLimiterFilter extends GenericFilterBean {
+public abstract class MemcachedClientLimiterFilter extends GenericFilterBean {
 
 	protected int expMillionSeconds;
 	
 	protected int visitLimiterCount;
 	
-	private VisitLimiter visitLimiter;
+	private MemcachedClientLimiter memcachedClientLimiter;
 
 	public void setExpMillionSeconds(int expMillionSeconds) {
 		this.expMillionSeconds = expMillionSeconds;
@@ -32,14 +32,14 @@ public abstract class VisitLimiterFilter extends GenericFilterBean {
 		this.visitLimiterCount = visitLimiterCount;
 	}
 
-	public void setVisitLimiter(VisitLimiter visitLimiter) {
-		this.visitLimiter = visitLimiter;
+	public void setMemcachedClientLimiter(MemcachedClientLimiter memcachedClientLimiter) {
+		this.memcachedClientLimiter = memcachedClientLimiter;
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String key = getKey(request, response);
-		boolean allowBrowse = visitLimiter.allowBrowse(key, expMillionSeconds, visitLimiterCount);
+		boolean allowBrowse = memcachedClientLimiter.allowBrowse(key, expMillionSeconds, visitLimiterCount);
 		if (allowBrowse) {
 			chain.doFilter(request, response);
 		} else {

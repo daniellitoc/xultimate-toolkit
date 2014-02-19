@@ -1,17 +1,17 @@
-package org.danielli.xultimate.web.util;
+package org.danielli.xultimate.context.kvStore.memcached.xmemcached;
 
 import net.rubyeye.xmemcached.MemcachedClient;
 
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedReturnedCallback;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedTemplate;
 
 /**
- * 浏览限制器。
+ * 访问限制器。
  * 
  * @author Daniel Li
  * @since 15 Jun 2013
  */
-public class VisitLimiter {
+public class MemcachedClientLimiter {
+
 	/** 每次增长的步进 */
 	private int visitStep = 1;
 	

@@ -16,10 +16,9 @@ public class SimpleStopWatchSummary extends AbstractStopWatchSummary {
 	public static final String DATE_FORMAT = "yyyy:MM:dd H:mm:ss.SSS";
 	
 	@Override
-	public void summarize(StopWatch stopWatch) {
-		Logger logger = getLogger();
-		if (logger.isDebugEnabled()) {
-			logger.debug("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, DATE_FORMAT), stopWatch.getTaskCount() }) ;
+	public void summarize(StopWatch stopWatch, Logger logger) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, DATE_FORMAT), stopWatch.getTaskCount() }) ;
 		}
 	}
 }
