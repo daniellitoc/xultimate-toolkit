@@ -3,6 +3,7 @@ package org.danielli.xultimate.util.time.stopwatch.support;
 import org.danielli.xultimate.util.time.DateUtils;
 import org.danielli.xultimate.util.time.DurationFormatUtils;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
+import org.danielli.xultimate.util.time.stopwatch.StopWatchSummary;
 import org.slf4j.Logger;
 
 /**
@@ -13,12 +14,10 @@ import org.slf4j.Logger;
  */
 public class SimpleStopWatchSummary extends AbstractStopWatchSummary {
 
-	public static final String DATE_FORMAT = "yyyy:MM:dd H:mm:ss.SSS";
-	
 	@Override
 	public void summarize(StopWatch stopWatch, Logger logger) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, DATE_FORMAT), stopWatch.getTaskCount() }) ;
+			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {} ({} ns) ({} us) ({} ms), task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, StopWatchSummary.DATE_FORMAT), stopWatch.getTotalTime(), stopWatch.getTotalTime() / DateUtils.NANOS_PER_MICROS, stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, stopWatch.getTaskCount() }) ;
 		}
 	}
 }

@@ -14,7 +14,15 @@ import redis.clients.jedis.ShardedJedisPool;
  */
 public class ShardedJedisPoolUtils {
 	
-	public static <T> T execute(ShardedJedisPool shardedJedisPool, ShardedJedisReturnedCallback<T> shardedJedisReturnedCallback) {
+	/**
+	 * 执行回调。
+	 * 
+	 * @param shardedJedisPool Jedis客户端。
+	 * @param shardedJedisReturnedCallback 回调。
+	 * @return 回调返回值。
+	 * @exception Exception 任何可能出现的异常。
+	 */
+	public static <T> T execute(ShardedJedisPool shardedJedisPool, ShardedJedisReturnedCallback<T> shardedJedisReturnedCallback) throws Exception {
 		ShardedJedis shardedJedis = null;
 	    try {   
 	    	shardedJedis = shardedJedisPool.getResource();
@@ -26,7 +34,14 @@ public class ShardedJedisPoolUtils {
 	    }
 	}
 	
-	public static void execute(ShardedJedisPool shardedJedisPool, ShardedJedisCallback shardedJedisCallback) {
+	/**
+	 * 执行回调。
+	 * 
+	 * @param shardedJedisPool Jedis客户端。
+	 * @param shardedJedisCallback 回调。
+	 * @exception Exception 任何可能出现的异常。
+	 */
+	public static void execute(ShardedJedisPool shardedJedisPool, ShardedJedisCallback shardedJedisCallback) throws Exception {
 		ShardedJedis shardedJedis = null;
 	    try {   
 	    	shardedJedis = shardedJedisPool.getResource();

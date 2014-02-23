@@ -3,10 +3,19 @@ package org.danielli.xultimate.context.kvStore.memcached.xmemcached.support;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.SimpleValueWrapper;
 
+/**
+ * XMemcached缓存封装类。
+ * 
+ * @author Daniel Li
+ * @since 19 Jun 2013
+ * @see Cache
+ */
 public class XMemcachedCache implements Cache {
-	
+	/** 缓存Key前缀 */ 
 	private final String name;  
-    private final XMemcache memcache;  
+	/** XMemcached缓存服务 */
+    private final XMemcache memcache; 
+    /** XMemcached模板 */
     private final XMemcachedTemplate memcachedTemplate;
       
     public XMemcachedCache(String name, int expire, XMemcachedTemplate memcachedTemplate) {  

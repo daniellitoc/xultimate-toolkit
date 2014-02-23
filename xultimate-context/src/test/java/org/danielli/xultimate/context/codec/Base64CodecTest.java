@@ -30,7 +30,7 @@ public class Base64CodecTest {
 		PerformanceMonitor.mark("Base64Codec.encode()");
 		source = "bmFtZT1kYW5pZWxsaQ==";
 		LOGGER.info("{}: {}", new Object[] { source, decoder.decode(source) });
-		PerformanceMonitor.mark("Base64Codec.encode()");
+		PerformanceMonitor.mark("Base64Codec.decode()");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
 		PerformanceMonitor.remove();

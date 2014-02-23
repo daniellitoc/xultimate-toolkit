@@ -20,7 +20,7 @@ public class SiftingAppenderTest {
 	public void testLogger() {
 		Logger logger = LoggerFactory.getLogger(SiftingAppenderTest.class);
 		for (int i = 0; i < 1; i++) {
-			logger.debug("{}", i);
+			logger.info("{}", i);
 		}
 	}
 	

@@ -14,6 +14,7 @@ public interface ShardedJedisCallback {
 	 * 回调实现。
 	 * 
 	 * @param shardedJedis Jedis客户端。
+	 * @exception Exception 任何可能出现的异常。
 	 */
-	void doInShardedJedis(ShardedJedis shardedJedis);
+	void doInShardedJedis(ShardedJedis shardedJedis) throws Exception;
 }

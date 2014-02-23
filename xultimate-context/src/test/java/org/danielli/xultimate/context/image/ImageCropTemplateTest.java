@@ -32,14 +32,14 @@ public class ImageCropTemplateTest {
 		PerformanceMonitor.start("ImageCropTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageSize(640, 480), Gravity.Center);
+				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ImageSize(640, 480), Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageCropTemplateImpl" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageSize(640, 480), Gravity.Center);
+				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ImageSize(640, 480), Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageCropTemplateImpl" + i);
 		}
@@ -53,14 +53,14 @@ public class ImageCropTemplateTest {
 		PerformanceMonitor.start("ImageCropTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
+				awtImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
 			}
 			PerformanceMonitor.mark("awtImageCropTemplateImpl" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
+				im4javaImageCropTemplateImpl.cropImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ImageGeometryCoordinate(new ImageSize(640, 480), new ImageCoordinate(100, 30)));
 			}
 			PerformanceMonitor.mark("im4javaImageCropTemplateImpl" + i);
 		}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		
+	<util:properties id="cookieProperties" location="classpath:/cookie.properties" />
+	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
+		<ref bean="cookieProperties"/>
+	</util:list>
+	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
+		<property name="encryptPropertyNames">
+			<array>
+				
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 浏览器关闭失效 -->
+	<bean id="cookieGenerator1" parent="cookieGenerator" c:cookieName="test1" init-method="setCookExpireOnCloseBrowser" />
+	
+	<!-- 604800秒后失效 -->
+	<bean id="rememberMeCookieGenerator" parent="cookieGenerator" c:cookieName="login_token" p:cookieMaxAge="604800" />
+	
+	<!-- 指定日期后失效 -->
+	<bean id="test3ExpireDate" class="org.joda.time.DateTime" c:year="2013" c:monthOfYear="6" c:dayOfMonth="15" />
+	<bean id="cookieGenerator3" parent="cookieGenerator" c:cookieName="test3" p:cookieMaxAge-ref="test3ExpireDate" />
+		
+	<bean id="cookieGenerator" abstract="true" class="org.danielli.xultimate.web.util.CookieGenerator"
+		p:cookieDomain="${cookie.domain}" p:cookiePath="${cookie.defaultPath}" 
+		p:cookieSecure="${cookie.secure}" p:cookieHttpOnly="${cookie.httpOnly}" />
+</beans>

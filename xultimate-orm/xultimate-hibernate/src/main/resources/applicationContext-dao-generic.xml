@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		
+	
+	<bean id="hibernateProxyInitializer" class="org.danielli.xultimate.orm.jpa.config.support.HibernateProxyInitializer" />
+	 
+	<!-- 导入数据源相关属性信息-->
+	<util:properties id="ormProperties" location="classpath:/orm.properties" />
+	<util:properties id="databasesProperties" location="classpath:/databases.properties" />
+	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
+		<ref bean="databasesProperties"/>
+		<ref bean="ormProperties"/>
+	</util:list>
+	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
+		<property name="encryptPropertyNames">
+			<array>
+				<value>datasource.ormDb.jdbc.password</value>
+				<value>datasource.ormDb.jdbc.username</value>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="databaseNamingStrategyModel" class="org.danielli.xultimate.orm.jpa.config.DatabaseNamingStrategyModel" 
+		p:tablePrefix="${orm.namingStrategy.tablePrefix}"
+		p:useUnderscores="${orm.namingStrategy.useUnderscores}"
+		p:columnFormater="${orm.namingStrategy.columnFormater}"
+		p:tableFormater="${orm.namingStrategy.tableFormater}"
+		p:maxLength="${orm.namingStrategy.maxLength}" />
+
+	<!-- JPA -->
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="beanFactoryContext, databaseNamingStrategyModel"
+		 p:persistenceUnitName="ultimateEntityManagerFactory" p:packagesToScan="org.danielli.xultimate.orm.jpa" p:dataSource-ref="ormDbDataSource">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<value>
+				hibernate.dialect=${orm.hibernate.dialect}
+				hibernate.hbm2ddl.auto=${orm.hibernate.hbm2ddl.auto}
+				hibernate.show_sql=${orm.hibernate.show_sql}
+				hibernate.format_sql=${orm.hibernate.format_sql}
+				hibernate.use_sql_comments=${orm.hibernate.use_sql_comments}
+				hibernate.cache.use_second_level_cache=${orm.hibernate.cache.use_second_level_cache}
+				hibernate.cache.region.factory_class=${orm.hibernate.cache.region.factory_class}
+				hibernate.cache.use_query_cache=${orm.hibernate.cache.use_query_cache}
+				hibernate.jdbc.fetch_size=${orm.hibernate.jdbc.fetch_size}
+				hibernate.jdbc.batch_size=${orm.hibernate.jdbc.batch_size}
+				hibernate.ejb.naming_strategy=org.danielli.xultimate.orm.jpa.config.DatabaseNamingStrategy
+				hibernate.generate_statistics=${orm.hibernate.generate_statistics}
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactory" class="org.danielli.xultimate.orm.jpa.config.EntityManagerFactoryUtils" factory-method="getSessionFactory">
+		<constructor-arg index="0" ref="entityManagerFactory" />
+	</bean>
+	
+	<bean id="ormDbDataSource" parent="abstractDataSource"
+		p:url="${datasource.ormDb.jdbc.url}"
+		p:username="${datasource.ormDb.jdbc.username}"
+		p:password="${datasource.ormDb.jdbc.password}"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="${datasource.ormDb.pool.maxActive}" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="${datasource.ormDb.pool.minIdle}" />
+	    <property name="minIdle" value="${datasource.ormDb.pool.minIdle}" />
+	</bean>
+</beans>

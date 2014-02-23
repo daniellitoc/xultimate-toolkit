@@ -7,6 +7,13 @@ import org.danielli.xultimate.context.format.Formatter;
 import org.danielli.xultimate.ui.stringtemplate.v4.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
 
+/**
+ * 格式化器。是StringTemplate 4.x版本的实现。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ * @see Formatter
+ */
 public class StringTemplateV4Formatter implements Formatter<String, Map<String, ? extends Object>, String> {
 
 	@Override

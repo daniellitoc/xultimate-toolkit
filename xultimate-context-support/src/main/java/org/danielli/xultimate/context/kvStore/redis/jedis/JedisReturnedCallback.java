@@ -17,6 +17,7 @@ public interface JedisReturnedCallback<T> {
 	 * 
 	 * @param jedis Jedis客户端。
 	 * @return 回调返回值。
+	 * @exception Exception 任何可能出现的异常。
 	 */
-	T doInJedis(Jedis jedis);
+	T doInJedis(Jedis jedis) throws Exception;
 }

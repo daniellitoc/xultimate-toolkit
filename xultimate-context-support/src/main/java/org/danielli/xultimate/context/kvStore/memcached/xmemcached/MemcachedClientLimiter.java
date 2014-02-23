@@ -33,12 +33,20 @@ public class MemcachedClientLimiter {
 		this.xMemcachedTemplate = xMemcachedTemplate;
 	}
 	
-	public boolean allowBrowse(final String key, final int expMillionSeconds, final int visitLimiterCount) {  
+	/**
+	 * 是否可以继续访问。
+	 * 
+	 * @param key 健。
+	 * @param expSeconds Key过期秒数。
+	 * @param visitLimiterCount 限制的访问个数。
+	 * @return 如果返回true，表示可以继续访问；否则返回false。
+	 */
+	public boolean allowBrowse(final String key, final int expSeconds, final int visitLimiterCount) {  
 	    Boolean result = xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Boolean>() {
 
 			@Override
 			public Boolean doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-				long currentBrowseCount = memcachedClient.incr(key, visitStep, initialVisitCount, memcachedClient.getOpTimeout(), expMillionSeconds);
+				long currentBrowseCount = memcachedClient.incr(key, visitStep, initialVisitCount, memcachedClient.getOpTimeout(), expSeconds);
 				return currentBrowseCount > visitLimiterCount ? false : true;
 			}
 			

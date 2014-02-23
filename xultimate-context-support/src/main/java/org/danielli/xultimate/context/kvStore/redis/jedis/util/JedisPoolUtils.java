@@ -14,7 +14,15 @@ import redis.clients.jedis.JedisPool;
  */
 public class JedisPoolUtils {
 	
-	public static <T> T execute(JedisPool jedisPool, JedisReturnedCallback<T> jedisReturnedCallback) {
+	/**
+	 * 执行回调。
+	 * 
+	 * @param jedisPool Jedis客户端。
+	 * @param jedisReturnedCallback 回调。
+	 * @return 回调返回值。
+	 * @exception Exception 任何可能出现的异常。
+	 */
+	public static <T> T execute(JedisPool jedisPool, JedisReturnedCallback<T> jedisReturnedCallback) throws Exception {
 		Jedis jedis = null;
 	    try {   
 	    	jedis = jedisPool.getResource();
@@ -26,7 +34,14 @@ public class JedisPoolUtils {
 	    }
 	}
 	
-	public static void execute(JedisPool jedisPool, JedisCallback jedisCallback) {
+	/**
+	 * 执行回调。
+	 * 
+	 * @param jedisPool Jedis客户端。
+	 * @param jedisCallback 回调。
+	 * @exception Exception 任何可能出现的异常。
+	 */
+	public static void execute(JedisPool jedisPool, JedisCallback jedisCallback) throws Exception {
 		Jedis jedis = null;
 	    try {   
 	    	jedis = jedisPool.getResource();

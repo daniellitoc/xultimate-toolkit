@@ -11,7 +11,7 @@ import javax.persistence.PrePersist;
 public class NormsListener {
 	
 	@PrePersist
-	public void prePersist(NormsEntity norms) {
+	public void prePersist(NormsEntity<?> norms) {
 		if (norms.getBoost() == null) {
 			norms.setBoost(0.0F);
 		}

@@ -22,7 +22,7 @@ public class PerformanceMonitor {
 	public static void start(String stopWatchId) {
 		StopWatch stopWatch = new StopWatch(stopWatchId);
 		StopWatchContext.set(stopWatch);
-		LOGGER.debug("Begin [{}] Stopwatch", stopWatch.getId());
+		LOGGER.trace("Begin [{}] Stopwatch", stopWatch.getId());
 		stopWatch.start();
 	}
 	
@@ -31,7 +31,7 @@ public class PerformanceMonitor {
 	 */
 	public static void stop() {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Stop [{}] Stopwatch", stopWatch.getId());
+		LOGGER.trace("Stop [{}] Stopwatch", stopWatch.getId());
 		stopWatch.stop();
 	}
 	
@@ -40,7 +40,7 @@ public class PerformanceMonitor {
 	 */
 	public static void reset() {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Reset [{}] Stopwatch", stopWatch.getId());
+		LOGGER.trace("Reset [{}] Stopwatch", stopWatch.getId());
 		stopWatch.reset();
 	}
 	
@@ -49,7 +49,7 @@ public class PerformanceMonitor {
 	 */
 	public static void suspend() {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Suspend [{}] Stopwatch", stopWatch.getId());
+		LOGGER.trace("Suspend [{}] Stopwatch", stopWatch.getId());
 		stopWatch.suspend();
 	}
 	
@@ -58,7 +58,7 @@ public class PerformanceMonitor {
 	 */
 	public static void resume() {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Resume [{}] Stopwatch", stopWatch.getId());
+		LOGGER.trace("Resume [{}] Stopwatch", stopWatch.getId());
 		stopWatch.resume();
 	}
 	
@@ -81,7 +81,7 @@ public class PerformanceMonitor {
 	 */
 	public static void mark(String taskName) {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Add [{}] Task", taskName);
+		LOGGER.trace("Add [{}] Task", taskName);
 		stopWatch.mark(taskName);
 	}
 	
@@ -90,7 +90,7 @@ public class PerformanceMonitor {
 	 */
 	public static void summarize(AbstractStopWatchSummary stopWatchSummary) {
 		StopWatch stopWatch = StopWatchContext.get();
-		LOGGER.debug("Print [{}] Stopwatch Info", stopWatch.getId());
+		LOGGER.trace("Print [{}] Stopwatch Info", stopWatch.getId());
 		if (stopWatchSummary.getLogger() == null) {
 			stopWatchSummary.setLogger(LOGGER);
 		}

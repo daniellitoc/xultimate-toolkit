@@ -26,17 +26,42 @@ import net.rubyeye.xmemcached.exception.MemcachedException;
  */
 public class MemcachedClientMutex {
 
-	private int expMillionSeconds;
+	/** 失效时间 */
+	private int expSeconds;
 
-	public void setExpMillionSeconds(int expMillionSeconds) {
-		this.expMillionSeconds = expMillionSeconds;
+	/**
+	 * 设置失效时间。
+	 * 
+	 * @param expSeconds 失效时间。
+	 */
+	public void setExpSeconds(int expSeconds) {
+		this.expSeconds = expSeconds;
 	}
 
+	/**
+	 * 设置锁。
+	 * 
+	 * @param memcachedClient XMemcached客户端。
+	 * @param lockKey 锁名称。
+	 * @return 如果返回true，则表示成功获取锁，否则表示锁正在被占用。
+	 * @throws TimeoutException 
+	 * @throws InterruptedException
+	 * @throws MemcachedException
+	 */
 	public boolean tryLock(XMemcachedClient memcachedClient, String lockKey)
 			throws TimeoutException, InterruptedException, MemcachedException {
-		return memcachedClient.add(lockKey, expMillionSeconds, true);
+		return memcachedClient.add(lockKey, expSeconds, true);
 	}
 
+	/**
+	 * 解锁。
+	 * 
+	 * @param memcachedClient XMemcached客户端。
+	 * @param lockKey 解锁名称。
+	 * @throws TimeoutException
+	 * @throws InterruptedException
+	 * @throws MemcachedException
+	 */
 	public void unlock(XMemcachedClient memcachedClient, String lockKey)
 			throws TimeoutException, InterruptedException, MemcachedException {
 		memcachedClient.delete(lockKey);

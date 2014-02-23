@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-config.xml", "classpath:/quartz/applicationContext-service-crypto.xml", "classpath:/quartz/applicationContext-dao-quartz.xml", "classpath:/quartz/applicationContext-service-quartz.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/quartz/applicationContext-dao-quartz.xml", "classpath:/quartz/applicationContext-service-quartz.xml" })
 public class SchedulerTest {
 	
 	@Resource

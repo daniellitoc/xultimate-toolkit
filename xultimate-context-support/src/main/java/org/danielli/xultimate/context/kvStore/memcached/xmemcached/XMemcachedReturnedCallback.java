@@ -17,6 +17,7 @@ public interface XMemcachedReturnedCallback<T> {
 	 * 
 	 * @param memcachedClient XMemcached客户端。
 	 * @return 回调返回值。
+	 * @exception Exception 任何可能出现的异常。
 	 */
 	T doInXMemcached(MemcachedClient memcachedClient) throws Exception;
 }

@@ -1,5 +1,10 @@
 package org.danielli.xultimate.util.time;
 
+/**  
+ * ChineseCalendarGB.java  
+ * Copyright (c) 1997-2002 by Dr. Herong Yang  
+ * 中国农历算法 - 实用于公历 1901 年至 2100 年之间的 200 年  
+ */ 
 public class ChineseCalendarGB {
 	private int gregorianYear;
 	private int gregorianMonth;
@@ -528,36 +533,5 @@ public class ChineseCalendarGB {
 				chineseYear++;
 		}
 		return 0;
-	}
-	
-	public static void main(String[] arg) {
-		ChineseCalendarGB c = new ChineseCalendarGB();
-		String cmd = "day";
-		int y = 1901;
-		int m = 1;
-		int d = 1;
-		if (arg.length > 0)
-			cmd = arg[0];
-		if (arg.length > 1)
-			y = Integer.parseInt(arg[1]);
-		if (arg.length > 2)
-			m = Integer.parseInt(arg[2]);
-		if (arg.length > 3)
-			d = Integer.parseInt(arg[3]);
-		c.setGregorian(y, m, d);
-		c.computeChineseFields();
-		c.computeSolarTerms();
-		if (cmd.equalsIgnoreCase("year")) {
-			String[] t = c.getYearTable();
-			for (int i = 0; i < t.length; i++)
-				System.out.println(t[i]);
-		} else if (cmd.equalsIgnoreCase("month")) {
-			String[] t = c.getMonthTable();
-			for (int i = 0; i < t.length; i++)
-				System.out.println(t[i]);
-		} else {
-			System.out.println(c.toString());
-			System.out.println(c.getDateString());
-		}
 	}
 }

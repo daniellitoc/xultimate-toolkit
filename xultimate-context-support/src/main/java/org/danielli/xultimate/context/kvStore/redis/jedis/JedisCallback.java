@@ -14,6 +14,7 @@ public interface JedisCallback {
 	 * 回调实现。
 	 * 
 	 * @param jedis Jedis客户端。
+	 * @exception Exception 任何可能出现的异常。
 	 */
-	void doInJedis(Jedis jedis);
+	void doInJedis(Jedis jedis) throws Exception;
 }

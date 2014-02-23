@@ -6,6 +6,7 @@
 
 	<display-name>Archetype Created Web Application</display-name>
 
+	<!-- 尽量别用 -->
 	<!-- 
 	<filter>
 		<filter-name>openEntityManagerInViewFilter</filter-name>

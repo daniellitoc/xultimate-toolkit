@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-chardet.xml" })
+@ContextConfiguration(locations = { "classpath:/chardet/applicationContext-service-chardet.xml" })
 public class FileCharsetDetectorTest {
 	
 	@Resource
@@ -33,28 +33,28 @@ public class FileCharsetDetectorTest {
 	@Test
 	public void test() {
 		try {
-			for (Charset charset : cpdetectorFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
+			for (Charset charset : cpdetectorFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile())) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
-			for (Charset charset : jchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
+			for (Charset charset : jchardetFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile())) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
-			for (Charset charset : icpu4jFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
+			for (Charset charset : icpu4jFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile())) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
-			for (Charset charset : juniversalchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile())) {
+			for (Charset charset : juniversalchardetFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile())) {
 				LOGGER.info(charset.displayName());
 			}
 		} catch (Exception e) {
@@ -68,7 +68,7 @@ public class FileCharsetDetectorTest {
 //		for (int i = 0; i < 5; i++) {
 //			for (int j = 0; j < 10000; j++) {
 //				try {
-//					cpdetectorFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile());
+//					cpdetectorFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile());
 //				} catch (Exception e) {
 //
 //				}
@@ -79,7 +79,7 @@ public class FileCharsetDetectorTest {
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
 				try {
-					jchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile());
+					jchardetFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile());
 				} catch (Exception e) {
 					
 				}
@@ -90,7 +90,7 @@ public class FileCharsetDetectorTest {
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
 				try {
-					icpu4jFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile());
+					icpu4jFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile());
 				} catch (Exception e) {
 					
 				}
@@ -101,7 +101,7 @@ public class FileCharsetDetectorTest {
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
 				try {
-					juniversalchardetFileCharsetDetector.detect(new ClassPathResource("test.txt").getFile());
+					juniversalchardetFileCharsetDetector.detect(new ClassPathResource("chardet/test.txt").getFile());
 				} catch (Exception e) {
 					
 				}

@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-chardet.xml" })
+@ContextConfiguration(locations = { "classpath:/chardet/applicationContext-service-chardet.xml" })
 public class URLCharsetDetectorTest {
 
 	@Resource

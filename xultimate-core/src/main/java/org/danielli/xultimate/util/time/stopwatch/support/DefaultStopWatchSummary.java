@@ -9,6 +9,7 @@ import org.danielli.xultimate.util.time.DateUtils;
 import org.danielli.xultimate.util.time.DurationFormatUtils;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch.TaskInfo;
+import org.danielli.xultimate.util.time.stopwatch.StopWatchSummary;
 import org.slf4j.Logger;
 
 /**
@@ -35,7 +36,7 @@ public class DefaultStopWatchSummary extends AbstractStopWatchSummary {
 	@Override
 	public void summarize(StopWatch stopWatch, Logger logger) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {}, task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT), stopWatch.getTaskCount() }) ;
+			logger.trace("StopWatch '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time = {} ({} ns) ({} us) ({} ms), task count: {}", new Object[] { stopWatch.getId(), stopWatch.getStartTime(), stopWatch.getStopTime(), DurationFormatUtils.formatDuration(stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, StopWatchSummary.DATE_FORMAT), stopWatch.getTotalTime(), stopWatch.getTotalTime() / DateUtils.NANOS_PER_MICROS, stopWatch.getTotalTime() / DateUtils.NANOS_PER_MILLIS, stopWatch.getTaskCount() }) ;
 			if (stopWatch.getTaskCount() == 0) {
 				logger.trace("No task info kept");
 			} else {
@@ -51,7 +52,7 @@ public class DefaultStopWatchSummary extends AbstractStopWatchSummary {
 					});
 				}
 				for (TaskInfo task : taskInfos) {
-					logger.trace("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), DurationFormatUtils.formatDuration(task.getTotalTime() / DateUtils.NANOS_PER_MILLIS, SimpleStopWatchSummary.DATE_FORMAT),  pf.format(task.getTotalTime() / (double) stopWatch.getTotalTime()) });
+					logger.trace("\tTask Name '{}': start timestamp(ns): {}, stop timestamp(ns): {}, running time: {} ({})", new Object[] { task.getTaskName(), task.getStartTime(), task.getStopTime(), DurationFormatUtils.formatDuration(task.getTotalTime() / DateUtils.NANOS_PER_MILLIS, StopWatchSummary.DATE_FORMAT),  pf.format(task.getTotalTime() / (double) stopWatch.getTotalTime()) });
 				}
 			}
 		}

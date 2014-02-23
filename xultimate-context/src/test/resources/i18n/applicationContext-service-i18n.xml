@@ -28,10 +28,8 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	
 	<!-- 国际化支持 -->
-	<util:list id="basenames">
-		<array>
-			<value>i18n/test</value>
-		</array>
+	<util:list id="basenames" value-type="java.lang.String">
+		<value>i18n/test</value>
 	</util:list>
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" p:basenames-ref="basenames" />
 	

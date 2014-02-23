@@ -1,6 +1,9 @@
 package org.danielli.xultimate.orm.jpa.area.dao;
 
-import org.danielli.xultimate.orm.jpa.area.model.Area;
+import javax.annotation.Resource;
+
+import org.danielli.xultimate.orm.jpa.area.po.Area;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,6 +11,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("areaDAOImpl") 
 public class AreaDAOImpl implements AreaDAOExt {
+	
+	@Resource(name = "sessionFactory")
+	private SessionFactory sessionFactory;
 	
 	@Override
 	public void execCustomMethod(Area area) {

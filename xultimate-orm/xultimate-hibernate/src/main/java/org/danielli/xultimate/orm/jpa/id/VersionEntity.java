@@ -13,7 +13,7 @@ import javax.persistence.Version;
  */
 @MappedSuperclass
 @Cacheable(true)
-public abstract class VersionEntity extends IDEntity {
+public abstract class VersionEntity<T> extends IDEntity<T> {
 	private static final long serialVersionUID = 479107963083635365L;
 
 	protected Long version;  // 版本号

@@ -13,8 +13,6 @@ public abstract class AbstractRedisTemplate extends AbstractKeyValueStoreTemplat
 	
 	/**
 	 * 抛出异常。
-	 * 
-	 * @param e 异常。
 	 */
 	@Override
 	protected void handleException(KeyValueStoreException e) throws RedisException {
@@ -23,6 +21,9 @@ public abstract class AbstractRedisTemplate extends AbstractKeyValueStoreTemplat
 	
 	@Override
 	protected RedisException wrapperException(Exception e) {
+		if (e instanceof RedisException) {
+			return (RedisException) e;
+		}
 		return new RedisException(e.getMessage(), e);
 	}
 }

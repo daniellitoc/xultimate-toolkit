@@ -4,25 +4,35 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.danielli.xultimate.context.crypto.support.StringStringCryptor;
+import org.danielli.xultimate.util.ArrayUtils;
 import org.danielli.xultimate.util.BooleanUtils;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.crypto.DigestUtils;
 import org.danielli.xultimate.util.crypto.MessageDigestAlgorithms;
+import org.danielli.xultimate.util.math.NumberUtils;
 import org.joda.time.DateTime;
 
+/**
+ * 实现自动登陆功能。
+ *
+ * @author Daniel Li
+ * @since 15 Jun 2013
+ */
 public class RememberMeService {
+	/** 信息分隔符 */
+	protected static final String SPLIT = ":";
 
-	private static final String SPLIT = ":";
-	
+	/** Cookie生成器 */
 	private CookieGenerator rememberMeCookieGenerator;
-	
-	private StringStringCryptor base64Cryptor;
-	
+	/** Cookie Value加密器 */
+	private StringStringCryptor cookieValueCryptor;
+	/** 私有密码 */
 	private String webKeyPassword;
-	
+	/** 请求参数 */
 	private String requestParameterName;
+	/** 密码回调器 */
+	private PasswordCallback passwordCallback;
 
 	/**
 	 * 获取用户名。
@@ -40,8 +50,8 @@ public class RememberMeService {
 			return null;
 		}
 		try {
-			String[] cookieValues = org.apache.commons.lang3.StringUtils.split(base64Cryptor.decrypt(cookieValue), SPLIT);
-			if (org.apache.commons.lang3.ArrayUtils.getLength(cookieValues) != 3) {
+			String[] cookieValues = StringUtils.split(cookieValueCryptor.decrypt(cookieValue), SPLIT);
+			if (ArrayUtils.getLength(cookieValues) != 3) {
 				rememberMeCookieGenerator.removeCookie(response);
 				return null;
 			}
@@ -54,7 +64,7 @@ public class RememberMeService {
 			
 			String userName = cookieValues[0];
 			
-			String password = null;
+			String password = passwordCallback.getPassword(userName);
 			if (StringUtils.isEmpty(password)) {
 				rememberMeCookieGenerator.removeCookie(response);
 				return null;
@@ -74,7 +84,7 @@ public class RememberMeService {
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * 记录用户。
 	 * 
@@ -86,28 +96,59 @@ public class RememberMeService {
 	public void doRememberMe(HttpServletRequest request, HttpServletResponse response, String userName, String password) throws Exception {
 		if (BooleanUtils.isTrue(BooleanUtils.toBooleanObject(request.getParameter(requestParameterName)))) {
 			Integer cookieMaxAge = rememberMeCookieGenerator.getCookieMaxAge();
-			Long expMillSeconds = new DateTime().plusSeconds(cookieMaxAge).getMillis();
-			StringBuilder webKeyBuilder = new StringBuilder();
-			webKeyBuilder.append(userName).append(password).append(expMillSeconds).append(webKeyPassword);
-			String webKey = DigestUtils.digest(MessageDigestAlgorithms.SHA_1, webKeyBuilder.toString());
-			
-			StringBuilder cookieValueBuilder = new StringBuilder();
-			cookieValueBuilder.append(userName).append(SPLIT).append(expMillSeconds).append(SPLIT).append(webKey);
-			
-			String cookieValue = base64Cryptor.encrypt(cookieValueBuilder.toString());
-			rememberMeCookieGenerator.addCookie(response, cookieValue);
+			if (cookieMaxAge != null) {
+				Long expMillSeconds = new DateTime().plusSeconds(cookieMaxAge).getMillis();
+				
+				StringBuilder webKeyBuilder = new StringBuilder();
+				webKeyBuilder.append(userName).append(password).append(expMillSeconds).append(webKeyPassword);
+				String webKey = DigestUtils.digest(MessageDigestAlgorithms.SHA_1, webKeyBuilder.toString());
+				
+				StringBuilder cookieValueBuilder = new StringBuilder();
+				cookieValueBuilder.append(userName).append(SPLIT).append(expMillSeconds).append(SPLIT).append(webKey);
+				
+				String cookieValue = cookieValueCryptor.encrypt(cookieValueBuilder.toString());
+				rememberMeCookieGenerator.addCookie(response, cookieValue);
+			}
 		}
 	}
-	
-	public void setBase64Cryptor(StringStringCryptor base64Cryptor) {
-		this.base64Cryptor = base64Cryptor;
-	}
 
+	/**
+	 * 设置Cookie生成器。
+	 * @param rememberMeCookieGenerator Cookie生成器。
+	 */
+	public void setRememberMeCookieGenerator(CookieGenerator rememberMeCookieGenerator) {
+		this.rememberMeCookieGenerator = rememberMeCookieGenerator;
+	}
+	
+	/**
+	 * 设置Cookie Value加密器。
+	 * @param cookieValueCryptor Cookie Value加密器。
+	 */
+	public void setCookieValueCryptor(StringStringCryptor cookieValueCryptor) {
+		this.cookieValueCryptor = cookieValueCryptor;
+	}
+	
+	/**
+	 * 私有密码。
+	 * @param webKeyPassword 私有密码。
+	 */
 	public void setWebKeyPassword(String webKeyPassword) {
 		this.webKeyPassword = webKeyPassword;
 	}
 
-	public void setRememberMeCookieGenerator(CookieGenerator rememberMeCookieGenerator) {
-		this.rememberMeCookieGenerator = rememberMeCookieGenerator;
+	/**
+	 * 请求参数。
+	 * @param requestParameterName 请求参数。
+	 */
+	public void setRequestParameterName(String requestParameterName) {
+		this.requestParameterName = requestParameterName;
+	}
+	
+	/**
+	 * 密码回调器。
+	 * @param passwordCallback 密码回调器。
+	 */
+	public void setPasswordCallback(PasswordCallback passwordCallback) {
+		this.passwordCallback = passwordCallback;
 	}
 }

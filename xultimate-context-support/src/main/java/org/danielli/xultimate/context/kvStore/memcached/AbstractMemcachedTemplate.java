@@ -27,6 +27,9 @@ public abstract class AbstractMemcachedTemplate extends AbstractKeyValueStoreTem
 	
 	@Override
 	protected MemcachedException wrapperException(Exception e) {
+		if (e instanceof MemcachedException) {
+			return (MemcachedException) e;
+		}
 		return new MemcachedException(e.getMessage(), e);
 	}
 }

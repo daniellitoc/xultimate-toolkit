@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @Cacheable(true)
 @EntityListeners({ NormsListener.class })
-public abstract class NormsEntity extends DateEntity {
+public abstract class NormsEntity<T> extends DateEntity<T> {
 
 	private static final long serialVersionUID = -6174042248508311497L;
 	

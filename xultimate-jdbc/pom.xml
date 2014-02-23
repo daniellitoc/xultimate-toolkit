@@ -19,12 +19,6 @@
 		<com.alibaba.druid.version>0.2.23</com.alibaba.druid.version>
 		<com.mchange.c3p0.version>0.9.5-pre3</com.mchange.c3p0.version>
 		<mysql.version>5.1.21</mysql.version>
-		
-		<!-- 测试使用 -->
-		<javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
-		<javax.servlet.jsp.javax.servlet.jsp-api.version>2.3.1</javax.servlet.jsp.javax.servlet.jsp-api.version>
-		<javax.servlet.jstl.version>1.2</javax.servlet.jstl.version>
-		<taglibs.standard.version>1.1.2</taglibs.standard.version>
 	</properties>
 
 	<dependencies>
@@ -54,38 +48,6 @@
 			<version>${org.springframework.version}</version>
 		</dependency>
 		
-		<!-- 测试使用 -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet.javax.servlet-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
-			<version>${javax.servlet.jsp.javax.servlet.jsp-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${javax.servlet.jstl.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-			<version>${taglibs.standard.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${org.springframework.version}</version>
-			<!-- 启动Web时打开 -->
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

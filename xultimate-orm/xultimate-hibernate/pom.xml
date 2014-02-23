@@ -66,6 +66,8 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${org.hibernate.hibernate-core.version}</version>
 		</dependency>
+		<!-- 版本不兼容，且觉得二级缓存可控性不强，建议在Biz层封装memcached或其他缓存 -->
+		<!-- 
 		<dependency>
 		    <groupId>com.googlecode</groupId>
 		    <artifactId>hibernate-memcached</artifactId>
@@ -81,7 +83,7 @@
 		    	</exclusion>
 		    </exclusions>
 		</dependency>
-		
+		 -->
 		<!-- TEST -->
 		<dependency>
 			<groupId>junit</groupId>

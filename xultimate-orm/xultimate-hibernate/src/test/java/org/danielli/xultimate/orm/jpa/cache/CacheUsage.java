@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.orm.jpa.cache.domain.Address;
-import org.danielli.xultimate.orm.jpa.cache.domain.Person;
+import org.danielli.xultimate.orm.jpa.cache.po.Address;
+import org.danielli.xultimate.orm.jpa.cache.po.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -19,10 +19,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
+/**
+ * 理解Hibernate3一级和二级(也包括查询)缓存专用。
+ * 
+ * @deprecated Hibernate4以后，hibernate-memcached没有更新，也觉得二级缓存不好控制，所以选择在Biz层手动或通过Spring缓存支持memcached。
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/applicationContext-service*.xml", "classpath*:/applicationContext-dao*.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-base.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml", "classpath:/applicationContext-dao-datajpa.xml" })
 @TransactionConfiguration(defaultRollback = false)
-@Deprecated
 public class CacheUsage {
 
 	@Resource(name = "sessionFactory")
@@ -31,76 +35,76 @@ public class CacheUsage {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CacheUsage.class);
 
 //	 @Test
-		public void t0() {
-			Session session = sessionFactory.openSession();
-			Transaction transaction = session.beginTransaction();
+	public void t0() {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
 
-			Person danielli = new Person();
-			danielli.setName("Daniel Li");
-			danielli.setAge(22);
+		Person danielli = new Person();
+		danielli.setName("Daniel Li");
+		danielli.setAge(22);
 
-			Address libeijing = new Address();
-			libeijing.setLocation("Li Beijing");
-			libeijing.setPhone("187010609204");
-			libeijing.setPerson(danielli);
+		Address libeijing = new Address();
+		libeijing.setLocation("Li Beijing");
+		libeijing.setPhone("187010609204");
+		libeijing.setPerson(danielli);
 
-			Address lishanghai = new Address();
-			lishanghai.setLocation("Li ShangHai");
-			lishanghai.setPhone("187010609204");
-			lishanghai.setPerson(danielli);
+		Address lishanghai = new Address();
+		lishanghai.setLocation("Li ShangHai");
+		lishanghai.setPhone("187010609204");
+		lishanghai.setPerson(danielli);
 
-			Set<Address> danielliAddresses = new HashSet<Address>();
-			danielliAddresses.add(libeijing);
-			danielliAddresses.add(lishanghai);
+		Set<Address> danielliAddresses = new HashSet<Address>();
+		danielliAddresses.add(libeijing);
+		danielliAddresses.add(lishanghai);
 
-			danielli.setAddresses(danielliAddresses);
-			session.save(danielli);
+		danielli.setAddresses(danielliAddresses);
+		session.save(danielli);
 
-			Person danielxiao = new Person();
-			danielxiao.setName("Daniel Xiao");
-			danielxiao.setAge(22);
+		Person danielxiao = new Person();
+		danielxiao.setName("Daniel Xiao");
+		danielxiao.setAge(22);
 
-			Address xiaobeijing = new Address();
-			xiaobeijing.setLocation("Xiao Beijing");
-			xiaobeijing.setPhone("187010609204");
-			xiaobeijing.setPerson(danielxiao);
+		Address xiaobeijing = new Address();
+		xiaobeijing.setLocation("Xiao Beijing");
+		xiaobeijing.setPhone("187010609204");
+		xiaobeijing.setPerson(danielxiao);
 
-			Address xiaoshanghai = new Address();
-			xiaoshanghai.setLocation("Xiao ShangHai");
-			xiaoshanghai.setPhone("187010609204");
-			xiaoshanghai.setPerson(danielxiao);
+		Address xiaoshanghai = new Address();
+		xiaoshanghai.setLocation("Xiao ShangHai");
+		xiaoshanghai.setPhone("187010609204");
+		xiaoshanghai.setPerson(danielxiao);
 
-			Set<Address> danielxiaoAddresses = new HashSet<Address>();
-			danielxiaoAddresses.add(xiaobeijing);
-			danielxiaoAddresses.add(xiaoshanghai);
+		Set<Address> danielxiaoAddresses = new HashSet<Address>();
+		danielxiaoAddresses.add(xiaobeijing);
+		danielxiaoAddresses.add(xiaoshanghai);
 
-			danielxiao.setAddresses(danielxiaoAddresses);
-			session.save(danielxiao);
+		danielxiao.setAddresses(danielxiaoAddresses);
+		session.save(danielxiao);
 
-			Person danielhuo = new Person();
-			danielhuo.setName("Daniel Huo");
-			danielhuo.setAge(22);
+		Person danielhuo = new Person();
+		danielhuo.setName("Daniel Huo");
+		danielhuo.setAge(22);
 
-			Address huobeijing = new Address();
-			huobeijing.setLocation("Huo Beijing");
-			huobeijing.setPhone("187010609204");
-			huobeijing.setPerson(danielhuo);
+		Address huobeijing = new Address();
+		huobeijing.setLocation("Huo Beijing");
+		huobeijing.setPhone("187010609204");
+		huobeijing.setPerson(danielhuo);
 
-			Address huoshanghai = new Address();
-			huoshanghai.setLocation("Huo ShangHai");
-			huoshanghai.setPhone("187010609204");
-			huoshanghai.setPerson(danielhuo);
+		Address huoshanghai = new Address();
+		huoshanghai.setLocation("Huo ShangHai");
+		huoshanghai.setPhone("187010609204");
+		huoshanghai.setPerson(danielhuo);
 
-			Set<Address> danielhuoAddresses = new HashSet<Address>();
-			danielhuoAddresses.add(huobeijing);
-			danielhuoAddresses.add(huoshanghai);
+		Set<Address> danielhuoAddresses = new HashSet<Address>();
+		danielhuoAddresses.add(huobeijing);
+		danielhuoAddresses.add(huoshanghai);
 
-			danielhuo.setAddresses(danielhuoAddresses);
-			session.save(danielhuo);
+		danielhuo.setAddresses(danielhuoAddresses);
+		session.save(danielhuo);
 
-			transaction.commit();
-			session.close();
-		}
+		transaction.commit();
+		session.close();
+	}
 	
 	@Test
 	public void t1() {

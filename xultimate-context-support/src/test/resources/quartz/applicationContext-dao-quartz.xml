@@ -28,11 +28,9 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	
 		<!-- 导入数据源相关属性信息-->
-	<util:properties id="dataSourcesProperties" location="classpath:/quartz/quartz.properties" />
+	<util:properties id="quartzProperties" location="classpath:/quartz/quartz.properties" />
 	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
-		<array value-type="java.util.Properties">
-			
-		</array>
+		<ref bean="quartzProperties"/>
 	</util:list>
 	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
 		<property name="encryptPropertyNames">
@@ -41,59 +39,6 @@
 				<value>datasource.quartz.jdbc.password</value>
 			</array>
 		</property>
-	</bean>
-	
-	<!-- 
-		slowSqlMillis：定义慢SQL的标准
-		logSlowSql：慢SQL记录
-		mergeSql：SQL合并配置
-	 -->
-	<bean id="statFilter" class="com.alibaba.druid.filter.stat.StatFilter" p:logSlowSql="true" p:mergeSql="true" p:slowSqlMillis="1000" />
-	<!-- 
-		logViolation：怀疑攻击的SQL记录到日志
-		throwException：怀疑攻击的SQL抛异常
-	 -->
-	<bean id="wallFilter" class="com.alibaba.druid.wall.WallFilter" p:dbType="mysql" p:logViolation="true" p:throwException="false" />
-	<!-- 
-		statementExecutableSqlLogEnable：记录所有可执行的SQL
-	 -->
-	<bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter" p:statementExecutableSqlLogEnable="true" />
-	<bean id="abstractDataSource" abstract="true" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">   	    
-	    <!-- 配置获取连接等待超时的时间 -->
-	    <property name="maxWait" value="60000" />
-		
-		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
-	    
-	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-	    <property name="minEvictableIdleTimeMillis" value="300000" />
-	 
-	    <property name="validationQuery" value="SELECT 'x'" />
-	    <property name="testWhileIdle" value="true" />
-	    <property name="testOnBorrow" value="false" />
-	    <property name="testOnReturn" value="false" />
-	    <!-- 定期将监控数据输出到日志中 -->
-	    <property name="timeBetweenLogStatsMillis" value="300000" />
-	    
-	    <!-- 当程序存在缺陷时，申请的连接忘记关闭，这时候，就存在连接泄漏了。Druid提供了RemoveAbandanded相关配置，用来关闭长时间不使用的连接。 -->
-	    <property name="removeAbandoned" value="true" /> <!-- 打开removeAbandoned功能 -->
-    	<property name="removeAbandonedTimeout" value="1800" /> <!-- 1800秒，也就是30分钟 -->
-    	<property name="logAbandoned" value="true" /> <!-- 关闭abanded连接时输出错误日志 -->
-	    
-	    <!-- 打开PSCache，并且指定每个连接上PSCache的大小。如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。分库分表较多的数据库，建议配置为false。 -->
-	    <property name="poolPreparedStatements" value="false" />
-	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
-	    
-	    <!-- 配置监控统计拦截的filters -->
-	    <property name="proxyFilters">
-	        <list>
-	        	<!-- <ref bean="wallFilter"/> -->
-	            <ref bean="statFilter" />
-	            <!-- <ref bean="logFilter" /> -->
-	        </list>
-	    </property>
-	    <!-- 合并多个DruidDataSource的监控数据，无汗和timeBetweenLogStatsMillis共用 -->
-	    <property name="useGloalDataSourceStat" value="false" />
 	</bean>
 	
 	<bean id="quartzDataSource" parent="abstractDataSource"
@@ -108,6 +53,6 @@
 	</bean>
 	
 	<jdbc:initialize-database enabled="true" data-source="quartzDataSource">
-		<jdbc:script separator=";" execution="INIT" location="classpath*:/quartz/tables_mysql_innodb.sql"/>
+		<jdbc:script separator=";" execution="INIT" location="classpath:/quartz/tables_mysql_innodb.sql"/>
 	</jdbc:initialize-database>
 </beans>

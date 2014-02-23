@@ -1,8 +1,8 @@
 package org.danielli.xultimate.web.util;
 
-import java.util.Date;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
-import org.danielli.xultimate.util.Assert;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -15,13 +15,17 @@ import org.joda.time.Duration;
  * like CookieLocaleResolcer and CookieThemeResolver.
  *
  * @author Daniel Li
+ * @author Juergen Hoeller
  * @since 15 Jun 2013
+ * @see #addCookie
+ * @see #removeCookie
  */
 public class CookieGenerator extends org.springframework.web.util.CookieGenerator {
-	
-	@SuppressWarnings("unused")
+
 	private static final int COOKIE_MAX_ZERO_TIME = 0;
 	private static final int COOKIE_MAX_BROWSER_TIME = -1;
+	
+	private DateTime cookieExpireDate;
 	
 	public CookieGenerator(String cookieName) {
 		setCookieName(cookieName);
@@ -30,12 +34,58 @@ public class CookieGenerator extends org.springframework.web.util.CookieGenerato
 	/**
 	 * 设置Cookie失效时间。
 	 * 
-	 * @param cookieExpireDate Cookie失效时间。
+	 * @param cookieMaxAge Cookie失效时间。
 	 */
-	public void setCookieMaxAge(Date cookieExpireDate) {
-		Duration duration = new Duration(DateTime.now(), new DateTime(cookieExpireDate));
-		Assert.isTrue(duration.getStandardSeconds() > 0, "expireDate must be great than now"); 
-		super.setCookieMaxAge((int) duration.getStandardSeconds());
+	public void setCookieMaxAge(DateTime cookieMaxAge) {
+		this.cookieExpireDate = cookieMaxAge;
+	}
+	
+
+	@Override
+	public Integer getCookieMaxAge() {
+		Integer maxAge = super.getCookieMaxAge();
+		if (maxAge != null) {
+			return maxAge;
+		} else if (this.cookieExpireDate != null) {
+			Duration duration = new Duration(DateTime.now(), cookieExpireDate);
+			if (duration.getStandardSeconds() <= 0) {
+				if (logger.isDebugEnabled()) {
+					logger.warn("expireDate must be great than now, ignore setMaxAge(int expiry)");
+				}
+			} else {
+				return (int) duration.getStandardSeconds();
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public void addCookie(HttpServletResponse response, String cookieValue) {
+		Cookie cookie = createCookie(cookieValue);
+		Integer maxAge = getCookieMaxAge();
+		if (maxAge != null) {
+			cookie.setMaxAge(maxAge);
+		}
+		if (isCookieSecure()) {
+			cookie.setSecure(true);
+		}
+		if (isCookieHttpOnly()) {
+			cookie.setHttpOnly(true);
+		}
+		response.addCookie(cookie);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Added cookie with name [" + getCookieName() + "] and value [" + cookieValue + "]");
+		}
+	}
+	
+	@Override
+	public void removeCookie(HttpServletResponse response) {
+		Cookie cookie = createCookie("");
+		cookie.setMaxAge(COOKIE_MAX_ZERO_TIME);
+		response.addCookie(cookie);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removed cookie with name [" + getCookieName() + "]");
+		}
 	}
 	
 	/**

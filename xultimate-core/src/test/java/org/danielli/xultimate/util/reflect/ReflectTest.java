@@ -21,7 +21,7 @@ public class ReflectTest {
 		PerformanceMonitor.start("ReflectTest");
 		// 禁止使用这种方式
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				User.class.getMethod("setUsername", String.class).invoke(someObject, "Daniel Li");
 			}
 			PerformanceMonitor.mark("JDK Simple" + i);
@@ -30,34 +30,33 @@ public class ReflectTest {
 		Method method = User.class.getMethod("setUsername", String.class);
 		// 超过sun.reflect.inflationThreshold个阀值后会被编译成直接代码。
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				method.invoke(someObject, "Daniel Li");
 			}
 			PerformanceMonitor.mark("JDK" + i);
 		}
 		
+		// 优先使用。
 		MethodAccess access = MethodAccess.get(User.class);
-		// 禁止使用这种方式，没有Java反射速度快。
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				access.invoke(someObject, "setUsername", "Daniel Li");
 			}
 			PerformanceMonitor.mark("Reflect Simple" + i);
 		}
 
-		// 特殊情况使用。
 		int fooIndex = access.getIndex("setUsername", String.class);
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				access.invoke(someObject, fooIndex, "Daniel Li");
 			}
 			PerformanceMonitor.mark("Reflect" + i);
 		}
 		
-		// 没有JDK速度快。
+		// 比JDK速度快。
 		FastClass clazz = FastClass.create(User.class); 
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				clazz.invoke("setUsername", new Class[] { String.class }, someObject, new Object[] { "Daniel Li" });
 			}
 			PerformanceMonitor.mark("FastClass Simple" + i);
@@ -65,7 +64,7 @@ public class ReflectTest {
 		
 		FastMethod fastMethod = clazz.getMethod("setUsername", new Class[] { String.class });
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				fastMethod.invoke(someObject, new Object[] { "Daniel Li" });
 			}
 			PerformanceMonitor.mark("FastClass" + i);

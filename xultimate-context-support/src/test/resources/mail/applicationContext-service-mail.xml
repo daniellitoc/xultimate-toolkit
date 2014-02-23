@@ -98,11 +98,9 @@
 			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
 		</property>
 	</bean>
-	
-	<bean id="greenMail" class="com.icegreen.greenmail.util.GreenMail" init-method="start" destroy-method="stop">
-		<constructor-arg name="config">
-			<util:constant static-field="com.icegreen.greenmail.util.ServerSetup.SMTP"/>
-		</constructor-arg>
+	<!-- 25端口必须用root -->
+	<bean id="smtpServerSetup" class="com.icegreen.greenmail.util.ServerSetup" c:port="6025" c:bindAddress="localhost" c:protocol="smtp" />
+	<bean id="greenMail" class="com.icegreen.greenmail.util.GreenMail" init-method="start" destroy-method="stop" c:config-ref="smtpServerSetup">
 		<property name="users">
 			<value>
 				${mail.username}=${mail.password}

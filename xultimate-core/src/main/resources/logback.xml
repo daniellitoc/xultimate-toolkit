@@ -63,12 +63,16 @@
 			</dataSource>
 		</connectionSource>
 	</appender>
-
-	<logger name="chapters.configuration" level="INFO" />
-	<logger name="chapters.configuration.Foo" level="DEBUG" />
 	 -->
+	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitor" level="TRACE" />
+	<logger name="org.danielli.xultimate.util.time.StopWatchTest" level="TRACE" />
+	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitorTest" level="TRACE" />
 	
-	<root level="DEBUG">
+	
+	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForEachMethodInterceptor" level="TRACE" />
+	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForOneMethodInterceptor" level="TRACE" />
+	
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<!-- 
 		<appender-ref ref="SIFT" />

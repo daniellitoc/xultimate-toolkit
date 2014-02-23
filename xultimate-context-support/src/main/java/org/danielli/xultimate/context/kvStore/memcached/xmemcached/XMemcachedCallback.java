@@ -12,8 +12,8 @@ public interface XMemcachedCallback {
 	
 	/**
 	 * 回调实现。
-	 * 
 	 * @param memcachedClient XMemcached客户端。
+	 * @throws Exception 任何可能出现的异常。
 	 */
 	void doInXMemcached(MemcachedClient memcachedClient) throws Exception;
 }

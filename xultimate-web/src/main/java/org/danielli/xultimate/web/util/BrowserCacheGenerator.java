@@ -14,6 +14,21 @@ import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 
+
+/**
+ * Convenient superclass for any kind of web content generator.
+ *
+ * <p>Supports HTTP cache control options. The usage of corresponding
+ * HTTP headers can be controlled via the "useExpiresHeader",
+ * "useCacheControlHeader" and "useCacheControlNoStore" properties.
+ *
+ * @author Daniel Li
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @since 15 Jun 2013
+ * @see #setCacheSeconds
+ * @see org.springframework.web.servlet.support.WebContentGenerator
+ */
 public class BrowserCacheGenerator extends WebApplicationObjectSupport {
 
 	/** HTTP method "GET" */

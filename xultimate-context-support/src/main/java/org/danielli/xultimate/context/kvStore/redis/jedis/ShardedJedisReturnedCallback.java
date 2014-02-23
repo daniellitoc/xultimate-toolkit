@@ -17,6 +17,7 @@ public interface ShardedJedisReturnedCallback<T> {
 	 * 
 	 * @param shardedJedis Jedis客户端。
 	 * @return 回调返回值。
+	 * @exception Exception 任何可能出现的异常。
 	 */
-	T doInShardedJedis(ShardedJedis shardedJedis);
+	T doInShardedJedis(ShardedJedis shardedJedis) throws Exception;
 }

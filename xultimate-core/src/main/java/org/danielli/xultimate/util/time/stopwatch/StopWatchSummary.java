@@ -7,6 +7,9 @@ package org.danielli.xultimate.util.time.stopwatch;
  * @since 17 Jun 2013
  */
 public interface StopWatchSummary {
+	
+	public String DATE_FORMAT = "yyyy:MM:dd H:mm:ss.SSS";
+	
 	/**
 	 * 汇总指定秒表。
 	 * 

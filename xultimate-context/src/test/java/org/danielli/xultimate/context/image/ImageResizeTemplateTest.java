@@ -32,14 +32,14 @@ public class ImageResizeTemplateTest {
 		PerformanceMonitor.start("ImageResizeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
+				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
 			}
 			PerformanceMonitor.mark("awtImageResizeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
+				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Emphasize));
 			}
 			PerformanceMonitor.mark("im4javaImageResizeTemplate" + i);
 		}
@@ -53,14 +53,14 @@ public class ImageResizeTemplateTest {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
+				awtImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
+				im4javaImageResizeTemplate.resizeImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"),  new ImageGeometry(new ImageSize(640, 480), GeometryOperator.Maximum));
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}
@@ -74,14 +74,14 @@ public class ImageResizeTemplateTest {
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum) , Gravity.Center);
+				awtImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum) , Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum), Gravity.Center);
+				im4javaImageResizeTemplate.resizeImageAsFixed(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ImageGeometry(new ImageSize(600, 480), GeometryOperator.Minimum), Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}

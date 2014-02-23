@@ -50,7 +50,7 @@ public class DataSourceTest {
 	}
 	
 	private void testDataSource(DataSource dataSource) throws SQLException {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             Connection conn = dataSource.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT 1");

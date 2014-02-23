@@ -32,14 +32,14 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
+				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
+				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -53,14 +53,14 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
+				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
+				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -74,14 +74,14 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
+				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
+				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -95,14 +95,14 @@ public class ImageCompositeTemplateTest {
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.gif"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
+				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.gif"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
+				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}

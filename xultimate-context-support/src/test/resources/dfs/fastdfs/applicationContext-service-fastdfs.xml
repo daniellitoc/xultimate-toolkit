@@ -27,19 +27,21 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 		
-	<bean class="org.danielli.xultimate.context.dfs.fastdfs.support.ClientGlobalInitializer" p:configResource="classpath:/dfs/fastdfs/fdfs_client.conf" />
+	<bean class="org.danielli.xultimate.context.dfs.fastdfs.support.ClientGlobalInitializer" p:configResource="classpath:/dfs/fastdfs/fdfs_client.conf" lazy-init="false" />
 	
 	<bean id="trackerClient" class="org.csource.fastdfs.TrackerClient" />
 	
-	<!-- 
 	<bean id="trackerGroup" class="org.csource.fastdfs.TrackerGroup">
 		<constructor-arg name="tracker_servers">
 			<bean class="net.rubyeye.xmemcached.utils.AddrUtil" factory-method="getOneAddress">
-				<constructor-arg index="0" value="127.0.0.1:22122" />
+				<constructor-arg index="0" value="192.168.10.103:22122" />
 			</bean>
 		</constructor-arg>
 	</bean>
-	<bean id="trackerClient" class="org.csource.fastdfs.TrackerClient" c:tracker_group-ref="trackerGroup" />
-	 -->
-	<bean id="storageClientTemplate" class="org.danielli.xultimate.context.dfs.fastdfs.support.StorageClientTemplate" p:trackerClient="trackerClient" />
+	<bean id="trackerClientWithTrackerGroup" class="org.csource.fastdfs.TrackerClient" c:tracker_group-ref="trackerGroup" />
+	
+	
+	
+	<bean id="storageClientTemplate" class="org.danielli.xultimate.context.dfs.fastdfs.support.StorageClientTemplate" p:trackerClient-ref="trackerClient" />
+	<bean id="storageClientTemplateWithTrackerGroup" class="org.danielli.xultimate.context.dfs.fastdfs.support.StorageClientTemplate" p:trackerClient-ref="trackerClientWithTrackerGroup" />
 </beans>

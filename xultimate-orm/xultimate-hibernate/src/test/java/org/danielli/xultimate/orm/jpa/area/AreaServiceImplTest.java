@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.orm.jpa.area.model.Area;
+import org.danielli.xultimate.orm.jpa.area.po.Area;
 import org.danielli.xultimate.orm.jpa.area.service.AreaService;
 import org.danielli.xultimate.orm.jpa.ds.ComparsionOperator;
 import org.danielli.xultimate.orm.jpa.ds.Item;
@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-util.xml", "classpath*:applicationContext-service-*.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-base-test.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-base.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml", "classpath:/applicationContext-dao-datajpa.xml" })
 public class AreaServiceImplTest {
 
 	@Resource(name = "areaServiceImpl")

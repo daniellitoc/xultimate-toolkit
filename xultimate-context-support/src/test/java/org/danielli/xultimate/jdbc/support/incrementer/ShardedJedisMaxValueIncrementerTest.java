@@ -23,11 +23,11 @@ public class ShardedJedisMaxValueIncrementerTest {
 	
 	@Test
 	public void test() {
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 100; i++) {
 			logger.info("{}", primaryKey1Incrementer1.nextLongValue());
 		}
 		
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 100; i++) {
 			logger.info("{}", primaryKey1Incrementer2.nextLongValue());
 		}
 	}

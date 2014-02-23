@@ -9,6 +9,7 @@ import org.danielli.xultimate.util.reflect.BeanUtils;
 import org.hibernate.AssertionFailure;
 import org.hibernate.cfg.NamingStrategy;
 import org.hibernate.internal.util.StringHelper;
+
 /**
  * 数据库表名、列名命名策略。
  *
@@ -21,6 +22,7 @@ public class DatabaseNamingStrategy extends DatabaseNamingStrategyModel implemen
 	
 	public DatabaseNamingStrategy() {
 		try {
+			System.out.println(BeanFactoryContext.currentApplicationContext());
 			DatabaseNamingStrategyModel model = ApplicationContextUtils.getBean(BeanFactoryContext.currentApplicationContext(), DatabaseNamingStrategyModel.class);
 			BeanUtils.copyProperties(model, this);
 		} catch (Exception e) {

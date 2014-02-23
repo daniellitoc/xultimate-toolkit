@@ -3,6 +3,12 @@ package org.danielli.xultimate.web.util;
 import org.danielli.xultimate.util.crypto.DigestUtils;
 import org.danielli.xultimate.util.crypto.MessageDigestAlgorithms;
 
+/**
+ * 短URL生成器。
+ * 
+ * @author Daniel Li
+ * @since 15 Jun 2013
+ */
 public class ShortURLGenerator {
 
 	private String[] chars = new String[] { // 要使用生成URL的字符

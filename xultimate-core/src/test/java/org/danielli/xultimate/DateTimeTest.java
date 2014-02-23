@@ -69,7 +69,7 @@ public class DateTimeTest {
 				 .withMinimumValue() // Get its minimum value
 				 .plusDays(6)        // Add 6 days
 				 .dayOfWeek()        // Access Day Of Week Property
-				 .setCopy("Monday")  // Set to Monday (it will round down)
+				 .setCopy("星期一")  // Set to Monday (it will round down)
 				 .plusDays(1);       // Gives us Tuesday
 		LOGGER.info("{}", electionDate);
 		

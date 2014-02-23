@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import org.danielli.xultimate.util.StringUtils;
 
+/**
+ * 数据库表名、列名命名策略模型。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ */
 public class DatabaseNamingStrategyModel implements Serializable {
 	
 	public enum Formater {
