@@ -14,6 +14,7 @@
 	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
@@ -25,7 +26,8 @@
 		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 		
 	
 	<bean id="hibernateProxyInitializer" class="org.danielli.xultimate.orm.jpa.config.support.HibernateProxyInitializer" />
@@ -91,4 +93,7 @@
 	    <property name="initialSize" value="${datasource.ormDb.pool.minIdle}" />
 	    <property name="minIdle" value="${datasource.ormDb.pool.minIdle}" />
 	</bean>
+	
+	<!-- Spring Data JPA -->
+	<jpa:repositories base-package="org.danielli.xultimate.orm.jpa" entity-manager-factory-ref="entityManagerFactory" />
 </beans>

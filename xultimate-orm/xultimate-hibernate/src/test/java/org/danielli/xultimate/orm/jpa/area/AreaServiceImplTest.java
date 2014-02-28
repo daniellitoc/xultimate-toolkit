@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-base.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml", "classpath:/applicationContext-dao-datajpa.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-generic.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml" })
 public class AreaServiceImplTest {
 
 	@Resource(name = "areaServiceImpl")

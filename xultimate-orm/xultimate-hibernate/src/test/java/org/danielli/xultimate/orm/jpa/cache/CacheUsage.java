@@ -25,7 +25,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  * @deprecated Hibernate4以后，hibernate-memcached没有更新，也觉得二级缓存不好控制，所以选择在Biz层手动或通过Spring缓存支持memcached。
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-base.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml", "classpath:/applicationContext-dao-datajpa.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext-service-util.xml", "classpath:/applicationContext-service-crypto.xml", "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-generic.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-generic.xml" })
 @TransactionConfiguration(defaultRollback = false)
 public class CacheUsage {
 
