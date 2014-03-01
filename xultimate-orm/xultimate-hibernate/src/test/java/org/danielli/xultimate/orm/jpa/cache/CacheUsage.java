@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.orm.jpa.cache.po.Address;
-import org.danielli.xultimate.orm.jpa.cache.po.Person;
+import org.danielli.xultimate.orm.jpa.cache.domain.Address;
+import org.danielli.xultimate.orm.jpa.cache.domain.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

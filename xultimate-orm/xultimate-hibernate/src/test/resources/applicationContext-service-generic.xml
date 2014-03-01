@@ -34,7 +34,6 @@
 	
 	<context:component-scan base-package="org.danielli.xultimate">
 		<context:exclude-filter type="aspectj" expression="org.danielli.xultimate.web..*"/>
-		<!-- <context:exclude-filter type="aspectj" expression="org.danielli.xultimate.orm..*"/>  -->
 	</context:component-scan>
 	
 	<!-- JPA -->

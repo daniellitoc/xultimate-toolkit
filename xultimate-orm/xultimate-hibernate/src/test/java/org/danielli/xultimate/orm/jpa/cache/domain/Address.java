@@ -1,4 +1,4 @@
-package org.danielli.xultimate.orm.jpa.cache.po;
+package org.danielli.xultimate.orm.jpa.cache.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

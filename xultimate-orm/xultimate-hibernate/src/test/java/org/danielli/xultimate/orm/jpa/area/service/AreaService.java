@@ -2,7 +2,7 @@ package org.danielli.xultimate.orm.jpa.area.service;
 
 import java.util.List;
 
-import org.danielli.xultimate.orm.jpa.area.po.Area;
+import org.danielli.xultimate.orm.jpa.area.domain.Area;
 import org.danielli.xultimate.orm.jpa.ds.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.danielli.xultimate.orm.jpa.area.biz.AreaBiz;
-import org.danielli.xultimate.orm.jpa.area.po.Area;
+import org.danielli.xultimate.orm.jpa.area.domain.Area;
 import org.danielli.xultimate.orm.jpa.area.service.AreaService;
 import org.danielli.xultimate.orm.jpa.ds.Item;
 import org.danielli.xultimate.orm.jpa.ds.ItemsSpecification;

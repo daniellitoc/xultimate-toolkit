@@ -1,4 +1,4 @@
-package org.danielli.xultimate.orm.jpa.cache.po;
+package org.danielli.xultimate.orm.jpa.cache.domain;
 
 import java.util.HashSet;
 import java.util.Set;

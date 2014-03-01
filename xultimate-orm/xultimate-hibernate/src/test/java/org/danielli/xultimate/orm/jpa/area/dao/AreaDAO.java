@@ -3,7 +3,7 @@ package org.danielli.xultimate.orm.jpa.area.dao;
 import java.util.List;
 
 import org.danielli.xultimate.orm.jpa.GenericDAO;
-import org.danielli.xultimate.orm.jpa.area.po.Area;
+import org.danielli.xultimate.orm.jpa.area.domain.Area;
 
 public interface AreaDAO extends GenericDAO<Area, Long>, AreaDAOExt {
     

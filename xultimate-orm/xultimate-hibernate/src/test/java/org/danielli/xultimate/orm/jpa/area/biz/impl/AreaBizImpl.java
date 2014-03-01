@@ -6,7 +6,7 @@ import org.danielli.xultimate.orm.jpa.DefaultGenericBiz;
 import org.danielli.xultimate.orm.jpa.GenericDAO;
 import org.danielli.xultimate.orm.jpa.area.biz.AreaBiz;
 import org.danielli.xultimate.orm.jpa.area.dao.AreaDAO;
-import org.danielli.xultimate.orm.jpa.area.po.Area;
+import org.danielli.xultimate.orm.jpa.area.domain.Area;
 import org.springframework.stereotype.Service;
 
 @Service("areaBizImpl")
