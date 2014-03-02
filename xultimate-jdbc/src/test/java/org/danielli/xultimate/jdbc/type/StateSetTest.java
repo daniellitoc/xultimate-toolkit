@@ -3,9 +3,13 @@ package org.danielli.xultimate.jdbc.type;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StateSetTest {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(StateSetTest.class);
+	
 	byte v1 = 1 << 0;
 	byte v2 = 1 << 1;
 	byte v3 = 1 << 2;
@@ -17,14 +21,18 @@ public class StateSetTest {
 	
 	@Test
 	public void test1() {
-		System.out.println(v8);
+		LOGGER.info("{}", v8);
 		StateSet set = new StateSet(v8);
 		set.add(v7);
 //		set.remove(v7);
-		System.out.println(set.getValue());
-		System.out.println(set.contain(v7));
-		System.out.println(set.contain(v6));
-		System.out.println(set.contain(v8));
+		LOGGER.info("{}", set.getValue());
+		LOGGER.info("{}", v7);
+		LOGGER.info("{}", v8);
+		LOGGER.info("{}", v5);
+		LOGGER.info("{}", v4);
+		LOGGER.info("{}", v3);
+		LOGGER.info("{}", v2);
+		LOGGER.info("{}", v1);
 	}
 	
 	@Test
@@ -32,7 +40,7 @@ public class StateSetTest {
 		List<Byte> result = StateSetUtils.getContainStates(new StateSet(v8));
 		int i = 0;
 		for (Byte b : result) {
-			System.out.println(++i + ", " + b);
+			LOGGER.info("{}, {}", ++i, b);
 		}
 	}
 }
