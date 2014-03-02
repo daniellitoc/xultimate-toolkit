@@ -19,9 +19,9 @@ public class StateSetUtils {
 	public static List<Byte> getContainStates(StateSet stateSet) {
 		byte currentStates = stateSet.getValue();
 		List<Byte> result = new ArrayList<>();
-		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+		for (short i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++) {
 			if ((i & currentStates) == currentStates) {
-				result.add(i);
+				result.add((byte) i);
 			}
 		}
 		return result;
