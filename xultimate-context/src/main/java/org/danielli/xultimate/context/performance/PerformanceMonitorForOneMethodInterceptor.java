@@ -13,9 +13,6 @@ import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
  *
  * <p>Uses a {@code StopWatch} for the actual performance measuring.
  *
- * @author Rod Johnson
- * @author Dmitriy Kopylenko
- * @author Rob Harrop
  * @author Daniel Li
  * @since 18 Jun 2013
  * @see PerformanceMonitorInterceptor

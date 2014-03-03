@@ -7,6 +7,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 性能检测注解。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ * @see PerformanceMonitorForEachMethodInterceptor
+ * @see PerformanceMonitorForOneMethodInterceptor
+ */
 @Inherited
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
