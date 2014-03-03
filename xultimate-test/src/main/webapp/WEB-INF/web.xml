@@ -46,7 +46,20 @@
 		<filter-name>encodingFilter</filter-name>
 		<servlet-name>spring</servlet-name>
 	</filter-mapping>
-	
+	<!-- 
+	<filter>
+		<filter-name>methodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+		<init-param>
+			<param-name>methodParam</param-name>
+			<param-value>_method</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>methodFilter</filter-name>
+		<servlet-name>spring</servlet-name>
+	</filter-mapping>
+	 -->
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

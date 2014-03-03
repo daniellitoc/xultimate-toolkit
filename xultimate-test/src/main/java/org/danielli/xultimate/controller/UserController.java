@@ -51,7 +51,10 @@ public class UserController {
 	}
 	
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_1" })
-	public String param11(@RequestParam(defaultValue = "Daniel Li") String message, ModelMap modelMap) {
+	public String param11(@RequestParam(required = false) String message, ModelMap modelMap) {
+		if (StringUtils.isEmpty(message)) {
+			message = "Daniel Li";
+		}
 		modelMap.put("message", message);
 		return "param1";
 	}
@@ -91,9 +94,16 @@ public class UserController {
 		return "param1";
 	}
 	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_1" })
-	public String param21(User user, ModelMap modelMap) {
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_1_1" })
+	public String param211(User user, ModelMap modelMap) {
 		return "param2";
+	}
+	
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_1_2" })
+	@ResponseBody
+	public User param212(User user) {
+		user.setId(10000L);
+		return user;
 	}
 	
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_2_2" })
