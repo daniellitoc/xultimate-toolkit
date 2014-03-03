@@ -1,5 +1,7 @@
 package org.danielli.xultimate.jdbc.type;
 
+import java.io.Serializable;
+
 
 /**
  * 替换MySQL当中的BIT或SET数据类型。
@@ -15,8 +17,9 @@ package org.danielli.xultimate.jdbc.type;
  * @author Daniel Li
  * @since 15 Jun 2013
  */
-public class StateSet {
-
+public class StateSet implements Serializable {
+	private static final long serialVersionUID = 2728631987057993625L;
+	
 	private byte value;
 	
 	public StateSet(byte value) {
