@@ -64,13 +64,25 @@
 		</connectionSource>
 	</appender>
 	 -->
-	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitor" level="TRACE" />
+	<!-- 测试性能测试的测试类 -->
 	<logger name="org.danielli.xultimate.util.time.StopWatchTest" level="TRACE" />
 	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitorTest" level="TRACE" />
 	
-	
+	<!-- 性能测试 -->
+	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitor" level="TRACE" />
 	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForEachMethodInterceptor" level="TRACE" />
 	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForOneMethodInterceptor" level="TRACE" />
+	<!-- Spring -->
+	<logger name="org.springframework" level="DEBUG" />
+	<!-- Hibernate -->
+	<logger name="org.hibernate" level="DEBUG" />
+	<!-- MyBatis -->
+	<logger name="org.apache.ibatis" level="DEBUG" />
+	<logger name="org.mybatis" level="DEBUG" />
+	<logger name="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" level="DEBUG" />
+	<!-- MyBatis，打印SQL输出 -->
+	<logger name="org.danielli.xultimate.orm.mybatis.area.dao" level="DEBUG" />
+	<logger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" />
 	
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
