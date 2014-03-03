@@ -1,9 +1,7 @@
 import java.lang.Character.UnicodeBlock;
-import java.util.Arrays;
 
 import org.danielli.xultimate.util.ArrayUtils;
 import org.danielli.xultimate.util.CharUtils;
-import org.junit.Test;
 
 
 public class CharTest {

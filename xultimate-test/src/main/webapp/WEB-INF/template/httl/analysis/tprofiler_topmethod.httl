@@ -1,0 +1,88 @@
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>TProfiler popmethod统计图表</title>
+		<script type="text/javascript" src="/resources/js/jquery-2.0.3.js"></script>
+		<script type="text/javascript" src="/resources/js/jquery.form.js"></script> 
+		<script type="text/javascript" src="/resources/highcharts/highcharts.js"></script>
+		<script type="text/javascript" src="/resources/highcharts/exporting.js"></script>
+		<script type="text/javascript">
+	$(function () {
+        $('#myForm').submit(function() { 
+            // inside event callbacks 'this' is the DOM element so we first 
+            // wrap it in a jQuery object and then invoke ajaxSubmit 
+            $(this).ajaxSubmit({
+            	dataType: 'json',
+            	success : function(responseJson) {
+                    $('#container').highcharts({
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: responseJson.title
+                        },
+                        subtitle: {
+                            text: responseJson.subtitle
+                        },
+                        xAxis: {
+                            categories: responseJson.categories,
+                            title: {
+                                text: null
+                            }
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: responseJson['yAxis.title'],
+                                align: 'high'
+                            },
+                            labels: {
+                                overflow: 'justify'
+                            }
+                        },
+                        tooltip: {
+                            valueSuffix: responseJson['tooltip.valueSuffix']
+                        },
+                        plotOptions: {
+                            bar: {
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            }
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'top',
+                            x: -40,
+                            y: 100,
+                            floating: true,
+                            borderWidth: 1,
+                            backgroundColor: '#FFFFFF',
+                            shadow: true
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        series: responseJson.series
+                    });
+            	}
+            }); 
+     
+            // !!! Important !!! 
+            // always return false to prevent standard browser submit and page navigation 
+            return false; 
+        }); 
+    });
+		</script>
+	</head>
+	<body>
+		<form id="myForm" action="comment.php" method="post"> 
+		    <input type="file" name="myfile"><br>
+	    	<input type="submit" value="Submit" /> 
+		</form>
+		<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	</body>
+</html>
