@@ -5,9 +5,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.danielli.xultimate.orm.mybatis.area.biz.AreaBiz;
-import org.danielli.xultimate.orm.mybatis.area.model.Area;
 import org.danielli.xultimate.orm.mybatis.area.service.AreaService;
 import org.danielli.xultimate.orm.mybatis.ds.Item;
+import org.danielli.xultimate.orm.mybatis.po.Area;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +38,24 @@ public class AreaServiceImpl implements AreaService {
 	
 	@Override
 	public List<Area> findAll() {
+		return areaBiz.findAll();
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public List<Area> findAllByTransaction() {
+		return areaBiz.findAll();
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public List<Area> findAllByNotSupport() {
+		return areaBiz.findAll();
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<Area> findAllByReadOnly() {
 		return areaBiz.findAll();
 	}
 

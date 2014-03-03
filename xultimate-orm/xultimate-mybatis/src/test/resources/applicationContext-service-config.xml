@@ -26,32 +26,6 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-	<!-- XML风格支持 -->
-	<aop:config expose-proxy="true" proxy-target-class="true" />
-	<!-- 注解风格支持 -->
-	<aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/> 
-	
-	<context:component-scan base-package="org.danielli.xultimate">
-		<context:exclude-filter type="aspectj" expression="org.danielli.xultimate.web..*"/>
-		<!-- <context:exclude-filter type="aspectj" expression="org.danielli.xultimate.orm..*"/>  -->
-	</context:component-scan>
-	
-	<!-- Mybatis -->
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="ormDbDataSource" />
-	
-	<!-- 
-		添加JVM参数 -javaagent:/home/toc/.m2/repository/org/springframework/spring-instrument/3.1.3.RELEASE/spring-instrument-3.1.3.RELEASE.jar
-		用于开启事务支持。性能没有代理好。
-		
-		需要添加
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${org.springframework.version}</version>
-		</dependency>
-	
-	<context:load-time-weaver aspectj-weaving="autodetect" />
-	<tx:annotation-driven transaction-manager="transactionManager" mode="aspectj" proxy-target-class="true" order="1000" />
-	-->
-	<tx:annotation-driven transaction-manager="transactionManager" mode="proxy" proxy-target-class="true" order="1000" />
+
+	<bean id="encryptPropertyPlaceholderConfigurer" class="org.danielli.xultimate.context.support.EncryptPropertyPlaceholderConfigurer" abstract="true" />
 </beans>

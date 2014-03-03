@@ -3,8 +3,8 @@ package org.danielli.xultimate.orm.mybatis.area.biz;
 import java.util.List;
 import java.util.Map;
 
-import org.danielli.xultimate.orm.mybatis.area.model.Area;
 import org.danielli.xultimate.orm.mybatis.ds.Item;
+import org.danielli.xultimate.orm.mybatis.po.Area;
 
 public interface AreaBiz {
 	

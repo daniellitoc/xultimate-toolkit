@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="org.danielli.xultimate.orm.mybatis.area.dao.AreaDAO">
+	<!-- 
+		如果一个方法有多个参数，使用param1、param2、param3代替
+	 -->
+	<insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO ULTIMATE_AREA (id, create_time, update_time, po_version, name, display_name, boost, parent_id) VALUES (#{id}, #{createTime}, #{updateTime}, #{poVersion}, #{name}, #{displayName}, #{boost}, #{parentId})
+	</insert>
+	
+	<update id="update">
+		UPDATE ULTIMATE_AREA SET update_time=#{updateTime}, po_version=#{nextPoVersion}, name=#{name}, display_name=#{displayName}, boost=#{boost}, parent_id=#{parentId} WHERE id=#{id} AND po_version=#{poVersion}
+	</update>
+	
+	<update id="dynamicUpdate1">
+	  	UPDATE ULTIMATE_AREA
+		<set>
+			<!-- display_name != null不成立，name != null成立，去除最后一个尾部的',' -->
+		    <if test="name != null">name=#{name},</if>
+		    <if test="display_name != null">display_name=#{displayName}</if>
+	    </set>
+	  	WHERE id = #{id}
+	</update>
+	<update id="dynamicUpdate2">
+	  	UPDATE ULTIMATE_AREA
+		<trim prefix="SET" suffixOverrides=",">
+			<!-- display_name != null不成立，name != null成立，去除最后一个尾部的',' -->
+		    <if test="name != null">name=#{name},</if>
+		    <if test="display_name != null">display_name=#{displayName}</if>
+	    </trim>
+	  	WHERE id = #{id}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM ULTIMATE_AREA WHERE id = #{id} AND po_version=#{poVersion}
+	</delete>
+	
+	<select id="findIdByName" resultType="java.lang.Long">
+		<bind name="pattern" value="'%' + name + '%'" />
+		SELECT id FROM ULTIMATE_AREA WHERE name LIKE #{pattern}
+		<if test="name != null">
+	    	AND 1 = 1
+	    </if>
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.orm.mybatis.po.Area" id="areaMappingAuto" autoMapping="true" />
+	<select id="findIdAndNameMap" resultMap="areaMappingAuto">
+		SELECT id, name FROM ULTIMATE_AREA
+	</select>
+	
+	<sql id="commonSQL"> SELECT id, create_time, update_time, po_version, name, display_name, boost, parent_id FROM ULTIMATE_AREA </sql>
+	<select id="findOneMap" resultType="java.util.HashMap">
+		<include refid="commonSQL"/> WHERE id = #{id}
+	</select>
+	
+	<select id="findOne" resultMap="areaMapping">
+		<include refid="commonSQL"/> WHERE id = #{id}
+	</select>
+	
+	<select id="findAll" resultMap="areaMapping">
+		<include refid="commonSQL"/>
+	</select>
+	
+	<select id="findByIds" resultMap="areaMapping">
+	 	<include refid="commonSQL"/> WHERE id IN
+	  	<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+	        #{item}
+	  	</foreach>
+	</select>
+	
+	<select id="findByIdOrName1" resultMap="areaMapping">
+	 	<include refid="commonSQL"/> 
+	 	<where> 
+		    <if test="id != null">
+		         id = #{id}
+		    </if> 
+		    <!-- id != null不成立，name != null成立，不会插入 -->
+		    <if test="name != null">
+		        AND name like #{name}
+		    </if>
+	    </where>
+	</select>
+	<select id="findByIdOrName2" resultMap="areaMapping">
+	 	<include refid="commonSQL"/> 
+	 	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		    <if test="id != null">
+		         id = #{id}
+		    </if> 
+		   <!-- id != null不成立，name != null成立，会插入，并去掉最近一个前缀为'AND '或'OR '，并添加前缀WHERE -->
+		    <if test="name != null">
+		        AND name like #{name}
+		    </if>
+	    </trim>
+	</select>
+	
+	<resultMap type="Area" id="areaMapping">
+		<id column="id" property="id" jdbcType="BIGINT"/>
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+		<result column="po_version" property="poVersion" jdbcType="BIGINT"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="display_name" property="displayName" jdbcType="VARCHAR"/>
+		<result column="boost" property="boost" jdbcType="FLOAT"/>
+		<result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+	</resultMap>
+	
+	<select id="findByItems" resultType="Area">
+		SELECT id, create_time as createTime, update_time as updateTime, po_version as poVersion, name, display_name as displayName, boost, parent_id as parentId 
+		FROM ULTIMATE_AREA
+		<where>
+			<foreach collection="list" item="item" index="item_index">
+				<choose>
+					<when test="item.logicalOperator.name() == 'OR' and item_index != 0">
+						OR (
+					</when>
+					<when test="item.logicalOperator.name() == 'AND' and item_index != 0">
+						AND (
+					</when>
+					<when test="item.logicalOperator.name() == 'NOT' and item_index != 0">
+						! (
+					</when>
+				</choose>
+				${item.key}
+				<choose>
+					<when test="item.comparsionOperator.name() == 'EQ'">
+						= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'NOT_EQ'">
+						!= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LIKE'">
+						LIKE #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'NOT_LIKE'">
+						NOT LIKE #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'GT'">
+						> #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LT'">
+					<![CDATA[ 
+						< 
+					]]> #{item.value.value}
+					
+					</when>
+					<when test="item.comparsionOperator.name() == 'GE'">
+						>= #{item.value.value}
+					</when>
+					<when test="item.comparsionOperator.name() == 'LE'">
+					<![CDATA[ 
+						<= 
+					]]> #{item.value.value}
+					
+					</when>
+					<when test="item.comparsionOperator.name() == 'IN'">
+						IN 
+						<foreach item="v" index="index" collection="item.value" open="(" separator="," close=")">
+        					#{v}
+  						</foreach>
+					</when>
+					<when test="item.comparsionOperator.name() == 'BETWEEN'">
+						BETWEEN #{item.value.value.first} AND #{item.value.value.second}
+					</when>
+				</choose>
+				<choose>
+					<when test="item.logicalOperator.name() == 'OR' and item_index != 0">
+						)
+					</when>
+					<when test="item.logicalOperator.name() == 'AND' and item_index != 0">
+						)
+					</when>
+					<when test="item.logicalOperator.name() == 'NOT' and item_index != 0">
+						)
+					</when>
+					<otherwise>
+				      
+				    </otherwise>
+				</choose>
+			</foreach>
+		</where>
+	</select>
+</mapper> 

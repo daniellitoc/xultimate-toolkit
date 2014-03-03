@@ -7,8 +7,8 @@ import javax.annotation.Resource;
 
 import org.danielli.xultimate.orm.mybatis.area.biz.AreaBiz;
 import org.danielli.xultimate.orm.mybatis.area.dao.AreaDAO;
-import org.danielli.xultimate.orm.mybatis.area.model.Area;
 import org.danielli.xultimate.orm.mybatis.ds.Item;
+import org.danielli.xultimate.orm.mybatis.po.Area;
 import org.springframework.stereotype.Service;
 
 @Service("areaBizImpl")
@@ -19,11 +19,24 @@ public class AreaBizImpl implements AreaBiz {
 	
 	@Override
 	public void save(Area entity) {
+		if (entity.getCreateTime() == null) {
+			entity.setCreateTimeToCurrent();
+		}
+		if (entity.getUpdateTime() == null) {
+			entity.setUpdateTime(entity.getCreateTime());
+		}
+		if (entity.getPoVersion() == null) {
+			entity.clearPoVersion();
+		}
+		if (entity.getBoost() == null) {
+			entity.clearBoost();
+		}
 		areaDAO.save(entity);
 	}
 
 	@Override
 	public void update(Area entity) {
+		entity.setUpdateTimeToCurrent();
 		areaDAO.update(entity);
 	}
 

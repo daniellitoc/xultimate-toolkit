@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="org.danielli.xultimate.orm.mybatis.type.dao.TestPoDAO">
+	<insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO TEST_PO (
+			parent_id, 
+			other_id, 
+			login_count, 
+			boost, 
+			money, 
+			message, 
+			introduction, 
+			sex, 
+			create_time, 
+			update_time, 
+			is_lock, 
+			has_login,
+			state_set, 
+			login_ip
+		) VALUES (
+			#{parentId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}, 
+			#{otherId, typeHandler=org.danielli.xultimate.orm.mybatis.type.IntegerNullParameterTypeHandler}, 
+			#{loginCount}, 
+			#{boost}, 
+			#{money}, 
+			#{message}, 
+			#{introduction}, 
+			#{sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+			#{createTime}, 
+			#{updateTime}, 
+			#{isLock, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler}, 
+			#{isLock},
+			#{stateSet}, 
+			inet_aton(#{loginIp})
+		)
+	</insert>
+
+	<resultMap type="TestPo" id="testPoMapper">
+		<id column="id" property="id" />
+		<result column="parent_id" property="parentId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler" />
+		<result column="other_id" property="otherId" typeHandler="org.danielli.xultimate.orm.mybatis.type.IntegerNullParameterTypeHandler"/>
+		<result column="login_count" property="loginCount"/>
+		<result column="boost" property="boost"/>
+		<result column="money" property="money"/>
+		<result column="message" property="message"/>
+		<result column="introduction" property="introduction"/>
+		<result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="is_lock" property="isLock" jdbcType="CHAR" typeHandler="org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler"/>
+		<result column="has_login" property="hasLogin"/>
+		<result column="state_set" property="stateSet" />
+		<result column="login_ip" property="loginIp"/>
+	</resultMap>
+	
+	<sql id="commonSQL"> SELECT id, parent_id, other_id, login_count, boost, money, message, introduction, sex, create_time, update_time, is_lock, has_login, state_set, login_ip FROM TEST_PO </sql>
+	
+	<select id="findByParentId" resultMap="testPoMapper">
+		<include refid="commonSQL"/> WHERE parent_id = #{parentId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+	</select>
+	
+	<select id="findBetweenMonty" resultMap="testPoMapper">
+		<include refid="commonSQL"/> WHERE money BETWEEN #{param1} AND #{param2}
+	</select>
+	
+	<select id="findByMessage" resultMap="testPoMapper">
+		<include refid="commonSQL"/> WHERE message = #{message, javaType=java.lang.String}
+	</select>
+	
+	<select id="findByIsLock" resultMap="testPoMapper" >
+		<include refid="commonSQL"/> WHERE is_lock 
+		<choose>
+			<when test="isLock">
+				= #{isLock, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler}
+			</when>
+			<when test="!isLock">
+				IS NULL;
+			</when>
+		</choose>
+	</select>
+	
+	<select id="findByStateSet" resultMap="testPoMapper">
+		<include refid="commonSQL"/> WHERE state_set = #{stateSet}
+	</select>
+	
+	<select id="findByStateSets" resultMap="testPoMapper">
+		<include refid="commonSQL"/> WHERE state_set IN
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+	        #{item}
+	  	</foreach>
+	</select>
+</mapper> 

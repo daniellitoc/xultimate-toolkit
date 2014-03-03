@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Select;
 import org.danielli.xultimate.orm.mybatis.MyBatisRepository;
-import org.danielli.xultimate.orm.mybatis.area.model.Area;
 import org.danielli.xultimate.orm.mybatis.ds.Item;
+import org.danielli.xultimate.orm.mybatis.po.Area;
 
 @MyBatisRepository
 public interface AreaDAO {

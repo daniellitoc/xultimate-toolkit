@@ -2,7 +2,14 @@ package org.danielli.xultimate.orm.mybatis.ds;
 
 import java.io.Serializable;
 
-
+/**
+ * 动态查询的操作项。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ *
+ * @param <T> 值。
+ */
 public class Item<T> implements Serializable {
 	private static final long serialVersionUID = -730615840191522967L;
 

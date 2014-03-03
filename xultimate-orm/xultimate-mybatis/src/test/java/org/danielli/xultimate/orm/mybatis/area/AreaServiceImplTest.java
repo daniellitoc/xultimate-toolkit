@@ -1,17 +1,16 @@
 package org.danielli.xultimate.orm.mybatis.area;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.orm.mybatis.area.model.Area;
 import org.danielli.xultimate.orm.mybatis.area.service.AreaService;
 import org.danielli.xultimate.orm.mybatis.ds.ComparsionOperator;
 import org.danielli.xultimate.orm.mybatis.ds.Item;
 import org.danielli.xultimate.orm.mybatis.ds.LogicalOperator;
 import org.danielli.xultimate.orm.mybatis.ds.ValueUtils;
+import org.danielli.xultimate.orm.mybatis.po.Area;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,32 +19,24 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-service-config.xml", "classpath:/applicationContext-service-util.xml", "classpath*:applicationContext-service-*.xml", "classpath:/applicationContext-dao-base.xml", "classpath:/applicationContext-dao-base-test.xml" })
+@ContextConfiguration(locations = { "classpath:applicationContext-service-config.xml", "classpath:applicationContext-service-crypto.xml", "classpath*:applicationContext-dao-*.xml", "classpath:applicationContext-service-generic.xml" })
 public class AreaServiceImplTest {
 
 	@Resource(name = "areaServiceImpl")
 	private AreaService areaService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AreaServiceImplTest.class);
-	
+
 	@Test
 	public void test() {
 		Area parent = new Area();
 		parent.setName("北京");
 		parent.setDisplayName("北京");
-		parent.setUpdateTime(new Date());
-		parent.setCreateTime(new Date());
-		parent.setBoost(0.0f);
-		parent.setVersion(0L);
 		areaService.save(parent);
 		
 		Area area = new Area();
 		area.setName("朝阳");
 		area.setDisplayName("北京朝阳");
-		area.setUpdateTime(new Date());
-		area.setCreateTime(new Date());
-		area.setBoost(0.0f);
-		area.setVersion(0L);
 		area.setParentId(parent.getId());
 		areaService.save(area);
 		
@@ -74,10 +65,6 @@ public class AreaServiceImplTest {
 			area.setId(3L);
 			area.setName("大兴");
 			area.setDisplayName("北京大兴");
-			area.setUpdateTime(new Date());
-			area.setCreateTime(new Date());
-			area.setBoost(0.0f);
-			area.setVersion(0L);
 			area.setParentId(parent.getId());
 			areaService.testRollback(area);
 		} catch (Exception e) {
