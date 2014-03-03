@@ -44,15 +44,11 @@
 	<bean id="httpClient" factory-bean="httpClientBuilder" factory-method="build" destroy-method="close" />
 	
 	<bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller" p:packagesToScan="org.danielli.xultimate" />
-	
 	<util:list id="messageConverters">
 		<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
 		<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
 		<bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
-        <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-            <property name="marshaller" ref="marshaller" />
-            <property name="unmarshaller" ref="marshaller" />
-        </bean>
+        <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter" c:marshaller-ref="marshaller" />
         <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />
     </util:list>
 	
