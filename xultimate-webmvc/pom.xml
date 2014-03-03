@@ -9,7 +9,6 @@
 	</parent>
 
 	<artifactId>xultimate-webmvc</artifactId>
-	<packaging>war</packaging>
 	
 	<name>The X-Ultimate Toolkit WEB MVC</name>
 	<description>The X-Ultimate Toolkit web mvc project.</description>
@@ -78,8 +77,4 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<finalName>xultimate-webmvc</finalName>
-	</build>
 </project>

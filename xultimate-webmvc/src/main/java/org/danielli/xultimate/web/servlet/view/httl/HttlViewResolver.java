@@ -11,6 +11,7 @@ import java.util.Properties;
  * @author Daniel Li
  * @since 15 Jun 2013
  * @see WebEngine
+ * @see httl.web.springmvc.HttlViewResolver
  */
 public class HttlViewResolver extends httl.web.springmvc.HttlViewResolver {
 

@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 处理Session跨域访问 -->
-<Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain=".xultimate.com" />
