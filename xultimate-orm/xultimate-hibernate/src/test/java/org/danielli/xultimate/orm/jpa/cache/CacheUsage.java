@@ -21,7 +21,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 /**
  * 查看二级缓存源码，配置Demo学习Hibernate3一级和二级(也包括查询)缓存专用。
- * 
+ * Hibernate3: ReadWriteCache NonstrictReadWriteCache
+ * Hibernate4: NonStrictReadWriteEhcacheEntityRegionAccessStrategy EhcacheTransactionalDataRegion ReadWriteEhcacheEntityRegionAccessStrategy
  * @deprecated Hibernate4以后，hibernate-memcached没有更新，也觉得二级缓存不好控制，所以选择在Biz层手动或通过Spring缓存支持memcached。
  */
 @RunWith(SpringJUnit4ClassRunner.class)
