@@ -2,7 +2,6 @@ package org.danielli.xultimate.context.performance;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.danielli.xultimate.util.time.stopwatch.StopWatch;
-import org.danielli.xultimate.util.time.stopwatch.support.AbstractStopWatchSummary;
 import org.slf4j.Logger;
 import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 
@@ -16,18 +15,12 @@ import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
  * @since 18 Jun 2013
  * @see PerformanceMonitorInterceptor
  */
-public class PerformanceMonitorForEachMethodInterceptor extends AbstractMonitoringInterceptor {
+public class PerformanceMonitorForEachMethodInterceptor extends AbstractStopWatchMonitoringInterceptor {
 
 	/**
 	 * Create a new PerformanceMonitorInterceptor with a static logger.
 	 */
 	public PerformanceMonitorForEachMethodInterceptor() {
-	}
-	
-	private AbstractStopWatchSummary stopWatchSummary;
-	
-	public void setStopWatchSummary(AbstractStopWatchSummary stopWatchSummary) {
-		this.stopWatchSummary = stopWatchSummary;
 	}
 
 	@Override
