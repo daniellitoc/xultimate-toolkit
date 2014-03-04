@@ -96,7 +96,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供GenericDAO，包含动态查询借口和动态查询配合排序或分页的接口。
 * 提供GenericBiz/DefaultGenericBiz，已经都封装好，便于重写自己的Biz层和封装Service层。
 * 测试类中CacheUsage展示了Hibernate3的二级缓存各种出现形式、便于理解一级、二级(查询)缓存。不过因为hibernate-memcached暂未升级到Hibernate4，而且觉得二级缓存控制起来不方便、而自己在Biz层手动控制或通过Spring缓存支持memcached等效果更好、更灵活。
-* 提供EntityManagerFactoryUtils，用于转换为SessionFactory实例。通过sessionFactory.withOptions().interceptor(new AuditInterceptor()).openSession()添加拦截器形式改变表名称实现分表。
+* 提供SessionFactoryUtils，用于转换为SessionFactory实例。通过SessionFactoryUtils.invokeSession(sessionFactory, interceptor, callback)添加拦截器形式改变表名称实现分表。
 * SimpleJpaRepository类的方法都采用了@Transactional，因此如果Service曾方法标明NOT_SUPPORT，调用到SimpleJpaRepository的方法还是会开启事物。
 * 注意：监听注解@PostPersist标注的方法中若改变值会引发UPDATE。INSERT后触发@PostPersist，若改变了值且在一个持久化上下文中(一级缓存)，提交前触发@PreUpdate，然后执行UPDATE。基于此建议慎用，若需要发布事件可采用异步处理方式。
 * 注意：监听注解@PreUpdate在事物准备提交和事物真正提交之间触发，会影响持久化上下文(一级缓存)。
@@ -130,12 +130,12 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 扩展HttlViewResolver，通过Properties通过Bean的形式配置HTTL，或通过属性置换器实现外部文件配置。
 
 
-## xultimate-test ## (未完成)
+## xultimate-test ##
 
 * 提供一套Spring MVC的使用演示Demo，包括可能的各种配置。
 * Session跨域处理。
-* Session共享集群。
-* 可视化分析工具。
+* Session共享集群。(未完成)
+* 可视化分析Demo。(未完成)
 * 收集的类，包括线程部分中volatile的具体效果，以及CountDownLatch、Semaphore、CyclicBarrier等的使用Demo。
 * 收集的类，包括NIO部分的使用。
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例。
