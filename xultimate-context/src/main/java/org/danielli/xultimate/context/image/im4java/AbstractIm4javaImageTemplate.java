@@ -15,14 +15,17 @@ public abstract class AbstractIm4javaImageTemplate extends AbstractImageTemplate
 	
 	protected boolean useGraphicsMagick = true;
 	
-	private ImageCommandPostProcessor imageCommandPostProcessor;
+	private ImageCommandPostProcessor[] imageCommandPostProcessors;
 
-	public void setImageCommandPostProcessor(ImageCommandPostProcessor imageCommandPostProcessor) {
-		this.imageCommandPostProcessor = imageCommandPostProcessor;
+	public void setImageCommandPostProcessors(ImageCommandPostProcessor[] imageCommandPostProcessors) {
+		this.imageCommandPostProcessors = imageCommandPostProcessors;
 	}
 
 	protected void runOperation(IMOperation operation, Object... params) throws ImageException {
-		imageCommandPostProcessor.postProcessAfterInitialization(createImageCommand(operation, params), operation, params);
+		ImageCommand imageCommand = createImageCommand(operation, params);
+		for (ImageCommandPostProcessor imageCommandPostProcessor : imageCommandPostProcessors) {
+			imageCommandPostProcessor.postProcessAfterInitialization(imageCommand, operation, params);
+		}
 	}
 
 	public void setUseGraphicsMagick(boolean useGraphicsMagick) {
