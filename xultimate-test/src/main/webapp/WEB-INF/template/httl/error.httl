@@ -1,1 +1,2 @@
-$exception
+<!-- #set(Exception user) -->
+${exception}

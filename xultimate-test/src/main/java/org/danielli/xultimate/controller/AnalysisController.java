@@ -30,12 +30,17 @@ public class AnalysisController {
 		return "analysis/tprofiler_topmethod";
 	}
 	
-	private static final Pattern TPROFILE_TOPMETHOD_PATTERN = Pattern.compile("");
+	private static final Pattern TPROFILE_TOPMETHOD_PATTERN = Pattern.compile("(.*) (.*) (.*) (.*)");
 	
 	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST }, value = { "/tprofiler/topmethod" })
-	public Object doAnalysisTProfilerTopMethod(MultipartFile multipartFile) throws IOException {
+	public Map<String, Object> doAnalysisTProfilerTopMethod(MultipartFile multipartFile) throws IOException {
 		Map<String, Object> result = new HashMap<String, Object>();
+		if (multipartFile == null) {
+			result.put("status", false);
+			result.put("message", "文件不能为空");
+			return result;
+		}
 		result.put("title", "TProfiler topmethod统计图表");
 		result.put("subtitle", "数据通过ProfilerLogAnalysis分析生成");
 		List<String> categories = new ArrayList<>();
@@ -81,10 +86,13 @@ public class AnalysisController {
 					totalTimeData.add(totalTime);
 				}
 			}
+			result.put("status", true);
 			return result;
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw e;
+			result.put("status", false);
+			result.put("message", e.getMessage());
+			return result;
 		} finally {
 			IOUtils.closeQuietly(scanner);
 		}
@@ -95,12 +103,25 @@ public class AnalysisController {
 		return "analysis/mysql_status";
 	}
 	
-	private static final Pattern MYSQ_STATUS_PATTERN = Pattern.compile("");
+	private static final Pattern MYSQ_STATUS_PATTERN = Pattern.compile("^[^#](.*) (.*) (.*) (.*) (.*)");
+	
+	public static void main(String[] args) {
+		Matcher matcher = MYSQ_STATUS_PATTERN.matcher("1394030990 2014-03-05 22:49:50 0.25 0.00");
+		while (matcher.find()) {
+			System.out.println(matcher.group(2) + " " + matcher.group(3));
+			System.out.println(matcher.group(5));
+		}
+	}
 	
 	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST }, value = { "/mysql/status" })
 	public Object doAnalysisMySQLStatus(MultipartFile multipartFile) throws IOException {
 		Map<String, Object> result = new HashMap<String, Object>();
+		if (multipartFile == null) {
+			result.put("status", false);
+			result.put("message", "文件不能为空");
+			return result;
+		}
 		result.put("title", "MySQL STATUS统计图表");
 		result.put("subtitle", "数据通过analyz.sh分析生成");
 		List<String> categories = new ArrayList<>();
@@ -113,7 +134,7 @@ public class AnalysisController {
 		singleSerie.put("name", "QPS");
 		singleSerie.put("data", qpsData);
 		series.add(singleSerie);
-		result.put("series", "");
+		result.put("series", series);
 		
 		Scanner scanner = null;
 		try {
@@ -121,14 +142,17 @@ public class AnalysisController {
 			while (scanner.hasNextLine()) {
 				Matcher matcher = MYSQ_STATUS_PATTERN.matcher(scanner.nextLine());
 				while (matcher.find()) {
-					categories.add(matcher.group(2));
+					categories.add(matcher.group(2) + " " + matcher.group(3));
 					qpsData.add(NumberUtils.createDouble(matcher.group(5)));
 				}
 			}
+			result.put("status", true);
 			return result;
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw e;
+			result.put("status", false);
+			result.put("message", e.getMessage());
+			return result;
 		} finally {
 			IOUtils.closeQuietly(scanner);
 		}

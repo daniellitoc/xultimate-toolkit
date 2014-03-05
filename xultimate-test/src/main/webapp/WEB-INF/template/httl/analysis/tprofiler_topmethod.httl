@@ -1,88 +1,163 @@
-
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>TProfiler popmethod统计图表</title>
-		<script type="text/javascript" src="/resources/js/jquery-2.0.3.js"></script>
-		<script type="text/javascript" src="/resources/js/jquery.form.js"></script> 
-		<script type="text/javascript" src="/resources/highcharts/highcharts.js"></script>
-		<script type="text/javascript" src="/resources/highcharts/exporting.js"></script>
-		<script type="text/javascript">
-	$(function () {
-        $('#myForm').submit(function() { 
-            // inside event callbacks 'this' is the DOM element so we first 
-            // wrap it in a jQuery object and then invoke ajaxSubmit 
-            $(this).ajaxSubmit({
-            	dataType: 'json',
-            	success : function(responseJson) {
-                    $('#container').highcharts({
-                        chart: {
-                            type: 'bar'
-                        },
-                        title: {
-                            text: responseJson.title
-                        },
-                        subtitle: {
-                            text: responseJson.subtitle
-                        },
-                        xAxis: {
-                            categories: responseJson.categories,
-                            title: {
-                                text: null
-                            }
-                        },
-                        yAxis: {
-                            min: 0,
-                            title: {
-                                text: responseJson['yAxis.title'],
-                                align: 'high'
-                            },
-                            labels: {
-                                overflow: 'justify'
-                            }
-                        },
-                        tooltip: {
-                            valueSuffix: responseJson['tooltip.valueSuffix']
-                        },
-                        plotOptions: {
-                            bar: {
-                                dataLabels: {
-                                    enabled: true
-                                }
-                            }
-                        },
-                        legend: {
-                            layout: 'vertical',
-                            align: 'right',
-                            verticalAlign: 'top',
-                            x: -40,
-                            y: 100,
-                            floating: true,
-                            borderWidth: 1,
-                            backgroundColor: '#FFFFFF',
-                            shadow: true
-                        },
-                        credits: {
-                            enabled: false
-                        },
-                        series: responseJson.series
-                    });
-            	}
-            }); 
-     
-            // !!! Important !!! 
-            // always return false to prevent standard browser submit and page navigation 
-            return false; 
-        }); 
-    });
-		</script>
-	</head>
-	<body>
-		<form id="myForm" action="comment.php" method="post"> 
-		    <input type="file" name="myfile"><br>
-	    	<input type="submit" value="Submit" /> 
-		</form>
-		<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-	</body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TProfiler topmethod统计图表</title>
+<style>
+.progress {
+	position: relative;
+	width: 400px;
+	border: 1px solid #ddd;
+	padding: 1px;
+	border-radius: 3px;
+}
+
+.bar {
+	background-color: #B4F5B4;
+	width: 0%;
+	height: 20px;
+	border-radius: 3px;
+}
+
+.percent {
+	position: absolute;
+	display: inline-block;
+	top: 3px;
+	left: 48%;
+}
+</style>
+</head>
+<body>
+	<table align="center">
+		<tr>
+			<th colspan="2">TProfiler topmethod统计图表</th>
+		</tr>
+		<tr>
+			<form id="myForm"
+				action="/xultimate-test/analysis/tprofiler/topmethod" method="post"
+				enctype="multipart/form-data">
+			<td><input type="file" name="multipartFile"></td>
+			<td><input type="submit" value="Submit" /></td>
+			</form>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="progress">
+					<div class="bar"></div>
+					<div class="percent">0%</div>
+				</div>
+				<div id="status"></div>
+			</td>
+		</tr>
+	</table>
+	<div id="container"
+		style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</body>
+<script type="text/javascript"
+	src="/xultimate-test/resources/js/jquery-2.0.3.js"></script>
+<script type="text/javascript"
+	src="/xultimate-test/resources/js/jquery.form.js"></script>
+<script type="text/javascript"
+	src="/xultimate-test/resources/highcharts/highcharts.js"></script>
+<script type="text/javascript"
+	src="/xultimate-test/resources/highcharts/exporting.js"></script>
+<script type="text/javascript">
+	$(function() {
+		var bar = $('.bar');
+		var percent = $('.percent');
+
+		$('#myForm')
+				.submit(
+						function() {
+							// inside event callbacks 'this' is the DOM element so we first 
+							// wrap it in a jQuery object and then invoke ajaxSubmit 
+							$(this)
+									.ajaxSubmit(
+											{
+												dataType : 'json',
+												beforeSend : function() {
+													var percentVal = '0%';
+													bar.width(percentVal)
+													percent.html(percentVal);
+												},
+												uploadProgress : function(
+														event, position, total,
+														percentComplete) {
+													var percentVal = percentComplete
+															+ '%';
+													bar.width(percentVal)
+													percent.html(percentVal);
+												},
+												success : function(responseJson) {
+													if (responseJson.status == false) {
+														alert(responseJson.message);
+														return;
+													}
+													var percentVal = '100%';
+													bar.width(percentVal)
+													percent.html(percentVal);
+
+													$('#container')
+															.highcharts(
+																	{
+																		chart : {
+																			type : 'bar'
+																		},
+																		title : {
+																			text : responseJson.title
+																		},
+																		subtitle : {
+																			text : responseJson.subtitle
+																		},
+																		xAxis : {
+																			categories : responseJson.categories,
+																			title : {
+																				text : null
+																			}
+																		},
+																		yAxis : {
+																			min : 0,
+																			title : {
+																				text : responseJson['yAxis.title'],
+																				align : 'high'
+																			},
+																			labels : {
+																				overflow : 'justify'
+																			}
+																		},
+																		tooltip : {
+																			valueSuffix : responseJson['tooltip.valueSuffix']
+																		},
+																		plotOptions : {
+																			bar : {
+																				dataLabels : {
+																					enabled : true
+																				}
+																			}
+																		},
+																		legend : {
+																			layout : 'vertical',
+																			align : 'right',
+																			verticalAlign : 'top',
+																			x : -40,
+																			y : 100,
+																			floating : true,
+																			borderWidth : 1,
+																			backgroundColor : '#FFFFFF',
+																			shadow : true
+																		},
+																		credits : {
+																			enabled : false
+																		},
+																		series : responseJson.series
+																	});
+												}
+											});
+
+							// !!! Important !!! 
+							// always return false to prevent standard browser submit and page navigation 
+							return false;
+						});
+	});
+</script>
 </html>

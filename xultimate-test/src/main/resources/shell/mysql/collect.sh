@@ -4,7 +4,8 @@ INTERVAL=5
 PREFIX=$INTERVAL-sec-status
 RUNFILE=/tmp/collect.sh.running
 USER=$2
-PASSWORD=$3
+read -s -p "请输入密码：" PASSWORD
+printf "\n"
 HOST=$1
 mysql -e 'show global variables' --host=$HOST --user=$USER --password=$PASSWORD >> mysql-variables
 while test -e $RUNFILE; do

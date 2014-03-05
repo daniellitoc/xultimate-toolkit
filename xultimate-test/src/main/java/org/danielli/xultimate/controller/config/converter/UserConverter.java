@@ -1,8 +1,8 @@
 package org.danielli.xultimate.controller.config.converter;
 
-import org.danielli.xultimate.model.User;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.math.NumberUtils;
+import org.danielli.xultimate.vo.User;
 import org.springframework.core.convert.converter.Converter;
 
 public class UserConverter implements Converter<String, User> {

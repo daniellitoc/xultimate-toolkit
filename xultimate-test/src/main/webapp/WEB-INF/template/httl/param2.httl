@@ -1,2 +1,2 @@
 <!-- #set(User user) -->
-$user.name, $user.age
+${user.id}, ${user.name}

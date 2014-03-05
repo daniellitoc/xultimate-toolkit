@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.danielli.xultimate.model.User;
 import org.danielli.xultimate.util.StringUtils;
+import org.danielli.xultimate.vo.User;
+import org.danielli.xultimate.web.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -59,7 +61,6 @@ public class UserController {
 		return "param1";
 	}
 	
-	// 缺少验证
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_2" })
 	public String param12(@RequestParam String message, ModelMap modelMap) {
 		modelMap.put("message", message);
@@ -72,20 +73,22 @@ public class UserController {
 		return "param1";
 	}
 	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_4/{message}" })
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_4/{message:[a-zA-z]+}" })
 	public String param14(@PathVariable("message") String message, ModelMap modelMap) {
 		return "param1";
 	}
 	
-	// 缺少CookieUtils
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_5" })
-	public String param15(@RequestParam String message, ModelMap modelMap) {
+	public String param15(@RequestParam String message, HttpServletRequest request, ModelMap modelMap) {
+		@SuppressWarnings("unused")
+		Cookie cookie = WebUtils.getCookie(request, "value");
 		return "param1";
 	}
 	
-	// 缺少HeaderUtils
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param1_6" })
-	public String param16(@RequestParam String message, ModelMap modelMap) {
+	public String param16(@RequestParam String message, HttpServletRequest request, ModelMap modelMap) {
+		@SuppressWarnings("unused")
+		String header = WebUtils.getHeader(request, WebUtils.CONTENT_ENCODING);
 		return "param1";
 	}
 	
