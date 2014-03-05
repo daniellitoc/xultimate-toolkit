@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,7 +15,7 @@ public class User implements Serializable {
 	private Long id;
 	
 	@NotNull
-    @Size(max=64)
+    @Pattern(regexp = "\\w{4,30}")
 	private String name;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

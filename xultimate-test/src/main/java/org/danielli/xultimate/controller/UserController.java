@@ -1,8 +1,7 @@
 package org.danielli.xultimate.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import org.danielli.xultimate.web.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/users")
@@ -33,6 +32,16 @@ public class UserController {
 	public void initBinder(WebDataBinder binder) {
 //		binder.registerCustomEditor(requiredType, propertyEditor)
 //		binder.addValidators(validators)
+	}
+	
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/forward" })
+	public String forward(ModelMap modelMap) {
+		return "forward:/users/redirect";
+	}
+	
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/redirect" })
+	public String redirect(User user, ModelMap modelMap) {
+		return "redirect:http://www.google.com";
 	}
 	
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/test1_normal" })
@@ -98,7 +107,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_1_1" })
-	public String param211(User user, ModelMap modelMap) {
+	public String param211(@RequestParam("userString") User user, ModelMap modelMap) {
+		modelMap.put("user", user);
 		return "param2";
 	}
 	
@@ -109,23 +119,35 @@ public class UserController {
 		return user;
 	}
 	
+	// 验证不通过进入param2_error
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_2_2" })
 	public String param221(@Valid User user, BindingResult bindingResult, ModelMap modelMap) {
 		if (bindingResult.hasErrors()) {
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			for (FieldError fieldError : fieldErrors) {
+				System.out.println(fieldError);
+			}
+			System.out.println(bindingResult.getFieldError("name"));
+			System.out.println(bindingResult.getFieldErrorCount());
+			System.out.println(bindingResult.getFieldValue("name"));
+			System.out.println(bindingResult.getFieldError("name").getCode());
+			System.out.println(Arrays.toString(bindingResult.getFieldError("name").getCodes()));
+			System.out.println(Arrays.toString(bindingResult.getFieldError("name").getArguments()));
 			return "param2_error";
 		}
 		return "param2";
 	}
 	
+	// 验证不通过通过抛出BindException
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_2_1" })
 	public String param222(@Valid User user, ModelMap modelMap) {
 		return "param2";
 	}
 	
+	// 手动验证
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_3_1" })
 	public String param231(User user, BindingResult bindingResult, ModelMap modelMap) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "name", "Required");
-//		ValidationUtils.invokeValidator(validator, obj, errors)
 		if (!StringUtils.equals(user.getName(), "Daniel Li")) {
 			bindingResult.rejectValue("name", "Exists");
 		}
@@ -135,39 +157,12 @@ public class UserController {
 		return "param2";
 	}
 	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_4" })
-	public String param24(@RequestParam("user") User user, ModelMap modelMap) {
+	// 没有执行验证
+	@RequestMapping(method = { RequestMethod.GET }, value = { "/param2_3_2" })
+	public String param232(User user, BindingResult bindingResult, ModelMap modelMap) {
+		if (bindingResult.hasErrors()) {
+			return "param2_error";
+		}
 		return "param2";
-	}
-	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/forward" })
-	public String forward(ModelMap modelMap) {
-		return "forward:/users/redirect";
-	}
-	
-	@RequestMapping(method = { RequestMethod.GET }, value = { "/redirect" })
-	public String redirect(User user, ModelMap modelMap) {
-		return "redirect:http://www.google.com";
-	}
-	
-	@RequestMapping(method = { RequestMethod.POST }, value = { "/to_upload" })
-	public String toUpload(MultipartFile file, ModelMap modelMap) {
-		return "upload";
-	}
-	
-	@ResponseBody
-	@RequestMapping(method = { RequestMethod.POST }, value = { "/preview" })
-	public byte[] report(MultipartFile file) throws IOException {
-		return file.getBytes();
-	}
-	
-	@RequestMapping(method = { RequestMethod.POST }, value = { "/do_upload" })
-	public String doUpload(MultipartFile file, ModelMap modelMap) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("fileName", file.getOriginalFilename());
-		result.put("size", file.getSize());
-		
-		modelMap.put("result", result);
-		return "upload_result";
 	}
 }

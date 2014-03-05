@@ -11,7 +11,7 @@ public class UserConverter implements Converter<String, User> {
 	public User convert(String source) {
 		User user = new User();
 		if (StringUtils.isNotBlank(source)) {
-			String[] items = source.split("|");
+			String[] items = StringUtils.split(source, "|");
 			user.setName(items[0]);
 			user.setId(NumberUtils.createLong(items[1]));
 		}
