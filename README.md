@@ -134,7 +134,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 
 * 提供一套Spring MVC的使用演示Demo，包括可能的各种配置。
 * Session跨域处理。
-* Session共享集群。
+* 通过memcached-session-manager实现Session共享集群。
 * TProfiler性能监测工具的topmethod.log日志文件的图形分析。
 * 通过sh/collect.sh数据，由sh/analyze.sh提取数据，最后完成MYSQL QPS的图形分析。
 * 收集的类，包括线程部分中volatile的具体效果，以及CountDownLatch、Semaphore、CyclicBarrier等的使用Demo。

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 处理Session跨域访问 -->
 <Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain=".xultimate.com">
+	<!-- 会话ID生成规则：用Tomcat的会话ID，随机从节点ID中取一个(如n1、n2、n3)可连接的，然后格式化成MSM的会话ID。 -->
+	<!-- 存取规则：根据MSM的会话ID中的节点ID判断应该从哪个memcached上存放和获取会话数据。 -->
+	<!-- 读取会话信息和添加会话信息都会进行检测是否可连接 -->
+	
+	<!-- Sticky Sesson中的failoverNodes="n1"表示如果Tomcat与Memcached在同一机器上，那么将信息放到n2上。如果n2不可用时，将存储到n2上。这样即便n1主机挂掉，其他机器可通过n2访问。 -->
 	<!-- Sticky Session 
 	<Manager requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$" className="de.javakaffee.web.msm.MemcachedBackupSessionManager" 
-		memcachedNodes="n1:192.168.1.137:11211,n2:192.168.1.137:11212" failoverNodes="n1" 
+		memcachedNodes="n1:127.0.0.1:11211,n2:127.0.0.1:11212,n3:127.0.0.1:11213" failoverNodes="n1" 
 		transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory" />
 	-->
+	<!-- 访问规则：只测试是否可以连接 -->
+	<!-- memcached崩溃：数据存在本地Tomcat和Memcached中，如果发出请求时发现memcached崩溃，将生成新的MSM会话ID(只改变节点ID)，然后将本地会话信息保存到新的MSM会话ID对应的memcached -->
+	<!-- tomcat崩溃：数据存在本地Tomcat和Memcached中，如果tomcat崩溃，先用MSM会话ID获取到会话信息到本地，然后用MSM会话ID删除memcached中的数据，生成新的MSM会话ID(只改变jvmRoute)，将数据重新保存 -->
+	
+	
+	
 	<!-- Non-Sticky Session 
 	<Manager requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$" className="de.javakaffee.web.msm.MemcachedBackupSessionManager" 
-memcachedNodes="n1:host1.yourdomain.com:11211,n2:host2.yourdomain.com:11211" sticky="false" sessionBackupAsync="false" 
-transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory"  />
+		memcachedNodes="n1:127.0.0.1:11211,n2:127.0.0.1:11212,n3:127.0.0.1:11213" sticky="false" sessionBackupAsync="false" 
+		transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory"  />
 	-->
-	<!-- Sticky Sesson中的failoverNodes="n1"表示如果Tomcat与Memcached在同一机器上，那么将信息放到n2上。如果n2不可用时，将存储到n2上。这样即便n1主机挂掉，其他机器可通过n2访问。 -->
+	<!-- 访问规则：和Sticky Session的tomcat崩溃效果一样 -->
+	<!-- memcached崩溃：发现无法访问到原来的memcached，如果发现当前的tomcat和前一次访问的是同一个，那么和Sticky Session的memcached崩溃效果相同，否则在不同的tomcat中，生成新的MSM会话ID，原来的数据丢失 -->
+	<!-- tomcat崩溃：正常情况下不会有影响，如果下次访问的和上次访问的相同(如两台机器，挂了接下来应该访问的那个)，则和Sticky Sesson的访问规则一样 -->
 </Context>
