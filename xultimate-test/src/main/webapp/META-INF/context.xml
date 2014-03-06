@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 处理Session跨域访问 -->
-<Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain=".xultimate.com" />
+<Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain=".xultimate.com">
+	<!-- Sticky Session 
+	<Manager requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$" className="de.javakaffee.web.msm.MemcachedBackupSessionManager" 
+		memcachedNodes="n1:192.168.1.137:11211,n2:192.168.1.137:11212" failoverNodes="n1" 
+		transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory" />
+	-->
+	<!-- Non-Sticky Session 
+	<Manager requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$" className="de.javakaffee.web.msm.MemcachedBackupSessionManager" 
+memcachedNodes="n1:host1.yourdomain.com:11211,n2:host2.yourdomain.com:11211" sticky="false" sessionBackupAsync="false" 
+transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory"  />
+	-->
+	<!-- Sticky Sesson中的failoverNodes="n1"表示如果Tomcat与Memcached在同一机器上，那么将信息放到n2上。如果n2不可用时，将存储到n2上。这样即便n1主机挂掉，其他机器可通过n2访问。 -->
+</Context>
