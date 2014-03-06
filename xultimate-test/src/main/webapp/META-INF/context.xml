@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 处理Session跨域访问 -->
-<Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain=".xultimate.com">
+<Context useHttpOnly="true" sessionCookieName="JSESSIONID" sessionCookiePath="/" sessionCookieDomain="localhost">
 	<!-- 会话ID生成规则：用Tomcat的会话ID，随机从节点ID中取一个(如n1、n2、n3)可连接的，然后格式化成MSM的会话ID。 -->
 	<!-- 存取规则：根据MSM的会话ID中的节点ID判断应该从哪个memcached上存放和获取会话数据。 -->
 	<!-- 读取会话信息和添加会话信息都会进行检测是否可连接 -->

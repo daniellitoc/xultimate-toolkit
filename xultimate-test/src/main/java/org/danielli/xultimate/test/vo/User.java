@@ -1,4 +1,4 @@
-package org.danielli.xultimate.vo;
+package org.danielli.xultimate.test.vo;
 
 import java.io.Serializable;
 import java.util.Date;

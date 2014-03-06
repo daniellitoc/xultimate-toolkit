@@ -28,7 +28,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<!-- 自动扫描org.danielli.xultimate.controller 包下的@Controller标注的类控制器类 -->
-	<context:component-scan base-package="org.danielli.xultimate.controller">
+	<context:component-scan base-package="org.danielli.xultimate.test.web.controller">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
@@ -47,7 +47,7 @@
 	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<property name="converters">
 			<set>
-				<bean class="org.danielli.xultimate.controller.config.converter.UserConverter" />
+				<bean class="org.danielli.xultimate.test.web.converter.UserConverter" />
 			</set>
 		</property>
 	</bean>
@@ -91,7 +91,7 @@
 	<bean class="org.danielli.xultimate.web.servlet.view.httl.HttlViewResolver" p:order="80" p:contentType="text/html; charset=utf8" p:suffix=".httl">
 		<property name="httlProperties">
 			<value>
-				import.packages+=org.danielli.xultimate.vo
+				import.packages+=org.danielli.xultimate.test.vo
 				template.directory=/WEB-INF/template/httl,/WEB-INF/template/error
 				input.encoding=UTF-8
 				output.encoding=UTF-8

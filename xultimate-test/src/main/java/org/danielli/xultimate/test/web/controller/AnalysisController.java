@@ -1,4 +1,4 @@
-package org.danielli.xultimate.controller;
+package org.danielli.xultimate.test.web.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;

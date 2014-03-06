@@ -1,4 +1,4 @@
-package org.danielli.xultimate.controller;
+package org.danielli.xultimate.test.web.controller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.danielli.xultimate.test.vo.User;
 import org.danielli.xultimate.util.StringUtils;
-import org.danielli.xultimate.vo.User;
 import org.danielli.xultimate.web.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

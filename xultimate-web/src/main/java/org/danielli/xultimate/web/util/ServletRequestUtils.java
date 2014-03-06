@@ -343,10 +343,13 @@ public class ServletRequestUtils {
 	 * @throws ServletRequestBindingException a subclass of ServletException,
 	 * so it doesn't need to be caught
 	 */
-	public static String getStringParameter(ServletRequest request, String name)
-			throws ServletRequestBindingException {
-
-		return org.springframework.web.bind.ServletRequestUtils.getStringParameter(request, name);
+	public static String getStringParameter(ServletRequest request, String name) {
+		try {
+			return org.springframework.web.bind.ServletRequestUtils.getStringParameter(request, name);
+		} catch (ServletRequestBindingException e) {
+			return null;
+		}
+		
 	}
 
 	/**
