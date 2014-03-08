@@ -43,6 +43,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 ## xultimate-web ##
 
 * ResourceUtils，是对Spring Resource的封装。
+* 提供StringToFileArrayPropertyEditor，是String到File[]的属性编辑器。
 * GzipCompressFilter，用于压缩响应流。
 * LogbackHostListener，用于配置Slf4j MDC。
 * 服务类BrowserCacheGenerator用于处理浏览器端缓存。
