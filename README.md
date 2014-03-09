@@ -113,7 +113,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供动态查询的操作实体，解析见测试，用法上没有Hibernate提供的易用，推荐只面向后台动态查询页面使用。
 * 提供BigDecimalTypeHandler，数据端使用BIGINT/UNSIGNED INT存储。
 * 提供BooleanTypeHandler，数据库使用CHAR(0)存储。""表示true、NULL表示false。缺点是无法建立索引，因此不适合用于高效检索条件部分。
-* 提供StateSetTypeHandler，数据库使用TINYINT存储。用来代替BIT/SET。支持部分匹配和完全匹配功能，解决BIT/SET部分匹配无法利用索引问题。
+* 提供StateSetTypeHandler，数据库使用TINYINT存储。用来代替BIT/SET。支持部分匹配和完全匹配功能，解决BIT/SET部分匹配无法利用索引问题。(目前支持8个类型，但查询数量多，可以考虑4个，这样最多有16个组合)
 * 提供IntegerNullParameterTypeHandler、LongNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的-1。展示是将数据端的-1处理为Java端的null。可以更好的建立高效索引。-1为默认值，可继承修改。
 * 提供StringNullParameterTypeHandler、ClobNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的""。展示是将数据端的""处理为Java端的null。可以更好的建立高效索引。""为默认值，可继承修改。
 * 去除类似Hibernate那样的复杂映射，将模型定义从领域模型改为POJO，采用最直接的数据库-实体类的映射，保持简单映射。
