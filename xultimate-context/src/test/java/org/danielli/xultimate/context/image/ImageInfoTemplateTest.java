@@ -30,17 +30,18 @@ public class ImageInfoTemplateTest {
 	
 //	@Test
 	public void testGetImageInfo() throws ImageInfoException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 50; j++) {
-				awtImageInfoTemplate.getImageInfo(new ClassPathResource("image/test.jpg").getFile());
+				awtImageInfoTemplate.getImageInfo(srcImageFile);
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 50; j++) {
-				im4javaImageInfoTemplate.getImageInfo(new ClassPathResource("image/test.jpg").getFile());
+				im4javaImageInfoTemplate.getImageInfo(srcImageFile);
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}
@@ -53,17 +54,18 @@ public class ImageInfoTemplateTest {
 
 	@Test
 	public void testConvertImage() throws ImageException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
 		PerformanceMonitor.start("ImageInfoTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageInfoTemplate.convertImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"));
+				awtImageInfoTemplate.convertImage(srcImageFile, new File("/home/toc/Desktop/test1.jpg"));
 			}
 			PerformanceMonitor.mark("awtImageInfoTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageInfoTemplate.convertImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"));
+				im4javaImageInfoTemplate.convertImage(srcImageFile, new File("/home/toc/Desktop/test2.jpg"));
 			}
 			PerformanceMonitor.mark("im4javaImageInfoTemplate" + i);
 		}

@@ -29,17 +29,19 @@ public class ImageCompositeTemplateTest {
 	
 //	@Test
 	public void test1() throws ImageException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
+		File waterImageFile = new ClassPathResource("image/go-home.png").getFile();
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
+				awtImageCompositeTemplate.addWatermarkImage(srcImageFile, new File("/home/toc/Desktop/test1.jpg"), waterImageFile, Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ClassPathResource("image/go-home.png").getFile(), Gravity.Center);
+				im4javaImageCompositeTemplate.addWatermarkImage(srcImageFile, new File("/home/toc/Desktop/test2.jpg"), waterImageFile, Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -50,17 +52,19 @@ public class ImageCompositeTemplateTest {
 	
 //	@Test
 	public void test2() throws ImageException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
+		File waterImageFile = new ClassPathResource("image/go-home.png").getFile();
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
+				awtImageCompositeTemplate.addWatermarkImage(srcImageFile, new File("/home/toc/Desktop/test1.jpg"), waterImageFile, new ImageCoordinate(30, 70));
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkImage(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), new ClassPathResource("image/go-home.png").getFile(), new ImageCoordinate(30, 70));
+				im4javaImageCompositeTemplate.addWatermarkImage(srcImageFile, new File("/home/toc/Desktop/test2.jpg"), waterImageFile, new ImageCoordinate(30, 70));
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -71,17 +75,18 @@ public class ImageCompositeTemplateTest {
 	
 	@Test
 	public void test3() throws ImageException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
+				awtImageCompositeTemplate.addWatermarkText(srcImageFile, new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
+				im4javaImageCompositeTemplate.addWatermarkText(srcImageFile, new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, Gravity.Center);
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
@@ -92,17 +97,18 @@ public class ImageCompositeTemplateTest {
 	
 //	@Test
 	public void test4() throws ImageException, IOException {
+		File srcImageFile = new ClassPathResource("image/test.jpg").getFile();
 		PerformanceMonitor.start("ImageCompositeTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				awtImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
+				awtImageCompositeTemplate.addWatermarkText(srcImageFile, new File("/home/toc/Desktop/test1.jpg"), "Avril Lavigne",new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
 			}
 			PerformanceMonitor.mark("awtImageCompositeTemplate" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {
-				im4javaImageCompositeTemplate.addWatermarkText(new ClassPathResource("image/test.jpg").getFile(), new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
+				im4javaImageCompositeTemplate.addWatermarkText(srcImageFile, new File("/home/toc/Desktop/test2.jpg"), "Avril Lavigne", new Font("Ubuntu", Font.PLAIN, 50), Color.BLUE, new ImageCoordinate(0, 0));
 			}
 			PerformanceMonitor.mark("im4javaImageCompositeTemplate" + i);
 		}
