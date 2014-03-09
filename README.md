@@ -31,6 +31,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 图片处理工具ImageCropTemplate，包括对剪裁等的功能处理，分别对im4java和java进行封装。
 * 图片处理工具ImageInfoTemplate，包括对格式转换等的功能处理，分别对im4java和java进行封装。
 * 图片处理工具ImageResizeTemplate，包括对改变大小等的功能处理，分别对im4java和java进行封装。
+* 以上图片处理为第一版，现增加第二版，主要用于支持BufferedImage和File两种方式。取出了getImageInfo，改为在DefaultImageResource内提供，目前先使用第一种，之后视情况在做合并。
 * 性能检测类PerformanceMonitorForEachMethodInterceptor，是对StopWatch的AOP行为处理，用于检测一个调用链中的每个标记方法，每个方法单独输出。
 * 性能检测类PerformanceMonitorForOneMethodInterceptor，是对StopWatch的AOP行为处理，用于检测一个调用链中的每个标记方法，每个线程开始后第一个标记方法作为总输出。
 * 加密属性置换器EncryptPropertyPlaceholderConfigurer，通过扩展Spring的属性置换器，提供加密功能。
