@@ -14,9 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/i18n/applicationContext-service-i18n.xml", "classpath:/applicationContext-service-util.xml" })
-public class I18nTest {
+public class MessageTest {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(I18nTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MessageTest.class);
 	
 	@Test
 	public void test() {
@@ -26,6 +26,8 @@ public class I18nTest {
 		if (ApplicationContextUtils.getMessage(applicationContext, Locale.CHINA, "helloWorld1") == null) {
 			LOGGER.info("helloWorld1 is not existsed");
 		}
+		
+		LOGGER.info(MessageUtils.success("helloWorld").getContent());
 		
 	}
 

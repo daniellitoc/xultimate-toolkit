@@ -36,7 +36,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 性能检测类PerformanceMonitorForOneMethodInterceptor，是对StopWatch的AOP行为处理，用于检测一个调用链中的每个标记方法，每个线程开始后第一个标记方法作为总输出。
 * 加密属性置换器EncryptPropertyPlaceholderConfigurer，通过扩展Spring的属性置换器，提供加密功能。
 * 提供工具类BeanFactoryContext/ApplicationContextUtils。
-* 包括一些Spring中部分功能的使用，如自定义属性编辑器、事件、i18n。
+* 提供MessageUtils工具类，内部使用Spring国际化(i18n)，用于JSON交互。
+* 包括一些Spring中部分功能的使用，如自定义属性编辑器、事件。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
 
@@ -44,7 +45,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 ## xultimate-web ##
 
 * ResourceUtils，是对Spring Resource的封装。
-* 提供StringToFileArrayPropertyEditor，是String到File[]的属性编辑器。
+* 提供StringToFileArrayPropertyEditor，是String到File[]的自定义属性编辑器。
 * GzipCompressFilter，用于压缩响应流。
 * LogbackHostListener，用于配置Slf4j MDC。
 * 服务类BrowserCacheGenerator用于处理浏览器端缓存。
