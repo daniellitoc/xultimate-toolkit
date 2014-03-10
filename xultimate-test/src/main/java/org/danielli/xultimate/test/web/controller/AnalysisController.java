@@ -1,6 +1,5 @@
 package org.danielli.xultimate.test.web.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +8,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.danielli.xultimate.context.i18n.Message;
+import org.danielli.xultimate.context.i18n.MessageType;
+import org.danielli.xultimate.context.i18n.MessageUtils;
 import org.danielli.xultimate.util.io.IOUtils;
 import org.danielli.xultimate.util.math.NumberUtils;
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ public class AnalysisController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisController.class);
 	
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/tprofiler/topmethod" })
-	public Object toAnalysisTProfilerTopMethod() throws IOException {
+	public String toAnalysisTProfilerTopMethod() {
 		return "analysis/tprofiler_topmethod";
 	}
 	
@@ -34,13 +36,11 @@ public class AnalysisController {
 	
 	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST }, value = { "/tprofiler/topmethod" })
-	public Map<String, Object> doAnalysisTProfilerTopMethod(MultipartFile multipartFile) throws IOException {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public Message<? extends Object> doAnalysisTProfilerTopMethod(MultipartFile multipartFile) {
 		if (multipartFile == null) {
-			result.put("status", false);
-			result.put("message", "文件不能为空");
-			return result;
+			return MessageUtils.warn("analysis.tprofiler.empty");
 		}
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("title", "TProfiler topmethod统计图表");
 		result.put("subtitle", "数据通过ProfilerLogAnalysis分析生成");
 		List<String> categories = new ArrayList<>();
@@ -86,42 +86,29 @@ public class AnalysisController {
 					totalTimeData.add(totalTime);
 				}
 			}
-			result.put("status", true);
-			return result;
-		} catch (IOException e) {
+			return MessageUtils.valueOf(MessageType.SUCCESS, result);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			result.put("status", false);
-			result.put("message", e.getMessage());
-			return result;
+			return MessageUtils.valueOf(MessageType.ERROR, e.getMessage());
 		} finally {
 			IOUtils.closeQuietly(scanner);
 		}
 	}
 
 	@RequestMapping(method = { RequestMethod.GET }, value = { "/mysql/status" })
-	public Object toAnalysisMySQLStatus() throws IOException {
+	public String toAnalysisMySQLStatus() {
 		return "analysis/mysql_status";
 	}
 	
 	private static final Pattern MYSQ_STATUS_PATTERN = Pattern.compile("^[^#](.*) (.*) (.*) (.*) (.*)");
 	
-	public static void main(String[] args) {
-		Matcher matcher = MYSQ_STATUS_PATTERN.matcher("1394030990 2014-03-05 22:49:50 0.25 0.00");
-		while (matcher.find()) {
-			System.out.println(matcher.group(2) + " " + matcher.group(3));
-			System.out.println(matcher.group(5));
-		}
-	}
-	
 	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST }, value = { "/mysql/status" })
-	public Object doAnalysisMySQLStatus(MultipartFile multipartFile) throws IOException {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public Message<? extends Object> doAnalysisMySQLStatus(MultipartFile multipartFile) {
 		if (multipartFile == null) {
-			result.put("status", false);
-			result.put("message", "文件不能为空");
-			return result;
+			return MessageUtils.warn("analysis.mysql.empty");
 		}
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("title", "MySQL STATUS统计图表");
 		result.put("subtitle", "数据通过analyz.sh分析生成");
 		List<String> categories = new ArrayList<>();
@@ -146,13 +133,10 @@ public class AnalysisController {
 					qpsData.add(NumberUtils.createDouble(matcher.group(5)));
 				}
 			}
-			result.put("status", true);
-			return result;
-		} catch (IOException e) {
+			return MessageUtils.valueOf(MessageType.SUCCESS, result);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			result.put("status", false);
-			result.put("message", e.getMessage());
-			return result;
+			return MessageUtils.valueOf(MessageType.ERROR, e.getMessage());
 		} finally {
 			IOUtils.closeQuietly(scanner);
 		}

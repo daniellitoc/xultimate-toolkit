@@ -33,9 +33,7 @@
 			<th colspan="2">TProfiler topmethod统计图表</th>
 		</tr>
 		<tr>
-			<form id="myForm"
-				action="/xultimate-test/analysis/tprofiler/topmethod" method="post"
-				enctype="multipart/form-data">
+			<form id="myForm" action="/xultimate-test/analysis/tprofiler/topmethod" method="post" enctype="multipart/form-data">
 			<td><input type="file" name="multipartFile"></td>
 			<td><input type="submit" value="Submit" /></td>
 			</form>
@@ -50,67 +48,53 @@
 			</td>
 		</tr>
 	</table>
-	<div id="container"
-		style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 </body>
-<script type="text/javascript"
-	src="/xultimate-test/resources/js/jquery-2.0.3.js"></script>
-<script type="text/javascript"
-	src="/xultimate-test/resources/js/jquery.form.js"></script>
-<script type="text/javascript"
-	src="/xultimate-test/resources/highcharts/highcharts.js"></script>
-<script type="text/javascript"
-	src="/xultimate-test/resources/highcharts/exporting.js"></script>
+<script type="text/javascript" src="/xultimate-test/resources/js/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="/xultimate-test/resources/js/jquery.form.js"></script>
+<script type="text/javascript" src="/xultimate-test/resources/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="/xultimate-test/resources/highcharts/exporting.js"></script>
 <script type="text/javascript">
 	$(function() {
-		var bar = $('.bar');
-		var percent = $('.percent');
+		var $bar = $('.bar');
+		var $percent = $('.percent');
 
-		$('#myForm')
-				.submit(
-						function() {
+		$('#myForm').submit(function() {
 							// inside event callbacks 'this' is the DOM element so we first 
 							// wrap it in a jQuery object and then invoke ajaxSubmit 
-							$(this)
-									.ajaxSubmit(
-											{
+							$(this).ajaxSubmit({
 												dataType : 'json',
 												beforeSend : function() {
 													var percentVal = '0%';
-													bar.width(percentVal)
-													percent.html(percentVal);
+													$bar.width(percentVal)
+													$percent.html(percentVal);
 												},
-												uploadProgress : function(
-														event, position, total,
-														percentComplete) {
-													var percentVal = percentComplete
-															+ '%';
-													bar.width(percentVal)
-													percent.html(percentVal);
+												uploadProgress : function(event, position, total, percentComplete) {
+													var percentVal = percentComplete + '%';
+													$bar.width(percentVal)
+													$percent.html(percentVal);
 												},
 												success : function(responseJson) {
-													if (responseJson.status == false) {
-														alert(responseJson.message);
+													if (responseJson.type != "SUCCESS") {
+														alert(responseJson.content);
 														return;
 													}
 													var percentVal = '100%';
-													bar.width(percentVal)
-													percent.html(percentVal);
+													$bar.width(percentVal)
+													$percent.html(percentVal);
 
-													$('#container')
-															.highcharts(
-																	{
+													$('#container').highcharts({
 																		chart : {
 																			type : 'bar'
 																		},
 																		title : {
-																			text : responseJson.title
+																			text : responseJson.content.title
 																		},
 																		subtitle : {
-																			text : responseJson.subtitle
+																			text : responseJson.content.subtitle
 																		},
 																		xAxis : {
-																			categories : responseJson.categories,
+																			categories : responseJson.content.categories,
 																			title : {
 																				text : null
 																			}
@@ -118,7 +102,7 @@
 																		yAxis : {
 																			min : 0,
 																			title : {
-																				text : responseJson['yAxis.title'],
+																				text : responseJson.content['yAxis.title'],
 																				align : 'high'
 																			},
 																			labels : {
@@ -126,7 +110,7 @@
 																			}
 																		},
 																		tooltip : {
-																			valueSuffix : responseJson['tooltip.valueSuffix']
+																			valueSuffix : responseJson.content['tooltip.valueSuffix']
 																		},
 																		plotOptions : {
 																			bar : {
@@ -149,7 +133,7 @@
 																		credits : {
 																			enabled : false
 																		},
-																		series : responseJson.series
+																		series : responseJson.content.series
 																	});
 												}
 											});
