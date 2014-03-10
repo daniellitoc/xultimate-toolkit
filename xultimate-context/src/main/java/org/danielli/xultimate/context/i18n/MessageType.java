@@ -9,11 +9,11 @@ package org.danielli.xultimate.context.i18n;
 public enum MessageType {
 	
 	/** 错误类型 */
-	error, 
+	ERROR, 
 	
 	/** 警告类型 */
-	warn, 
+	WARN, 
 	
 	/** 成功类型 */
-	success;
+	SUCCESS;
 }

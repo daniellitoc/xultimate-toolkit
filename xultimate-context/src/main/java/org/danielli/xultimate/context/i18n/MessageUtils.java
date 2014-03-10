@@ -15,9 +15,20 @@ public class MessageUtils {
 	 * @param args 消息参数。
 	 * @return 消息实例。
 	 */
-	public static Message valueOf(MessageType messageType, String code, Object... args) {
+	public static Message<String> valueOf(MessageType messageType, String code, Object... args) {
 		String content = ApplicationContextUtils.getMessage(BeanFactoryContext.currentApplicationContext(), Locale.getDefault(), code, args);
-		return new Message(messageType, content);
+		return new Message<String>(messageType, content);
+	}
+	
+	/**
+	 * 返回指定消息类型的消息实例。
+	 * 
+	 * @param messageType 消息类型。
+	 * @param content 消息体。
+	 * @return 消息实例。
+	 */
+	public static <T> Message<T> valueOf(MessageType messageType, T content) {
+		return new Message<T>(messageType, content);
 	}
 	
 	/**
@@ -27,8 +38,8 @@ public class MessageUtils {
 	 * @param args 消息参数。
 	 * @return 消息实例。
 	 */
-	public static Message success(String code, Object... args) {
-		return valueOf(MessageType.success, code, args);
+	public static Message<String> success(String code, Object... args) {
+		return valueOf(MessageType.SUCCESS, code, args);
 	}
 	
 	/**
@@ -38,8 +49,8 @@ public class MessageUtils {
 	 * @param args 消息参数。
 	 * @return 消息实例。
 	 */
-	public static Message error(String code, Object... args) {
-		return valueOf(MessageType.error, code, args);
+	public static Message<String> error(String code, Object... args) {
+		return valueOf(MessageType.ERROR, code, args);
 	}
 	
 	/**
@@ -49,7 +60,7 @@ public class MessageUtils {
 	 * @param args 消息参数。
 	 * @return 消息实例。
 	 */
-	public static Message warn(String code, Object... args) {
-		return valueOf(MessageType.warn, code, args);
+	public static Message<String> warn(String code, Object... args) {
+		return valueOf(MessageType.WARN, code, args);
 	}
 }

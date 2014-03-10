@@ -6,15 +6,15 @@ package org.danielli.xultimate.context.i18n;
  * @author Daniel Li
  * @since 18 Jun 2013
  */
-public class Message {
+public class Message<T> {
 	
 	/** 消息类型 */
 	protected MessageType type;
 	
 	/** 消息内容 */
-	protected String content;
+	protected T content;
 	
-	public Message(MessageType type, String content) {
+	public Message(MessageType type, T content) {
 		this.type = type;
 		this.content = content;
 	}
@@ -33,7 +33,7 @@ public class Message {
 	 * 
 	 * @return 消息内容。
 	 */
-	public String getContent() {
+	public T getContent() {
 		return content;
 	}
 }
