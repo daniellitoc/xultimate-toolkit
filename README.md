@@ -148,3 +148,11 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 收集的类，包括线程部分中volatile的具体效果，以及CountDownLatch、Semaphore、CyclicBarrier等的使用Demo。
 * 收集的类，包括NIO部分的使用。
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例。
+
+
+### 打算(序列化) ###
+
+* 用ProtobufOutput提供的static方法替换我之前封装的SerializerUtils。
+* 输出时配合使用LinkedBuffer和ProtobufOutput和writeTo(LinkedBuffer buffer...)替代writeDelimitedTo(DataOutput out...)类的方法。
+* 使用mergeDelimitedFrom(InputStream in, T message, Schema<T> schema, LinkedBuffer buffer)类方法。
+* 序列化大小平均值。
