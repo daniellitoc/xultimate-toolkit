@@ -26,6 +26,7 @@
 		
 		<org.aspectj.aspectjweaver.version>1.7.3</org.aspectj.aspectjweaver.version>
 		<org.im4java.version>1.4.0</org.im4java.version>
+		<io.netty.version>5.0.0.Alpha1</io.netty.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -88,6 +89,21 @@
 			<groupId>org.im4java</groupId>
 			<artifactId>im4java</artifactId>
 			<version>${org.im4java.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-transport</artifactId>
+		    <version>${io.netty.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-codec</artifactId>
+		    <version>${io.netty.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-handler</artifactId>
+		    <version>${io.netty.version}</version>
 		</dependency>
 		
 		<dependency>
