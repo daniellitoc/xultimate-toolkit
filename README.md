@@ -40,6 +40,10 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括一些Spring中部分功能的使用，如自定义属性编辑器、事件。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
+* 提供BootstrapFactoryBean、ServerBootstrapFactoryBean，通过Spring管理Netty中Bootstrap、ServerBootstrap对象的生命周期。使用事例见xultimate-crawler。
+* 提供SocketChannelInitializerFactoryBean，通过Spring管理Netty中ChannelInitializer\<SocketChannel\>对象的生命周期。使用事例见xultimate-crawler。
+* 提供KryoCodec、ObjectCodec，通过Kryo、Java默认的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
+* 提供ProtobufCodec、ProtostuffCodec，通过Protobuf、Protostuff的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
 
 
 ## xultimate-web ##
@@ -68,6 +72,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供RoutingDataSource和RoutingDataSourceUtils。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-mybatis。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
+* 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。
 
 
 ## xultimate-context-support ##
