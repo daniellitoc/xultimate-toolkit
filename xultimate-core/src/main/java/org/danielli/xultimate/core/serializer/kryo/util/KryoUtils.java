@@ -72,7 +72,8 @@ public class KryoUtils {
 	                return super.getDefaultSerializer(type);
 				};
 			};
-			kryo.setRegistrationRequired(false);
+			kryo.setRegistrationRequired(false);	// 是否需要预先知道对象所属的类。
+			kryo.setReferences(true);	// 开启这个选项，表示相同的对象将被序列化为同一个byte[]。如果要支持循环引用，则必须开启。
 			
 			kryo.register(ArrayList.class);
 		    kryo.register(LinkedList.class);
