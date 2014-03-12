@@ -11,6 +11,7 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
+import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
 import org.danielli.xultimate.core.serializer.protostuff.RpcProtostuffSerializer;
 
 /**
@@ -55,15 +56,17 @@ public class ProtostuffCodec extends ChannelHandlerAdapter {
     }
     
     protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out)  throws Exception {
+    	// TODO 此处可改进。不一定要4个字节。见Protostuff源码。
     	byte[] data = rpcSerializer.serialize(msg);
-    	out.add(ctx.alloc().buffer(4).writeInt(data.length));
+    	out.add(ctx.alloc().buffer(SerializerUtils.INT_BYTE_SIZE).writeInt(data.length));
     	out.add(Unpooled.wrappedBuffer(data));
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+    	// TODO 此处可改进。不一定要4个字节。见Protostuff源码。
     	for (int i = msg.readerIndex(), length = 0; i < msg.readableBytes(); i += length) {
     		length = msg.getInt(i);
-        	i += 4;
+        	i += SerializerUtils.INT_BYTE_SIZE;
         	byte[] data = new byte[length];
         	msg.getBytes(i, data, 0, length);
             out.add(rpcSerializer.deserialize(data, Object.class));
