@@ -84,6 +84,69 @@
 	<logger name="org.danielli.xultimate.orm.mybatis.area.dao" level="DEBUG" />
 	<logger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" />
 	
+	<appender name="SIFT_CRAWLER" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>logback.host</key>
+			<defaultValue>0.0.0.0</defaultValue>
+		</discriminator>
+		
+		<sift>
+			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-crawler.log</file>
+				<!-- Support multiple-JVM writing to the same log file -->
+				<prudent>true</prudent> 
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<!-- daily rollover -->
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-crawler.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+						<maxFileSize>50MB</maxFileSize>
+					</timeBasedFileNamingAndTriggeringPolicy>
+					<!-- keep 14 days' worth of history -->
+					<maxHistory>14</maxHistory>
+				</rollingPolicy>
+
+				<encoder>
+					<pattern>%date [%contextName] %level [%thread] %logger [%file:%line] - %msg%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+	<appender name="SIFT_LINKBASE" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>logback.host</key>
+			<defaultValue>0.0.0.0</defaultValue>
+		</discriminator>
+		
+		<sift>
+			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-linkbase.log</file>
+				<!-- Support multiple-JVM writing to the same log file -->
+				<prudent>true</prudent> 
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<!-- daily rollover -->
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-linkbase.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+						<maxFileSize>50MB</maxFileSize>
+					</timeBasedFileNamingAndTriggeringPolicy>
+					<!-- keep 14 days' worth of history -->
+					<maxHistory>14</maxHistory>
+				</rollingPolicy>
+
+				<encoder>
+					<pattern>%date [%contextName] %level [%thread] %logger [%file:%line] - %msg%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+	
+	<logger name="linkbase" level="INFO">
+		<appender-ref ref="SIFT_LINKBASE" />
+	</logger>
+
+	<logger name="org.danielli.xultimate.crawler" level="INFO">
+		<appender-ref ref="SIFT_CRAWLER" />
+	</logger>
+	
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<!-- 

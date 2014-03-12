@@ -30,14 +30,15 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 		} finally {
 			output.flush();
 		}
-		return output.getBuffer();
+		return output.toBytes();
 	}
 
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
-		Output output = new Output(outputStream, DEFAULT_BUFFER_SIZE);
+		Output output = new Output(DEFAULT_BUFFER_SIZE);
 		try {
 			KryoUtils.getKryo().writeObject(output, source);
+			outputStream.write(output.toBytes());
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
 		} finally {
@@ -57,9 +58,15 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 
 	@Override
 	public <T> T deserialize(InputStream inputStream, Class<T> clazz) throws DeserializerException {
+		if (!(inputStream instanceof Input)) {
+			throw new SerializerException("Parameter 'inputStream' must be com.esotericsoftware.kryo.io.Input type");
+		}
+		return deserialize((Input) inputStream, clazz);
+	}
+	
+	public <T> T deserialize(Input input, Class<T> clazz) throws DeserializerException {
 		try {
-			Input input = new Input(inputStream);
-	        return KryoUtils.getKryo().readObject(input, clazz);
+			return KryoUtils.getKryo().readObject(input, clazz);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}

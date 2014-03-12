@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import org.apache.commons.io.LineIterator;
 
 /**
  * General file manipulation utilities.
@@ -149,5 +153,54 @@ public class FileUtils {
      */
     public static boolean deleteQuietly(File file) {
     	return org.apache.commons.io.FileUtils.deleteQuietly(file);
+    }
+    
+    /**
+     * Reads the contents of a file line by line to a List of Strings.
+     * The file is always closed.
+     *
+     * @param file  the file to read, must not be {@code null}
+     * @param encoding  the encoding to use, {@code null} means platform default
+     * @return the list of Strings representing each line in the file, never {@code null}
+     * @throws IOException in case of an I/O error
+     * @since 2.3
+     */
+    public static List<String> readLines(File file, Charset encoding) throws IOException {
+    	return org.apache.commons.io.FileUtils.readLines(file, encoding);
+    }
+    
+    /**
+     * Returns an Iterator for the lines in a <code>File</code>.
+     * <p>
+     * This method opens an <code>InputStream</code> for the file.
+     * When you have finished with the iterator you should close the stream
+     * to free internal resources. This can be done by calling the
+     * {@link LineIterator#close()} or
+     * {@link LineIterator#closeQuietly(LineIterator)} method.
+     * <p>
+     * The recommended usage pattern is:
+     * <pre>
+     * LineIterator it = FileUtils.lineIterator(file, "UTF-8");
+     * try {
+     *   while (it.hasNext()) {
+     *     String line = it.nextLine();
+     *     /// do something with line
+     *   }
+     * } finally {
+     *   LineIterator.closeQuietly(iterator);
+     * }
+     * </pre>
+     * <p>
+     * If an exception occurs during the creation of the iterator, the
+     * underlying stream is closed.
+     *
+     * @param file  the file to open for input, must not be {@code null}
+     * @param encoding  the encoding to use, {@code null} means platform default
+     * @return an Iterator of the lines in the file, never {@code null}
+     * @throws IOException in case of an I/O error (file closed)
+     * @since 1.2
+     */
+    public static LineIterator lineIterator(File file, String encoding) throws IOException {
+    	return org.apache.commons.io.FileUtils.lineIterator(file, encoding);
     }
 }

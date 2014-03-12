@@ -25,14 +25,15 @@ public class RpcKryoSerializer extends RpcSerializer {
 		} finally {
 			output.flush();
 		}
-		return output.getBuffer();
+		return output.toBytes();
 	}
 
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
-		Output output = new Output(outputStream, defaultBufferSize);
+		Output output = new Output(defaultBufferSize);
 		try {
 			KryoUtils.getKryo().writeClassAndObject(output, source);
+			outputStream.write(output.toBytes());
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
 		} finally {
@@ -51,12 +52,18 @@ public class RpcKryoSerializer extends RpcSerializer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T deserialize(InputStream inputStream, Class<T> clazz) throws DeserializerException {
+		if (!(inputStream instanceof Input)) {
+			throw new SerializerException("Parameter 'inputStream' must be com.esotericsoftware.kryo.io.Input type");
+		}
+		return deserialize((Input) inputStream, clazz);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T deserialize(Input input, Class<T> clazz) throws DeserializerException {
 		try {
-			Input input = new Input(inputStream);
-	        return (T) KryoUtils.getKryo().readClassAndObject(input);
+	        return  (T) KryoUtils.getKryo().readClassAndObject(input);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
