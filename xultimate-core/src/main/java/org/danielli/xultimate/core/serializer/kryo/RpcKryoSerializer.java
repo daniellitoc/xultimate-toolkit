@@ -13,7 +13,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class RpcKryoSerializer extends RpcSerializer {
 
-	private int defaultBufferSize = 100 * 1024;
+	private int defaultBufferSize = 10 * 1024;
 	
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {

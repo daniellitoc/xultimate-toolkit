@@ -10,9 +10,11 @@ import com.dyuproject.protostuff.LinkedBuffer;
  */
 public class LinkedBufferUtils {
 	
+	public static final int DEFAULT_BUFFER_SIZE = 10 * 1024;
+	
 	private static ThreadLocal<LinkedBuffer> linkedBuffer = new ThreadLocal<LinkedBuffer>() {
         protected LinkedBuffer initialValue() {
-            return LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
+            return LinkedBuffer.allocate(DEFAULT_BUFFER_SIZE);
         };
     };
 
@@ -21,8 +23,7 @@ public class LinkedBufferUtils {
 	 * @return LinkedBuffer实例。
 	 */
     public static LinkedBuffer getLinkedBuffer() {
-        LinkedBuffer buffer = linkedBuffer.get();
-        buffer.clear();
-        return buffer;
+        return linkedBuffer.get().clear();
+        
     }
 }

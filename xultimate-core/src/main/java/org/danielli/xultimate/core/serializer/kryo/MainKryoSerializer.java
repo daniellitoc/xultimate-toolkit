@@ -13,7 +13,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 	
-	private static final int DEFAULT_BUFFER_SIZE = 100 * 1024;
+	private static final int DEFAULT_BUFFER_SIZE = 10 * 1024;
 
 	@Override
 	public boolean support(Class<?> classType) {
