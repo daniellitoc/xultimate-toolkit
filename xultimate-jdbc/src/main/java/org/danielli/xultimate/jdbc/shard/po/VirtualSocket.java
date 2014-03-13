@@ -3,8 +3,8 @@ package org.danielli.xultimate.jdbc.shard.po;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.danielli.xultimate.core.json.JsonUtils;
 import org.danielli.xultimate.core.json.ValueType;
-import org.danielli.xultimate.core.json.fastjson.FastJSONTemplate;
 
 /**
  * 虚拟Socket。
@@ -43,11 +43,11 @@ public class VirtualSocket implements Serializable {
 	}
 	
 	public Integer[] getHashValues() {
-		return FastJSONTemplate.parseObject(hashValuesJson, new ValueType<Integer[]>() {});
+		return JsonUtils.readValue(hashValuesJson, new ValueType<Integer[]>() {});
 	}
 	
 	public void setHashValues(Integer[] hashValues) {
-		this.hashValuesJson = FastJSONTemplate.toJSONString(hashValues);
+		this.hashValuesJson = JsonUtils.writeValueAsString(hashValues);
 	}
 
 	public Long getVirtualTableIntervalId() {
