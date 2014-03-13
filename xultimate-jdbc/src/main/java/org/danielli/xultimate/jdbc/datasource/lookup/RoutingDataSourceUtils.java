@@ -11,27 +11,27 @@ public class RoutingDataSourceUtils {
 	private static final ThreadLocal<String> holder = new ThreadLocal<String>();
 	
 	/**
-	 * 设置数据源Key。
+	 * 设置路由数据源Key。
 	 * 
-	 * @param dataSourceKey 数据源Key。
+	 * @param dataSourceKey 路由数据源Key。
 	 */
-	public static void setDataSourceKey(String dataSourceKey) {  
-        holder.set(dataSourceKey);  
+	public static void setRoutingDataSourceKey(String routingDataSourceKey) {  
+        holder.set(routingDataSourceKey);  
     }  
     
 	/**
-	 * 获取数据源Key。
+	 * 获取路由数据源Key。
 	 * 
-	 * @return 数据源Key。
+	 * @return 路由数据源Key。
 	 */
-    public static String getDataSourceKey() {  
+    public static String getRoutingDataSourceKey() {  
         return holder.get();  
     }  
     
     /**
-     * 清理数据源Key。
+     * 清理路由数据源Key。
      */
-    public static void removeDataSourceKey () {
+    public static void removeRoutingDataSourceKey () {
     	holder.remove();
     }
 }
