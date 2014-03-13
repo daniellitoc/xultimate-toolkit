@@ -44,7 +44,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供SocketChannelInitializerFactoryBean，通过Spring管理Netty中ChannelInitializer\<SocketChannel\>对象的生命周期。使用事例见xultimate-crawler。
 * 提供KryoCodec、ObjectCodec，通过Kryo、Java默认的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
 * 提供ProtobufCodec、ProtostuffCodec，通过Protobuf、Protostuff的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
-
+* 提供ShardInfoGenerator，用于分表接口，具体实现见xultimate-mybatis，辅助模型见xultimate-jdbc。
 
 ## xultimate-web ##
 
@@ -73,6 +73,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
 * 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。
+* 添加jdbc/shard/po包，分表规则目前先采用数据库存放，pojo主要为细粒度的数据模型，具体通过shard实现分表在xultimate-mybatis工程。注: xultimate-hibernate工程没有采用此方式。
 
 
 ## xultimate-context-support ##
