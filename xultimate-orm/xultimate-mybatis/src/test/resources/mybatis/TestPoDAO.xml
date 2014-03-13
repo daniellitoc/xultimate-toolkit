@@ -30,7 +30,7 @@
 			#{createTime}, 
 			#{updateTime}, 
 			#{isLock, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler}, 
-			#{isLock},
+			#{hasLogin},
 			#{stateSet}, 
 			inet_aton(#{loginIp})
 		)

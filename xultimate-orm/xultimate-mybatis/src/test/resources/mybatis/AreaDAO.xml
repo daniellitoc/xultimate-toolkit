@@ -94,14 +94,14 @@
 	</select>
 	
 	<resultMap type="Area" id="areaMapping">
-		<id column="id" property="id" jdbcType="BIGINT"/>
-		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-		<result column="po_version" property="poVersion" jdbcType="BIGINT"/>
+		<id column="id" property="id"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="po_version" property="poVersion"/>
 		<result column="name" property="name" jdbcType="VARCHAR"/>
-		<result column="display_name" property="displayName" jdbcType="VARCHAR"/>
-		<result column="boost" property="boost" jdbcType="FLOAT"/>
-		<result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+		<result column="display_name" property="displayName"/>
+		<result column="boost" property="boost"/>
+		<result column="parent_id" property="parentId"/>
 	</resultMap>
 	
 	<select id="findByItems" resultType="Area">
