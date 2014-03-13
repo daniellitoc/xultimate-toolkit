@@ -156,3 +156,4 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 输出时配合使用LinkedBuffer和ProtobufOutput和writeTo(LinkedBuffer buffer...)替代writeDelimitedTo(DataOutput out...)类的方法。
 * 使用mergeDelimitedFrom(InputStream in, T message, Schema<T> schema, LinkedBuffer buffer)类方法。
 * 序列化大小平均值。
+* 看一下common-lang里的NumberRange。可不可以使用NumberRange代替PO的Start和End，使用MyBatis类型处理器自动完成转换。
