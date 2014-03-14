@@ -2,7 +2,7 @@ package org.danielli.xultimate.context.kvStore.memcached.xmemcached;
 
 import java.util.concurrent.TimeoutException;
 
-import net.rubyeye.xmemcached.XMemcachedClient;
+import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 
 /**
@@ -41,14 +41,14 @@ public class MemcachedClientMutex {
 	/**
 	 * 设置锁。
 	 * 
-	 * @param memcachedClient XMemcached客户端。
+	 * @param memcachedClient Memcached客户端。
 	 * @param lockKey 锁名称。
 	 * @return 如果返回true，则表示成功获取锁，否则表示锁正在被占用。
 	 * @throws TimeoutException 
 	 * @throws InterruptedException
 	 * @throws MemcachedException
 	 */
-	public boolean tryLock(XMemcachedClient memcachedClient, String lockKey)
+	public boolean tryLock(MemcachedClient memcachedClient, String lockKey)
 			throws TimeoutException, InterruptedException, MemcachedException {
 		return memcachedClient.add(lockKey, expSeconds, true);
 	}
@@ -56,13 +56,13 @@ public class MemcachedClientMutex {
 	/**
 	 * 解锁。
 	 * 
-	 * @param memcachedClient XMemcached客户端。
+	 * @param memcachedClient Memcached客户端。
 	 * @param lockKey 解锁名称。
 	 * @throws TimeoutException
 	 * @throws InterruptedException
 	 * @throws MemcachedException
 	 */
-	public void unlock(XMemcachedClient memcachedClient, String lockKey)
+	public void unlock(MemcachedClient memcachedClient, String lockKey)
 			throws TimeoutException, InterruptedException, MemcachedException {
 		memcachedClient.delete(lockKey);
 	}
