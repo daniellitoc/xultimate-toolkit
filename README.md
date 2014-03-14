@@ -19,6 +19,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 对tamper、cglib、reflectasm的使用。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
+* 添加MapBuilder、ListBuilder、SetBuilder。
 
 
 ## xultimate-context ##
