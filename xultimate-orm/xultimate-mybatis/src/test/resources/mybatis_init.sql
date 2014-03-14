@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `ULTIMATE_AREA` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `po_version` bigint(20) DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  `update_time` timestamp NULL DEFAULT NULL,
   `boost` float DEFAULT NULL,
   `display_name` longtext NOT NULL,
   `name` varchar(255) NOT NULL,
