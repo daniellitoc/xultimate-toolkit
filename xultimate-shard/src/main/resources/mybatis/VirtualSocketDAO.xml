@@ -2,12 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
 <mapper namespace="org.danielli.xultimate.shard.mybatis.dao.VirtualSocketDAO">
 	
-	<sql id="commonSQL"> SELECT VS.id, VS.address, VS.hash_values_json, VS.create_time FROM XULTIMATE_VIRTUAL_SOCKET VS </sql>
+	<sql id="commonSQL"> SELECT VS.id, VS.address, VS.create_time FROM XULTIMATE_VIRTUAL_SOCKET VS </sql>
 	
 	<resultMap type="org.danielli.xultimate.shard.po.VirtualSocket" id="virtualSocketResultMap">
 		<id column="id" property="id"/>
 		<result column="address" property="address"/>
-		<result column="hash_values_json" property="hashValuesJson"/>
 		<result column="create_time" property="createTime" />
 	</resultMap>
 </mapper> 

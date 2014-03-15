@@ -15,7 +15,7 @@ import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.danielli.xultimate.shard.mybatis.biz.PartitionedTableIntervalBiz;
 import org.danielli.xultimate.shard.mybatis.biz.VirtualTableIntervalBiz;
 import org.danielli.xultimate.shard.po.PartitionedTableInterval;
-import org.danielli.xultimate.shard.po.VirtualSocket;
+import org.danielli.xultimate.shard.po.VirtualSocketBindRecord;
 import org.danielli.xultimate.shard.po.VirtualTableInterval;
 import org.danielli.xultimate.util.ArrayUtils;
 import org.danielli.xultimate.util.collections.CollectionUtils;
@@ -51,9 +51,9 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(Arrays.asList(virtualTableInterval.getId()));
 		
 		for (Map<String, Object> partitionedTableIntervalInfo : partitionedTableIntervalInfoList) {
-			VirtualSocket virtualSocket = new VirtualSocket();
-			virtualSocket.setHashValuesJson((String) partitionedTableIntervalInfo.get("virtualSocketHashValuesJson"));
-			if (!ArrayUtils.contains(virtualSocket.getHashValues(), (int) (intervalValue % virtualTableInterval.getHashValuesCount()))) {
+			VirtualSocketBindRecord virtualSocketBindRecord = new VirtualSocketBindRecord();
+			virtualSocketBindRecord.setHashValuesJson((String) partitionedTableIntervalInfo.get("virtualSocketBindRecordHashValuesJson"));
+			if (!ArrayUtils.contains(virtualSocketBindRecord.getHashValues(), (int) (intervalValue % virtualTableInterval.getHashValuesCount()))) {
 				continue;
 			}
 			PartitionedTableInterval partitionedTableInterval = new PartitionedTableInterval();
@@ -79,7 +79,9 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		}
 		List<Long> virtualTableIntervalIdList = new ArrayList<>();
 		for (VirtualTableInterval virtualTableInterval : virtualTableIntervalList) {
-			virtualTableIntervalIdList.add(virtualTableInterval.getId());
+			if (virtualTableInterval.getAvailable()) {
+				virtualTableIntervalIdList.add(virtualTableInterval.getId());
+			}
 		}
 		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(virtualTableIntervalIdList);
 		
