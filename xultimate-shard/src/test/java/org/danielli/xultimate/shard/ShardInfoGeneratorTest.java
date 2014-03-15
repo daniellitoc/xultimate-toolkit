@@ -33,7 +33,7 @@ public class ShardInfoGeneratorTest {
 		PerformanceMonitor.start("ShardInfoGeneratorTest");
 		while (true) {
 			Long id = dataFieldMaxValueIncrementer.nextLongValue();
-			if (id.compareTo(300L) >= 0) {
+			if (id.compareTo(150L) >= 0) {
 				break;
 			}
 			ShardInfo shardInfo = shardInfoGenerator.createShardInfo("test", "test_table", id);

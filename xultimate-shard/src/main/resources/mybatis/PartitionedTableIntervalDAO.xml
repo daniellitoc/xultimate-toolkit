@@ -12,7 +12,7 @@
 		VSBR.hash_values_json virtualSocketBindRecordHashValuesJson, VS.address virtualSocketAddress
 		FROM XULTIMATE_PARTITIONED_TABLE_INTERVAL PTI
 		INNER JOIN XULTIMATE_PARTITIONED_TABLE PT ON (PT.id = PTI.partitioned_table_id)
-		INNER JOIN XULTIMATE_VIRTUAL_SOCKET_BIND_RECORD VSBR ON (VSBR.id = PT.virtual_socket_bind_record_id)
+		INNER JOIN XULTIMATE_VIRTUAL_SOCKET_BIND_RECORD VSBR FORCE INDEX (ix_virtualTableIntervalId_virtualSocketId ) ON (VSBR.id = PT.virtual_socket_bind_record_id)
 		INNER JOIN XULTIMATE_VIRTUAL_SOCKET VS ON (VS.id = VSBR.virtual_socket_id)
 		WHERE VSBR.virtual_table_interval_id IN 
 		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
