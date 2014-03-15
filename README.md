@@ -45,7 +45,6 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供SocketChannelInitializerFactoryBean，通过Spring管理Netty中ChannelInitializer\<SocketChannel\>对象的生命周期。使用事例见xultimate-crawler。
 * 提供KryoCodec、ObjectCodec，通过Kryo、Java默认的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
 * 提供ProtobufCodec、ProtostuffCodec，通过Protobuf、Protostuff的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。使用事例见xultimate-crawler。
-* 提供ShardInfoGenerator，用于分表接口，具体实现见xultimate-mybatis，辅助模型见xultimate-jdbc。
 
 ## xultimate-web ##
 
@@ -70,11 +69,10 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供序列主键生成器(基于序列)，通过重写Spring的AbstractSequenceMaxValueIncrementer，添加step功能。即可部署在不同机器/表中同时主键不会重复。包含Oracle和H2的各自实现。
 * 提供主键生成器AbstractKeyMaxValueIncrementer(基于Key/Value)，即可部署在不同机器/Key中同时主键不会重复。包括JedisMaxValueIncrementer和ShardedJedisMaxValueIncrementer实现，见xultimate-context-support。
 * 提供StateSet，使用TINYINT替代MySQL中BIT和SET数据类型，支持"="和"FIND_IN_SET"的需求并且会通过索引进行匹配。见测试类理解，具体使用见xultimate-mybatis。
-* 提供RoutingDataSource和RoutingDataSourceUtils。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-mybatis。
+* 提供RoutingDataSource和RoutingDataSourceUtils。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-mybatis、xultimate-shard。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
-* 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。
-* 添加jdbc/shard/po包，分表规则目前先采用数据库存放，pojo主要为细粒度的数据模型，具体通过shard实现分表在xultimate-mybatis工程。注: xultimate-hibernate工程没有采用此方式。
+* 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。使用见xultimate-shard。
 
 
 ## xultimate-context-support ##
@@ -152,6 +150,19 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例。
 
 
+## xultimate-shard ##
+
+* 主要根据一篇文章进行的重新设计，将概念进行了重新的抽象，结构也进行了修改。用于分库、分表的规则处理。
+* 提供ShardInfoGenerator，属于公众接口，按此方式应用可以分布式部署。
+* 添加po包，包含了最小粒度的数据模型。分表规则目前先采用数据库存放。
+* MyBatisShardInfoGenerator为其ShardInfoGenerator的默认实现方式。
+* 优势: 数据划分规则集中处理。同时具备无需数据迁移且避免存在热点表的问题。
+* 优势: 使用数据库存储，BIZ层使用Memcached做缓存，之所以没有默认采用Redis是因为数据库的可视化客户端能让我们更清晰的看到关联关系。
+* 优势: 作为服务端，可分布式部署，客户端只需要调用即可。即客户端内部不需要包含分表分库逻辑。
+* 优势: 如果需要读写分离的支持，可扩展ShardInfo，或添加ShardInfoHandler服务。
+* 注: xultimate-hibernate工程采用的是拦截器的分表方式。
+
+
 ### 打算(序列化) ###
 
 * 用ProtobufOutput提供的static方法替换我之前封装的SerializerUtils。
@@ -159,3 +170,4 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 使用mergeDelimitedFrom(InputStream in, T message, Schema<T> schema, LinkedBuffer buffer)类方法。
 * 序列化大小平均值。
 * 看一下common-lang里的NumberRange。可不可以使用NumberRange代替PO的Start和End，使用MyBatis类型处理器自动完成转换。
+* 将MemcahcedCallback进一步细分，处理成专用于集合或实体的模式。

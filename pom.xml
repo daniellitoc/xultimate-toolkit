@@ -20,7 +20,8 @@
 		<module>xultimate-jdbc</module>
 	    <module>xultimate-webmvc</module>
 	    <module>xultimate-orm</module>
-	</modules>
+    <module>xultimate-shard</module>
+  </modules>
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
