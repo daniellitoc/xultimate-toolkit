@@ -32,6 +32,60 @@ public class BooleanUtils {
 		return org.apache.commons.lang3.BooleanUtils.isTrue(bool);
 	}
 	
+    /**
+     * <p>Checks if a {@code Boolean} value is <i>not</i> {@code true},
+     * handling {@code null} by returning {@code true}.</p>
+     *
+     * <pre>
+     *   BooleanUtils.isNotTrue(Boolean.TRUE)  = false
+     *   BooleanUtils.isNotTrue(Boolean.FALSE) = true
+     *   BooleanUtils.isNotTrue(null)          = true
+     * </pre>
+     *
+     * @param bool  the boolean to check, null returns {@code true}
+     * @return {@code true} if the input is null or false
+     * @since 2.3
+     */
+    public static boolean isNotTrue(Boolean bool) {
+        return org.apache.commons.lang3.BooleanUtils.isNotTrue(bool);
+    }
+
+    /**
+     * <p>Checks if a {@code Boolean} value is {@code false},
+     * handling {@code null} by returning {@code false}.</p>
+     *
+     * <pre>
+     *   BooleanUtils.isFalse(Boolean.TRUE)  = false
+     *   BooleanUtils.isFalse(Boolean.FALSE) = true
+     *   BooleanUtils.isFalse(null)          = false
+     * </pre>
+     *
+     * @param bool  the boolean to check, null returns {@code false}
+     * @return {@code true} only if the input is non-null and false
+     * @since 2.1
+     */
+    public static boolean isFalse(Boolean bool) {
+    	 return org.apache.commons.lang3.BooleanUtils.isFalse(bool);
+    }
+
+    /**
+     * <p>Checks if a {@code Boolean} value is <i>not</i> {@code false},
+     * handling {@code null} by returning {@code true}.</p>
+     *
+     * <pre>
+     *   BooleanUtils.isNotFalse(Boolean.TRUE)  = true
+     *   BooleanUtils.isNotFalse(Boolean.FALSE) = false
+     *   BooleanUtils.isNotFalse(null)          = true
+     * </pre>
+     *
+     * @param bool  the boolean to check, null returns {@code true}
+     * @return {@code true} if the input is null or true
+     * @since 2.3
+     */
+    public static boolean isNotFalse(Boolean bool) {
+    	return org.apache.commons.lang3.BooleanUtils.isNotFalse(bool);
+    }
+	
 	/**
      * <p>Converts a String to a Boolean.</p>
      *
