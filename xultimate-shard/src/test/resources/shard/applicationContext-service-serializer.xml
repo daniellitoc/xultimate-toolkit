@@ -68,6 +68,4 @@
 	</util:list>
 	<bean id="protobufSerializer" class="org.danielli.xultimate.core.serializer.support.SerializerFactory" p:serializers-ref="serializers1" />
 	<bean id="protobufDeserializer" class="org.danielli.xultimate.core.serializer.support.DeserializerFactory" p:deserializers-ref="deserializers1" />
-
-	<bean id="fastJsonTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
 </beans>
