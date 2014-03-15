@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="org.danielli.xultimate.shard.mybatis.dao.PartitionedTableIntervalDAO">
+	
+	<sql id="commonSQL"> SELECT PTI.partitioned_table_id, PTI.start_interval, PTI.end_interval, PTI.create_time FROM XULTIMATE_PARTITIONED_TABLE_INTERVAL PTI </sql>
+	<select id="findByPartitionedTableId" resultMap="partitionedTableIntervalResultMap">
+		<include refid="commonSQL"/> WHERE PTI.partitioned_table_id = #{partitionedTableId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+	</select>
+	
+	<select id="findPartitionedTableIntervalInfosByvirtualTableIntervalIdList" resultType="java.util.HashMap">
+		SELECT PTI.start_interval partitionedTableStartInterval, PTI.end_interval partitionedTableEndInterval, PT.shard_id partitionedTableShardId,
+		VS.address virtualSocketAddress, VS.hash_values_json virtualSocketHashValuesJson
+		FROM XULTIMATE_PARTITIONED_TABLE_INTERVAL PTI
+		INNER JOIN XULTIMATE_PARTITIONED_TABLE PT ON (PT.id = PTI.partitioned_table_id)
+		INNER JOIN XULTIMATE_VIRTUAL_SOCKET VS ON (VS.id = PT.virtual_socket_id)
+		INNER JOIN XULTIMATE_VIRTUAL_SOCKET_BIND_RECORD VSBR ON (VSBR.virtual_socket_id = VS.id)
+		WHERE VSBR.virtual_table_interval_id IN 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+	        #{item}
+	  	</foreach>
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.shard.po.PartitionedTableInterval" id="partitionedTableIntervalResultMap">
+		<result column="partitioned_table_id" property="partitionedTableId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="start_interval" property="startInterval"/>
+		<result column="end_interval" property="endInterval"/>
+		<result column="create_time" property="createTime" />
+	</resultMap>
+</mapper> 

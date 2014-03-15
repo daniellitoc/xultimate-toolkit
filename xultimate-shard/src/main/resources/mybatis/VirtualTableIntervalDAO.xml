@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="org.danielli.xultimate.shard.mybatis.dao.VirtualTableIntervalDAO">
+	
+	<update id="updateAvailableById">
+		UPDATE XULTIMATE_VIRTUAL_TABLE_INTERVAL SET update_time=#{param3}, available=#{param2, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler} WHERE id=#{param1}
+	</update>
+	
+	<sql id="commonSQL"> SELECT VTI.id, VTI.virtual_table_id, VTI.start_interval, VTI.end_interval, VTI.available, VTI.hash_values_count, VTI.create_time, VTI.update_time FROM XULTIMATE_VIRTUAL_TABLE_INTERVAL VTI </sql>
+	<select id="findByVirtualTableId" resultMap="virtualTableIntervalResultMap">
+		<include refid="commonSQL"/> WHERE VTI.virtual_table_id = #{virtualTableId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+	</select>
+	
+	<select id="findByVirtualDatabaseNameAndVirtualTableName" resultMap="virtualTableIntervalResultMap">
+		<include refid="commonSQL"/> 
+		INNER JOIN  XULTIMATE_VIRTUAL_TABLE VT ON (VT.id = VTI.virtual_table_id)
+		INNER JOIN XULTIMATE_VIRTUAL_DATABASE VD ON (VD.id = VT.virtual_database_id) 
+		WHERE VT.name = #{param2} AND VD.name = #{param1}
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.shard.po.VirtualTableInterval" id="virtualTableIntervalResultMap">
+		<id column="id" property="id"/>
+		<result column="virtual_table_id" property="virtualTableId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="start_interval" property="startInterval"/>
+		<result column="end_interval" property="endInterval"/>
+		<result column="available" property="available" jdbcType="CHAR" typeHandler="org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler"/>
+		<result column="hash_values_count" property="hashValuesCount"/>
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+</mapper> 

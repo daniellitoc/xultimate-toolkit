@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="org.danielli.xultimate.shard.mybatis.dao.PartitionedTableDAO">
+	
+	<sql id="commonSQL"> SELECT PT.id, PT.virtual_socket_id, PT.shard_id, PT.create_time FROM XULTIMATE_PARTITIONED_TABLE PT </sql>
+	<select id="findByVirtualSocketId" resultMap="partitionedTableResultMap">
+		<include refid="commonSQL"/> WHERE PT.virtual_socket_id = #{virtualSocketId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.shard.po.PartitionedTable" id="partitionedTableResultMap">
+		<id column="id" property="id"/>
+		<result column="virtual_socket_id" property="virtualSocketId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="shard_id" property="shardId"/>
+		<result column="create_time" property="createTime" />
+	</resultMap>
+</mapper> 

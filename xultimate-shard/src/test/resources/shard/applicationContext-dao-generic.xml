@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- MyBatis配置 -->
+	<bean id="sqlSessionFactory" class="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" 
+		p:dataSource-ref="shardDataSource" p:typeAliasesPackage="org.danielli.xultimate.shard.po"
+		p:mapperLocations="classpath:/mybatis/*DAO.xml">
+		<property name="typeHandlers">
+			<array>
+				<bean class="org.danielli.xultimate.orm.mybatis.type.BigDecimalTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.ClobNullParameterTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StringNullParameterTypeHandler" />
+			</array>
+		</property>
+		<property name="configuration">
+			<bean class="org.apache.ibatis.session.Configuration">
+				<!-- 全局映射器启用缓存 -->
+				<property name="cacheEnabled" value="false" />
+				<!-- true表示启动延迟加载，false表示禁用延迟加载 -->
+				<property name="lazyLoadingEnabled" value="false" />
+				<!-- lazyLoadingEnabled=true时，true表示当访问对象中一个懒对象属性时，将完全加载这个对象的所有懒对象属性。false，当延迟加载时，按需加载对象属性。默认为true -->
+				<property name="aggressiveLazyLoading" value="false" />
+				<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+				<property name="multipleResultSetsEnabled" value="true" />
+				<!-- 允许使用列标签代替列名 -->
+				<property name="useColumnLabel" value="true" />
+				<!-- 允许使用自定义的主建键 -->
+				<property name="useGeneratedKeys" value="true" />
+				<!-- 给予被嵌套的resultMap以字段－属性的映射支持 -->
+				<property name="autoMappingBehavior" value="FULL" />
+				<!-- 对于批量更新操作缓存SQL以提高性能 -->
+				<property name="defaultExecutorType" value="BATCH" />
+				<!-- 数据库超过25000秒仍未响应则超时 -->
+				<property name="defaultStatementTimeout" value="25000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" c:sqlSessionFactory-ref="sqlSessionFactory" />
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" 
+		p:processPropertyPlaceHolders="true"  p:sqlSessionTemplateBeanName="sqlSessionTemplate" 
+		p:basePackage="org.danielli.xultimate.shard"
+		p:annotationClass="org.danielli.xultimate.orm.mybatis.MyBatisRepository" />
+</beans>
