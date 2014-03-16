@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.jdbc.type.StateSet;
 import org.danielli.xultimate.jdbc.type.StateSetUtils;
 import org.danielli.xultimate.orm.mybatis.po.TestPo;
-import org.danielli.xultimate.orm.mybatis.po.TestPo.Sex;
+import org.danielli.xultimate.orm.mybatis.po.e.Sex;
 import org.danielli.xultimate.orm.mybatis.type.service.TestPoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.danielli.xultimate.jdbc.type.StateSet;
+import org.danielli.xultimate.orm.mybatis.po.e.Sex;
 import org.danielli.xultimate.util.builder.BuildType;
 import org.danielli.xultimate.util.builder.Buildable;
 import org.danielli.xultimate.util.builder.ToStringBuilderUtils;
@@ -16,10 +17,6 @@ public class TestPo implements Serializable {
 	public static final byte CAN_READ = 1 << 0;
 	public static final byte CAN_WRITE = 1 << 1;
 	public static final byte CAN_EXECUTE = 1 << 2;
-	
-	public enum Sex {
-		FEMALE, MALE
-	}
 	
 	private Long id;		// org.apache.ibatis.type.LongTypeHandler
 	

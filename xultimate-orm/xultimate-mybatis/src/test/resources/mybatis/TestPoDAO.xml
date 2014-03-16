@@ -26,7 +26,7 @@
 			#{money}, 
 			#{message}, 
 			#{introduction}, 
-			#{sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+			#{sex, javaType=org.danielli.xultimate.orm.mybatis.po.e.Sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
 			#{createTime}, 
 			#{updateTime}, 
 			#{isLock, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler}, 
@@ -45,7 +45,7 @@
 		<result column="money" property="money"/>
 		<result column="message" property="message"/>
 		<result column="introduction" property="introduction"/>
-		<result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+		<result column="sex" property="sex" javaType="org.danielli.xultimate.orm.mybatis.po.e.Sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
 		<result column="create_time" property="createTime"/>
 		<result column="update_time" property="updateTime"/>
 		<result column="is_lock" property="isLock" jdbcType="CHAR" typeHandler="org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler"/>
