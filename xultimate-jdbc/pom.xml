@@ -16,7 +16,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-jdbc</url>
 	
 	<properties>
-		<com.alibaba.druid.version>0.2.23</com.alibaba.druid.version>
+		<com.alibaba.druid.version>1.0.4</com.alibaba.druid.version>
 		<com.mchange.c3p0.version>0.9.5-pre3</com.mchange.c3p0.version>
 		<mysql.version>5.1.21</mysql.version>
 	</properties>
