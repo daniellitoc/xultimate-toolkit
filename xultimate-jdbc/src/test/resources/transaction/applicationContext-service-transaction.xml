@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	<context:component-scan base-package="org.danielli.xultimate.transaction" />
+	<bean id="userDataSource" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/user_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="transaction_user"
+		p:password="transaction_user"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="2" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="1" />
+	    <property name="minIdle" value="1" />
+	</bean>
+	
+	<bean id="otherDataSource" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/other_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="transaction_user"
+		p:password="transaction_user"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="2" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="1" />
+	    <property name="minIdle" value="1" />
+	</bean>
+	
+	<jdbc:initialize-database enabled="true" data-source="userDataSource">
+		<jdbc:script separator=";" execution="INIT" location="classpath:/transaction/user_init.sql"/>
+		<!-- 
+		<jdbc:script separator=";" execution="DESTROY" location="classpath:/transaction/user_destroy.sql"/>
+		 -->
+	</jdbc:initialize-database>
+	
+	<jdbc:initialize-database enabled="true" data-source="otherDataSource">
+		<jdbc:script separator=";" execution="INIT" location="classpath:/transaction/other_init.sql"/>
+		<!-- 
+		<jdbc:script separator=";" execution="DESTROY" location="classpath:/transaction/other_destroy.sql"/>
+		 -->
+	</jdbc:initialize-database>
+	
+	<bean id="defaultDataSource" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="primary_key_user"
+		p:password="primary_key_user"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="2" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="1" />
+	    <property name="minIdle" value="1" />
+	</bean>
+	
+	<util:map id="routingDataSourceMap">
+		<entry key="user" value-ref="userDataSource" />
+		<entry key="other" value-ref="otherDataSource" />
+	</util:map>
+	
+	<bean id="defaultTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="defaultDataSource" />
+	<bean id="otherTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="otherDataSource" />
+	<bean id="userTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="userDataSource" />
+	<bean id="chainTransactionManager" class="org.danielli.xultimate.transaction.RoutingDataSourceTransactionManager" c:checkedTransactionManager-ref="defaultTransactionManager">
+		<constructor-arg name="transactionManagers">
+			<map>
+				<entry key="user" value-ref="userTransactionManager" />
+				<entry key="other" value-ref="otherTransactionManager" />
+			</map>
+		</constructor-arg>
+	</bean>
+	<tx:annotation-driven/>
+</beans>

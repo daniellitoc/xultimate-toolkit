@@ -28,7 +28,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 		
 	<bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-		<property name="url" value="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
 	    <property name="username" value="primary_key_user" />
 	    <property name="password" value="primary_key_user" />
 	    <property name="maxActive" value="20" />
@@ -54,7 +54,7 @@
 		p:user="primary_key_user" 
 		p:password="primary_key_user"
 		p:driverClass="com.mysql.jdbc.Driver" 
-		p:jdbcUrl="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8"
+		p:jdbcUrl="jdbc:mysql://127.0.0.1:3306/primary_key_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
 		p:initialPoolSize="10" 
 		p:minPoolSize="10"
 		p:maxPoolSize="20" 
