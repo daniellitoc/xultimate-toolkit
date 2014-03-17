@@ -72,7 +72,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供RoutingDataSource和RoutingDataSourceUtils。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-mybatis、xultimate-shard。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
-* 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。使用见xultimate-shard。
+* 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。
+* 添加RoutingDataSourceTransactionManager, 采用Best Efforts 1PC模式处理多事物。使用懒加载的方式，实现分布式事物。见测试。
 
 
 ## xultimate-context-support ##
@@ -171,3 +172,4 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 序列化大小平均值。
 * 看一下common-lang里的NumberRange。可不可以使用NumberRange代替PO的Start和End，使用MyBatis类型处理器自动完成转换。
 * 将MemcahcedCallback进一步细分，处理成专用于集合或实体的模式。
+* RoutingDataSourceTransactionManager不能和RoutingDataSource配合使用，看看有没有其他方式可以代替RoutingDataSource。
