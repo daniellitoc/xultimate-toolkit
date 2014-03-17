@@ -74,6 +74,7 @@
 	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForOneMethodInterceptor" level="TRACE" />
 	<!-- Spring -->
 	<logger name="org.springframework" level="DEBUG" />
+	<logger name="org.danielli.xultimate.transaction" level="DEBUG" />
 	<!-- Hibernate -->
 	<logger name="org.hibernate" level="DEBUG" />
 	<!-- MyBatis -->
