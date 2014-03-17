@@ -73,11 +73,15 @@
 	    <property name="initialSize" value="1" />
 	    <property name="minIdle" value="1" />
 	</bean>
-	
-	<util:map id="routingDataSourceMap">
-		<entry key="user" value-ref="userDataSource" />
-		<entry key="other" value-ref="otherDataSource" />
-	</util:map>
+	<bean id="routingProxyDataSource" class="org.danielli.xultimate.jdbc.datasource.lookup.RoutingProxyDataSourceFactoryBean">
+		<property name="targetDataSources">
+			<util:map>
+				<entry key="user" value-ref="userDataSource" />
+				<entry key="other" value-ref="otherDataSource" />
+			</util:map>
+		</property>
+	</bean>
+	<bean id="routingJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="routingProxyDataSource" />
 	
 	<bean id="defaultTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="defaultDataSource" />
 	<bean id="otherTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="otherDataSource" />
