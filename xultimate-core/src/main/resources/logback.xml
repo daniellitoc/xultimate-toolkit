@@ -86,6 +86,11 @@
 	<logger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" />
 	<logger name="org.danielli.xultimate.shard.mybatis.dao" level="DEBUG" />
 	
+	<!-- Solr日志配置 -->
+	<logger name="org.apache.zookeeper" level="WARN" />
+	<logger name="org.apache.hadoop" level="WARN" />
+	<logger name="org.apache.solr.update.LoggingInfoStream" level="OFF" />
+
 	<appender name="SIFT_CRAWLER" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<key>logback.host</key>
