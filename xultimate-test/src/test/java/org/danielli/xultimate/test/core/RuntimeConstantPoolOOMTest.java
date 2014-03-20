@@ -1,6 +1,6 @@
-package org.danielli.xultimate.test.jvm.chapter2;
+package org.danielli.xultimate.test.core;
 
-public class RuntimeConstantPoolOOM2 {
+public class RuntimeConstantPoolOOMTest {
 
 	public static void main(String[] args) {
 		// "I'm"和"Daniel Li"在之前都没出现过，现在都在常量池中指向了对象的引用。
