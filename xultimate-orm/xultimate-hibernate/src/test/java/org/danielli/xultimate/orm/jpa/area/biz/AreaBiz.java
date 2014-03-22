@@ -5,4 +5,5 @@ import org.danielli.xultimate.orm.jpa.area.domain.Area;
 
 public interface AreaBiz extends GenericBiz<Area, Long> {
 
+	void execCustomMethod(Area area);
 }

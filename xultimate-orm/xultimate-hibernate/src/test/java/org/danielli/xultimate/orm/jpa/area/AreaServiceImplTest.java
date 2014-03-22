@@ -92,5 +92,7 @@ public class AreaServiceImplTest {
 			areaService.delete(a);
 			logger.info("\tDelete Area : {}", a.getId());
 		}
+		
+		areaService.execCustomMethod(null);
 	}
 }

@@ -79,7 +79,7 @@
 		</property>
 	</bean>
 	
-	<bean id="sessionFactory" class="org.danielli.xultimate.orm.jpa.config.EntityManagerFactoryUtils" factory-method="getSessionFactory">
+	<bean id="sessionFactory" class="org.danielli.xultimate.orm.jpa.config.SessionFactoryUtils" factory-method="getSessionFactory">
 		<constructor-arg index="0" ref="entityManagerFactory" />
 	</bean>
 	

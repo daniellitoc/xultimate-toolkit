@@ -1,0 +1,63 @@
+一.RepositoryBeanDefinitionParser，<jpa:repositories />元素的解析器。
+	BeanDefinition parse(Element element, ParserContext parser)
+		创建XmlRepositoryConfigurationSource类型的实例。调用其getCandidates方法，会返回Set<String>集。
+		遍历集，将元素和XmlRepositoryConfigurationSource作为构造参数创建DefaultRepositoryConfiguration<XmlRepositoryConfigurationSource>类型实例，并调用registerGenericRepositoryFactoryBean方法。
+		
+	void registerGenericRepositoryFactoryBean(RepositoryConfiguration<XmlRepositoryConfigurationSource> configuration, ParserContext parser)
+		创建一个RootBeanDefinition实例，设置beanClassName为org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean。
+		设置beanDefinition的属性列表中repositoryInterface的值为configuration.getRepositoryInterface()，即扫描到的接口。
+		如果configuration.getImplementationBeanName()在ApplicationContext中存在，则设置beanDefinition的属性列表中customImplementation的值为configuration.getImplementationBeanName()，同时设置beanDefinition依赖configuration.getImplementationBeanName()。
+		通过beanNameGenerator生成beanName，然后创建BeanComponentDefinition实例，通过调用BeanDefinitionReaderUtils.registerBeanDefinition方法完成注册。
+		
+二.XmlRepositoryConfigurationSource，对应<jpa:repositories />元素。继承了RepositoryConfigurationSourceSupport。
+	Collection<String> getCandidates(ResourceLoader loader)
+		创建RepositoryComponentProvider类型的实例，构造参数为include-filter(<jpa:repositoryies />子元素)，调用其addExcludeFilter方法，内部对应exclude-filter(<jpa:repositoryies />子元素)。
+		然后调用其findCandidateComponents方法，返回BeanDefinition集合，遍历集合将beanClassName加入到Set<String>集中，最终返回Set<String>。
+	
+三.ClassPathScanningCandidateComponentProvider，对应于<context:component-scan />
+	Set<BeanDefinition> findCandidateComponents(String basePackage)
+		LinkedHashSet，包含的元素是匹配到的BeanDefinition。
+		
+四.JpaRepositoryFactoryBean，是实现了FactoryBean，返回类型的实例。
+	Class<? extends T> getObjectType()
+		如果repositoryInterface为空，返回org.springframework.data.repository.Repository类型，否则返回repositoryInterface类型。
+	boolean isSingleton()
+		返回true
+	T getObject()
+		调用factory成员变量，类型为RepositoryFactorySupport，的getRepository(repositoryInterface, customImplementation)方法。
+	void afterPropertiesSet()
+		实例化factory成员变量为new JpaRepositoryFactory(entityManager)。
+	void setEntityManager(EntityManager entityManager)
+		使用@PersistenceContext获取entityManager实例，然后设置给entityManager成员变量。
+		
+五.JpaRepositoryFactory，继承了RepositoryFactorySupport类。
+	T getRepository(Class<T> repositoryInterface, Object customImplementation)
+		创建ProxyFactory类型的实例result。
+		调用result的setTarget方法，参数为新建的SimpleJpaRepository实例。
+		调用result的setInterfaces方法，参数为new Class[] { repositoryInterface, Repository.class }
+		调用result的addAdvice方法，参数为new QueryExecutorMethodInterceptor(information, customImplementation, target)。
+		调用result.getProxy(classLoader)返回实例。
+
+六.QueryExecutorMethodInterceptor，RepositoryFactorySupport内部类，实现了MethodInterceptor接口。
+	Map<Method, RepositoryQuery> queries
+
+	QueryExecutorMethodInterceptor(RepositoryInformation repositoryInformation, Object customImplementation, Object target)
+		设置相应的成员变量。
+		解析repositoryInformation中方法被标注@Query的，解析成RepositoryQuery实例，添加到queries中。
+		
+	Object invoke(MethodInvocation invocation) throws Throwable
+		获取执行的Method实例。
+		判断调用的方法在customImplementation中是否存在相同名称，相同参数个数，参数类型也可以匹配到。
+			如果都正确，获取正确的Method实例，设置方法可见，并执行method.invoke(customImplementation, invocation.getArguments())并返回。
+		判断在queries中是否存在
+			如果存在则返回RepositoryQuery实例，调用其execute(invocation.getArguments())方法并返回。
+		获取正确的Method实例，并执行method.invoke(target, invocation.getArguments())并返回。
+			
+		
+	
+	
+		
+
+
+
+

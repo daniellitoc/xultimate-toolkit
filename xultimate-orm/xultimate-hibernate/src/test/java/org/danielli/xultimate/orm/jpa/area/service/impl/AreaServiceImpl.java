@@ -129,4 +129,9 @@ public class AreaServiceImpl implements AreaService {
 	public Page<Area> findAll(Specification<Area> spec, Pageable pageable) {
 		return areaBiz.findAll(spec, pageable);
 	}
+	
+	@Override
+	public void execCustomMethod(Area area) {
+		areaBiz.execCustomMethod(area);
+	}
 }

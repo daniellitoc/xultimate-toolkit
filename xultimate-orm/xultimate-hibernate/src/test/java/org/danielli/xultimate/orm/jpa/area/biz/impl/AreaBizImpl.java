@@ -20,4 +20,9 @@ public class AreaBizImpl extends DefaultGenericBiz<Area, Long> implements AreaBi
 	public void setGenericDAO(GenericDAO<Area, Long> genericDAO) {
 		super.setGenericDAO(genericDAO);
 	}
+	
+	@Override
+	public void execCustomMethod(Area area) {
+		areaDAO.execCustomMethod(area);
+	}
 }

@@ -48,4 +48,6 @@ public interface AreaService {
 	List<Area> findAll(Specification<Area> spec, Sort sort);
     
 	Page<Area> findAll(Specification<Area> spec, Pageable pageable);
+	
+	void execCustomMethod(Area area);
 }
