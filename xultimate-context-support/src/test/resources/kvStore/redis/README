@@ -1,0 +1,10 @@
+一.Sharded
+	TreeMap<Long, S> nodes = new TreeMap<Long, S>();
+	void initialize(List<S> shards)
+		遍历shards，索引为i
+			如果shardInfo的getName()方法为空，循环160 * shardInfo.getWeight()次，索引为n，根据算法计算"SHARD-" + i + "-NODE-" + n的hash值，将hash值和shardInfo存入nodes中。
+			否则循环160 * shardInfo.getWeight()次，索引为n，根据算法计算shardInfo.getName() + "*" + shardInfo.getWeight() + n的hash值，将hash值和shardInfo存入nodes中。
+	S getShardInfo(byte[] key)
+		计算算法计算key的hash值，调用nodes.tailMap(hash)得到SortedMap<Long, S> tail。
+		如果tail的个数为0，则返回nodes中第一个key对应的ShardInfo。
+		否则返回tail中第一个key对应的ShardInfo。
