@@ -8,12 +8,15 @@ import javax.sql.DataSource;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.FactoryBean;
 
 
-public class RoutingProxyDataSourceFactoryBean implements FactoryBean<DataSource> {
+public class RoutingProxyDataSourceFactoryBean implements FactoryBean<DataSource>, InvocationHandler, BeanClassLoaderAware {
 	
 	private Map<String, DataSource> targetDataSources;
+	
+	private ClassLoader classLoader;
 
 	public Map<String, DataSource> getTargetDataSources() {
 		return targetDataSources;
@@ -23,21 +26,24 @@ public class RoutingProxyDataSourceFactoryBean implements FactoryBean<DataSource
 		this.targetDataSources = targetDataSources;
 	}
 
-	class RoutingProxyDataSourceInvocationHandler implements InvocationHandler {
-		
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return method.invoke(targetDataSources.get(RoutingDataSourceUtils.getRoutingDataSourceKey()), args);
-		}
-		
+	@Override
+	public void setBeanClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+	
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		return method.invoke(targetDataSources.get(RoutingDataSourceUtils.getRoutingDataSourceKey()), args);
 	}
 
 	@Override
 	public DataSource getObject() throws Exception {
-		RoutingProxyDataSourceInvocationHandler invocationHandler = new RoutingProxyDataSourceInvocationHandler();
 		Enhancer enhancer = new Enhancer();
-		enhancer.setCallback(invocationHandler);
+		enhancer.setClassLoader(classLoader);
+		enhancer.setUseCache(true);
 		enhancer.setInterfaces(new Class<?>[] { DataSource.class });
+		enhancer.setInterceptDuringConstruction(true);
+		enhancer.setCallback(this);
 		return (DataSource) enhancer.create();
 	}
 
@@ -50,6 +56,10 @@ public class RoutingProxyDataSourceFactoryBean implements FactoryBean<DataSource
 	public boolean isSingleton() {
 		return true;
 	}
+
+
+
+
 	
 	
 	
