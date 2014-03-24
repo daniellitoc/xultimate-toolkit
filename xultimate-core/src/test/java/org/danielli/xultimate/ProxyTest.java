@@ -8,9 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.sf.cglib.proxy.Enhancer;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Test;
+import org.springframework.aop.framework.ProxyFactory;
 
 public class ProxyTest {
 	
@@ -35,6 +38,16 @@ public class ProxyTest {
 		}
 	}
 	
+	class SpringAOP implements MethodInterceptor {
+
+		@Override
+		public Object invoke(MethodInvocation invocation) throws Throwable {
+			ProxyObject object = proxyObjects.get(keyThreadLocal.get());
+			return invocation.getMethod().invoke(object, invocation.getArguments());
+		}
+		
+	}
+	
 	@Test
 	public void test() {
 		for (int i = 0; i < 100; i++) {
@@ -48,10 +61,17 @@ public class ProxyTest {
 		enhancer.setCallback(new CglibInvocationHandler());
 		ProxyObject cglibObject = (ProxyObject) enhancer.create();
 		
+		ProxyFactory proxyFactory = new ProxyFactory();
+		proxyFactory.setTargetClass(ProxyObject.class);
+		proxyFactory.addAdvice(new SpringAOP());
+		proxyFactory.setOptimize(true);
+		ProxyObject springObject = (ProxyObject) proxyFactory.getProxy(ProxyObject.class.getClassLoader());
+		
+		
 		PerformanceMonitor.start("ProxyTest");
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				keyThreadLocal.set(j % 100);
 				jdkObject.getProxy();
 			}
@@ -59,11 +79,19 @@ public class ProxyTest {
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 1000000; j++) {
+			for (int j = 0; j < 2000000; j++) {
 				keyThreadLocal.set(j % 100);
 				cglibObject.getProxy();
 			}
 			PerformanceMonitor.mark("cglibObject" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 2000000; j++) {
+				keyThreadLocal.set(j % 100);
+				springObject.getProxy();
+			}
+			PerformanceMonitor.mark("springObject" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
