@@ -34,7 +34,7 @@
 	<bean id="performanceAdvice" class="org.danielli.xultimate.context.performance.PerformanceMonitorForEachMethodInterceptor"
 		p:stopWatchSummary-ref="stopWatchSummary" />
 
-	<aop:config>
+	<aop:config expose-proxy="true" proxy-target-class="true">
 		<aop:pointcut expression="@annotation(org.danielli.xultimate.context.performance.PerformanceMonitor)" id="performancePointcut"/>
 		<aop:advisor advice-ref="performanceAdvice" pointcut-ref="performancePointcut"/>
 	</aop:config>
