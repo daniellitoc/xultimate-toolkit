@@ -33,7 +33,7 @@ public class RoutingProxyDataSourceFactoryBean implements FactoryBean<DataSource
 	
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		return method.invoke(targetDataSources.get(RoutingDataSourceUtils.getRoutingDataSourceKey()), args);
+		return method.invoke(targetDataSources.get(DataSourceContext.currentLookupKey()), args);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSourceUtils;
+import org.danielli.xultimate.jdbc.datasource.lookup.DataSourceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -60,7 +60,7 @@ public class RoutingDataSourceTransactionManager implements PlatformTransactionM
 
 		
 		try {
-			PlatformTransactionManager platformTransactionManager = transactionManagers.get(RoutingDataSourceUtils.getRoutingDataSourceKey());
+			PlatformTransactionManager platformTransactionManager = transactionManagers.get(DataSourceContext.currentLookupKey());
 			if (platformTransactionManager == null) {
 				((LinkedHashSet<PlatformTransactionManager>) TransactionSynchronizationManager.getResource("platformTransactionManagers")).add(checkedTransactionManager);
 				mts.registerTransactionManager(definition, checkedTransactionManager);

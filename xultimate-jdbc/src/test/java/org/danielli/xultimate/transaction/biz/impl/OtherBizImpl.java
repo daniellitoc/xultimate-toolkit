@@ -2,7 +2,7 @@ package org.danielli.xultimate.transaction.biz.impl;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSourceUtils;
+import org.danielli.xultimate.jdbc.datasource.lookup.DataSourceContext;
 import org.danielli.xultimate.transaction.biz.OtherBiz;
 import org.danielli.xultimate.transaction.dao.OtherDAO;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class OtherBizImpl implements OtherBiz {
 	@Override
 	public void saveOther() {
 		System.out.println("otherDAO.saveOther(); Before");
-		RoutingDataSourceUtils.setRoutingDataSourceKey("other");
+		DataSourceContext.setCurrentLookupKey("other");
 		otherDAO.saveOther();
 		System.out.println("otherDAO.saveOther(); After");
 	}
@@ -24,7 +24,7 @@ public class OtherBizImpl implements OtherBiz {
 	@Override
 	public void saveErrorOther() {
 		System.out.println("otherDAO.saveErrorOther(); Before");
-		RoutingDataSourceUtils.setRoutingDataSourceKey("other");
+		DataSourceContext.setCurrentLookupKey("other");
 		otherDAO.saveErrorOther();
 		System.out.println("otherDAO.saveErrorOther(); After");
 	}

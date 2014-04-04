@@ -17,7 +17,7 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
 
 	@Override
 	protected Object determineCurrentLookupKey() {
-		return RoutingDataSourceUtils.getRoutingDataSourceKey();
+		return DataSourceContext.currentLookupKey();
 	}
 
 }

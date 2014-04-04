@@ -71,10 +71,10 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供序列主键生成器(基于序列)，通过重写Spring的AbstractSequenceMaxValueIncrementer，添加step功能。即可部署在不同机器/表中同时主键不会重复。包含Oracle和H2的各自实现。
 * 提供主键生成器AbstractKeyMaxValueIncrementer(基于Key/Value)，即可部署在不同机器/Key中同时主键不会重复。包括JedisMaxValueIncrementer和ShardedJedisMaxValueIncrementer实现，见xultimate-context-support。
 * 提供StateSet，使用TINYINT替代MySQL中BIT和SET数据类型，支持"="和"FIND_IN_SET"的需求并且会通过索引进行匹配。见测试类理解，具体使用见xultimate-mybatis。
-* 提供RoutingDataSource和RoutingDataSourceUtils。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-shard。
+* 提供RoutingDataSource和DataSourceContext。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-shard。
 * 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。无法配合RoutingDataSource完成分布式事物功能。
 * 添加RoutingDataSourceTransactionManager, 采用Best Efforts 1PC模式处理多事物。使用懒加载的方式，实现分布式事物。见测试。
-* 添加RoutingProxyDataSourceFactoryBean，利用cglib和RoutingDataSourceUtils实现RoutingDataSource的功能，配合RoutingDataSourceTransactionManager利用Spring事物注解从使用习惯上满足分布式事物处理。
+* 添加RoutingProxyDataSourceFactoryBean，利用cglib和DataSourceContext实现RoutingDataSource的功能，配合RoutingDataSourceTransactionManager利用Spring事物注解从使用习惯上满足分布式事物处理。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
 
