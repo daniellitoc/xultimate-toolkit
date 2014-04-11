@@ -92,6 +92,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供序列主键生成器(基于Redis)，包括ShardedJedisMaxValueIncrementer/JedisMaxValueIncrementer。见xultimate-jdbc。
 * 提供quartz的集群实例，同时，支持类似与JobDetailFactoryBean的Spring Bean配置形式。
 * 提供Spring Mail的使用ShowCase，包括各种使用情况、如用HTTL模板做邮件模板、加密SMTP用户密码、收件人等默认值、包含昵称、使用TaskExecutor异步处理等。
+* 提供EmailAddressBuilder代替new InternetEmail(...).toString()形式。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
 
@@ -181,6 +182,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 ### 打算(MyBatis) ###
 
 * 看一下common-lang里的NumberRange。可不可以使用NumberRange代替PO的Start和End，使用MyBatis类型处理器自动完成转换。
+* 将StateSet修改为泛型类(E extends Enum<E>)，然后用1 << element.ordinal()的方式代替常量。
 
 
 ### 打算(Memcached) ###
