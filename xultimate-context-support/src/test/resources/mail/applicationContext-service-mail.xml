@@ -56,24 +56,24 @@
 		</property>	
 	</bean>
 	
-	<bean id="from" class="javax.mail.internet.InternetAddress" c:address="daniellitoc@danielli.org" c:personal="Daniel Li" c:charset="UTF-8" />
-	<bean id="fromStr" factory-bean="from" factory-method="toString" />
-	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" p:from-ref="fromStr" p:replyTo-ref="fromStr">		
+	<bean id="fromBuilder" class="org.danielli.xultimate.mail.EmailAddressBuilder" p:address="daniellitoc@danielli.org" p:personal="Daniel Li" p:charset="UTF-8" />
+	<bean id="from" factory-bean="fromBuilder" factory-method="build" />
+	<bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" p:from-ref="from" p:replyTo-ref="from">		
 		<property name="to">
 			<array>
-				<value>daniellitoc@yahoo.com</value>
+				<value>daniellitoc@gmail.com</value>
 			</array>
 		</property>	
 		<!-- 抄送地址。邮件中可以看到。 -->
 		<property name="cc">
 			<array>
-				<value>daniellitoc@msn.com</value>
+				<value>daniellitoc@yahoo.com</value>
 			</array>
 		</property>
 		<!-- 暗抄地址。邮件中看不到。 -->
 		<property name="bcc">
 			<array>
-				<value>wiccue@msn.com</value>
+				<value>daniellitoc@msn.com</value>
 			</array>
 		</property>
 	</bean>
