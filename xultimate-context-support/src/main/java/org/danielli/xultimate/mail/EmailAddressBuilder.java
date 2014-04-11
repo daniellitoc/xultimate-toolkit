@@ -14,6 +14,16 @@ public class EmailAddressBuilder implements Builder<String> {
     
     protected String charset = CharsetUtils.CharEncoding.UTF_8;
     
+    public EmailAddressBuilder() {
+		
+	}
+    
+    public EmailAddressBuilder(String address, String personal, String charset) {
+		setAddress(address);
+		setPersonal(personal);
+		setCharset(charset);
+	}
+    
 	public void setAddress(String address) {
 		this.address = address;
 	}
