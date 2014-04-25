@@ -34,12 +34,6 @@ public class ObjectSerializer extends RpcSerializer {
 			serialize(source, outputStream);
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
-		} finally {
-			try {
-				outputStream.close();
-			} catch (IOException e) {
-				throw new SerializerException(e.getMessage(), e);
-			}
 		}
 		return outputStream.toByteArray();
 	}
@@ -54,7 +48,7 @@ public class ObjectSerializer extends RpcSerializer {
 			throw new SerializerException(e.getMessage(), e);
 		} finally {
 			try {
-				out.close();
+				out.flush();
 			} catch (IOException e) {
 				throw new SerializerException(e.getMessage(), e);
 			}
@@ -68,12 +62,6 @@ public class ObjectSerializer extends RpcSerializer {
 			return (T) deserialize(inputStream, clazz);
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
-		} finally {
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				throw new SerializerException(e.getMessage(), e);
-			}
 		}
 	}
 
@@ -86,12 +74,6 @@ public class ObjectSerializer extends RpcSerializer {
             return (T) in.readObject();
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
-		} finally {
-			try {
-				in.close();
-			} catch (IOException e) {
-				throw new SerializerException(e.getMessage(), e);
-			}
 		}
 	}
 }
