@@ -2,6 +2,7 @@ package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -12,7 +13,8 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-import org.danielli.xultimate.core.serializer.kryo.RpcKryoSerializer;
+import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
+import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
 
 import com.esotericsoftware.kryo.io.Input;
 
@@ -25,10 +27,19 @@ import com.esotericsoftware.kryo.io.Input;
 @Sharable
 public class KryoCodec extends ChannelHandlerAdapter {
 
-	private RpcKryoSerializer rpcSerializer;
+//	private RpcKryoSerializer rpcSerializer;
+//	
+//	public KryoCodec(RpcKryoSerializer rpcSerializer) {
+//		this.rpcSerializer = rpcSerializer;
+//	}
 	
-	public KryoCodec(RpcKryoSerializer rpcSerializer) {
-		this.rpcSerializer = rpcSerializer;
+	protected BaseTypeSerializer serializer;
+	
+	protected BaseTypeDeserializer deserializer;
+	
+	public KryoCodec(BaseTypeSerializer serializer, BaseTypeDeserializer deserializer) {
+		this.serializer = serializer;
+		this.deserializer = deserializer;
 	}
 	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
@@ -58,15 +69,23 @@ public class KryoCodec extends ChannelHandlerAdapter {
     }
     
     protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out)  throws Exception {
-    	byte[] data = rpcSerializer.serialize(msg);
-    	out.add(Unpooled.wrappedBuffer(data));
+//    	byte[] data = rpcSerializer.serialize(msg);
+//    	out.add(Unpooled.wrappedBuffer(data));
+    	ByteBuf byteBuf = Unpooled.directBuffer();
+    	ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
+    	try {
+    		serializer.serialize(msg, byteBufOutputStream);
+    	} finally {
+    		byteBufOutputStream.close();
+    	}
+    	out.add(byteBuf);
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
     	Input input = new Input(new ByteBufInputStream(msg));
     	try {
     		while (input.available() > 0) {
-        		Object object = rpcSerializer.deserialize(input, Object.class);
+        		Object object = deserializer.deserialize(input, Object.class);
     			out.add(object);
         	}
     	} finally {
