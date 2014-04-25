@@ -7,7 +7,7 @@ import org.danielli.xultimate.util.reflect.ClassUtils;
 public class DefaultClassTypeSupporter implements ClassTypeSupporter {
 	
 	/** 支持类型列表 */
-	private Class<?>[] supportClassTypes;
+	protected Class<?>[] supportClassTypes;
 	
 	@Override
 	public boolean support(Class<?> classType) {

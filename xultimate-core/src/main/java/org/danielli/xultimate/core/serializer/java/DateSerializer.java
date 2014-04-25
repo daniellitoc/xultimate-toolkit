@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.danielli.xultimate.core.serializer.AbstractClassTypeSupportSerializer;
+import org.danielli.xultimate.core.serializer.ClassTypeSupporterSerializer;
 import org.danielli.xultimate.core.serializer.DeserializerException;
 import org.danielli.xultimate.core.serializer.SerializerException;
 import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
 import org.danielli.xultimate.util.reflect.ClassUtils;
 
-public class DateSerializer extends AbstractClassTypeSupportSerializer {
+public class DateSerializer implements ClassTypeSupporterSerializer {
 
 	private Boolean packZeros = true;
 	

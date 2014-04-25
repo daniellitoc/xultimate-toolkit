@@ -26,10 +26,16 @@ public class RpcProtobufSerializer extends RpcSerializer {
 	@SuppressWarnings("rawtypes")
 	private final Schema<MutableObject> schema = RuntimeSchema.createFrom(MutableObject.class); 
 	
+	protected int bufferSize = 10 * 1024;
+	
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+	
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
 		MutableObject<T> holder = new MutableObject<T>(source);
-		LinkedBuffer buffer = LinkedBufferUtils.getLinkedBuffer();
+		LinkedBuffer buffer = LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize);
 		try {
 			return ProtobufIOUtil.toByteArray(holder, schema, buffer);
 		} catch (Exception e) {
@@ -43,7 +49,7 @@ public class RpcProtobufSerializer extends RpcSerializer {
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
 		MutableObject<T> holder = new MutableObject<T>(source);
-		LinkedBuffer buffer = LinkedBufferUtils.getLinkedBuffer();
+		LinkedBuffer buffer = LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize);
 		try {
 			ProtobufIOUtil.writeDelimitedTo(outputStream, holder, schema, buffer);
 		} catch (Exception e) {
@@ -67,10 +73,13 @@ public class RpcProtobufSerializer extends RpcSerializer {
 	@Override
 	public <T> T deserialize(InputStream inputStream, Class<T> clazz) throws DeserializerException {
 		MutableObject<T> holder = new MutableObject<T>();
+		LinkedBuffer buffer = LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize);
 		try {
-			ProtobufIOUtil.mergeDelimitedFrom(inputStream, holder, schema);
+			ProtobufIOUtil.mergeDelimitedFrom(inputStream, holder, schema, buffer);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
+		} finally {
+			buffer.clear();
 		}
 		return holder.getValue();
 	}

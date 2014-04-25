@@ -2,9 +2,9 @@ package org.danielli.xultimate.core.serializer;
 
 import org.danielli.xultimate.core.ClassTypeSupporter;
 
-public abstract class AbstractClassTypeSupportSerializer implements Serializer, Deserializer, ClassTypeSupporter {
+public abstract class AbstractClassTypeSupporterSerializer implements ClassTypeSupporterSerializer {
 
-	private ClassTypeSupporter classTypeSupporter;
+	protected ClassTypeSupporter classTypeSupporter;
 	
 	@Override
 	public boolean support(Class<?> classType) {

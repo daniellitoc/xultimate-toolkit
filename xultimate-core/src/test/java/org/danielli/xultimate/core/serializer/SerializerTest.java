@@ -1,11 +1,10 @@
 package org.danielli.xultimate.core.serializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.core.serializer.java.ObjectSerializer;
-import org.danielli.xultimate.core.serializer.kryo.RpcKryoSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.RpcProtobufSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.RpcProtostuffSerializer;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Test;
@@ -13,21 +12,35 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.esotericsoftware.kryo.io.Input;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
 public class SerializerTest {
 	
-	@Resource
-	private ObjectSerializer objectSerializer;
+	@Resource(name = "rpcObjectSerializerProxy")
+	private Serializer rpcObjectSerializerProxy;
 	
-	@Resource
-	private RpcKryoSerializer rpcKryoSerializer;
+	@Resource(name = "rpcObjectDeserializerProxy")
+	private Deserializer rpcObjectDeserializerProxy;
 	
-	@Resource
-	private RpcProtostuffSerializer rpcProtostuffSerializer;
+	@Resource(name = "rpcKryoSerializerProxy")
+	private Serializer rpcKryoSerializer;
+	
+	@Resource(name = "rpcKryoDeserializerProxy")
+	private Deserializer rpcKryoDeserializer;
+	
+	@Resource(name = "rpcProtobufSerializerProxy")
+	private Serializer rpcProtobufSerializer;
+	
+	@Resource(name = "rpcProtobufDeserializerProxy")
+	private Deserializer rpcProtobufDeserializer;
 
-	@Resource
-	private RpcProtobufSerializer rpcProtobufSerializer;
+	@Resource(name = "rpcProtostuffSerializerProxy")
+	private Serializer rpcProtostuffSerializer;
+	
+	@Resource(name = "rpcProtostuffDeserializerProxy")
+	private Deserializer rpcProtostuffDeserializer;
 	
 	@Test
 	public void testObject() {
@@ -37,8 +50,8 @@ public class SerializerTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				byte[] data = objectSerializer.serialize(person);
-				person = (User) objectSerializer.deserialize(data, Object.class);
+				byte[] data = rpcObjectSerializerProxy.serialize(person);
+				person = (User) rpcObjectDeserializerProxy.deserialize(data, Object.class);
 			}
 			PerformanceMonitor.mark("objectSerializer" + i);
 		}
@@ -47,9 +60,22 @@ public class SerializerTest {
 			for (int j = 0; j < 100000; j++) {
 				User person = new User();
 				person.setName("Daniel Li");
+				person.setAge(j);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcObjectSerializerProxy.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcObjectDeserializerProxy.deserialize(inputStream, Object.class);
+			}
+			PerformanceMonitor.mark("objectSerializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
 				person.setAge(i);
 				byte[] data = rpcKryoSerializer.serialize(person);
-				person = (User) rpcKryoSerializer.deserialize(data, Object.class);
+				person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
 			}
 			PerformanceMonitor.mark("rpcKryoSerializer" + i);
 		}
@@ -58,9 +84,22 @@ public class SerializerTest {
 			for (int j = 0; j < 100000; j++) {
 				User person = new User();
 				person.setName("Daniel Li");
+				person.setAge(j);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcKryoSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcKryoDeserializer.deserialize(new Input(inputStream), Object.class);
+			}
+			PerformanceMonitor.mark("rpcKryoSerializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
 				person.setAge(i);
 				byte[] data = rpcProtostuffSerializer.serialize(person);
-				person = (User) rpcProtostuffSerializer.deserialize(data, Object.class);
+				person = (User) rpcProtostuffDeserializer.deserialize(data, Object.class);
 			}
 			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
 		}
@@ -69,12 +108,39 @@ public class SerializerTest {
 			for (int j = 0; j < 100000; j++) {
 				User person = new User();
 				person.setName("Daniel Li");
+				person.setAge(j);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcProtostuffSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcProtostuffDeserializer.deserialize(inputStream, Object.class);
+			}
+			PerformanceMonitor.mark("rpcProtostuffDeserializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
 				person.setAge(i);
 				byte[] data = rpcProtobufSerializer.serialize(person);
-				person = (User) rpcProtobufSerializer.deserialize(data, Object.class);
+				person = (User) rpcProtobufDeserializer.deserialize(data, Object.class);
 			}
 			PerformanceMonitor.mark("rpcProtobufSerializer" + i);
 		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
+				person.setAge(j);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcProtobufSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcProtobufDeserializer.deserialize(inputStream, Object.class);
+			}
+			PerformanceMonitor.mark("rpcProtobufSerializer IO" + i);
+		}
+		
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();

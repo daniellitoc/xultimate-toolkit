@@ -2,7 +2,7 @@ package org.danielli.xultimate.core.serializer.support;
 
 import java.io.InputStream;
 
-import org.danielli.xultimate.core.serializer.AbstractClassTypeSupportSerializer;
+import org.danielli.xultimate.core.serializer.ClassTypeSupporterSerializer;
 import org.danielli.xultimate.core.serializer.Deserializer;
 import org.danielli.xultimate.core.serializer.DeserializerException;
 import org.danielli.xultimate.util.ArrayUtils;
@@ -16,11 +16,11 @@ import org.danielli.xultimate.util.ArrayUtils;
 public class DeserializerFactory implements Deserializer {
 	
 	/** 解序列化器列表 */
-	private AbstractClassTypeSupportSerializer[] deserializers;
+	protected ClassTypeSupporterSerializer[] deserializers;
 	
 	private Deserializer getDeserializer(Class<?> clazz) {
 		if (ArrayUtils.isNotEmpty(deserializers)) {
-			for (AbstractClassTypeSupportSerializer deserializer : deserializers) {
+			for (ClassTypeSupporterSerializer deserializer : deserializers) {
 				if (deserializer.support(clazz)) {
 					return deserializer;
 				}
@@ -43,7 +43,7 @@ public class DeserializerFactory implements Deserializer {
 	 * 设置解序列化器列表。
 	 * @param deserializers 解序列化器列表。
 	 */
-	public void setDeserializers(AbstractClassTypeSupportSerializer[] deserializers) {
+	public void setDeserializers(ClassTypeSupporterSerializer[] deserializers) {
 		this.deserializers = deserializers;
 	}
 }

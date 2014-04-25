@@ -15,7 +15,7 @@ import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSumma
 import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactory;
 
-public class ProxyTest {
+public class ProxyTest implements ProxyObject {
 	
 	private Map<Integer, ProxyObject> proxyObjects = new ConcurrentHashMap<Integer, ProxyObject>();
 	private ThreadLocal<Integer> keyThreadLocal = new ThreadLocal<>();
@@ -48,6 +48,12 @@ public class ProxyTest {
 		
 	}
 	
+	@Override
+	public String getProxy() {
+		ProxyObject object = proxyObjects.get(keyThreadLocal.get());
+		return object.getProxy();
+	}
+	
 	@Test
 	public void test() {
 		for (int i = 0; i < 100; i++) {
@@ -67,6 +73,7 @@ public class ProxyTest {
 		proxyFactory.setOptimize(true);
 		ProxyObject springObject = (ProxyObject) proxyFactory.getProxy(ProxyObject.class.getClassLoader());
 		
+		ProxyTest proxyTest = this;
 		
 		PerformanceMonitor.start("ProxyTest");
 		
@@ -93,11 +100,20 @@ public class ProxyTest {
 			}
 			PerformanceMonitor.mark("springObject" + i);
 		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 2000000; j++) {
+				keyThreadLocal.set(j % 100);
+				proxyTest.getProxy();
+			}
+			PerformanceMonitor.mark("原生" + i);
+		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();
 		
 	}
+
 }
 
 

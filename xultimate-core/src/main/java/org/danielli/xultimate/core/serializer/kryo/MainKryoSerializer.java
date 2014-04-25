@@ -3,17 +3,27 @@ package org.danielli.xultimate.core.serializer.kryo;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.danielli.xultimate.core.serializer.AbstractClassTypeSupportSerializer;
+import org.danielli.xultimate.core.serializer.ClassTypeSupporterSerializer;
 import org.danielli.xultimate.core.serializer.DeserializerException;
 import org.danielli.xultimate.core.serializer.SerializerException;
-import org.danielli.xultimate.core.serializer.kryo.util.KryoUtils;
+import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
+public class MainKryoSerializer implements ClassTypeSupporterSerializer {
+
+	protected int bufferSize = 10 * 1024;
 	
-	private static final int DEFAULT_BUFFER_SIZE = 10 * 1024;
+	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
+	
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+	
+	public void setKryoGenerator(KryoGenerator kryoGenerator) {
+		this.kryoGenerator = kryoGenerator;
+	}
 
 	@Override
 	public boolean support(Class<?> classType) {
@@ -22,9 +32,9 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 	
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
-		Output output = new Output(DEFAULT_BUFFER_SIZE);
+		Output output = new Output(bufferSize);
 		try {
-			KryoUtils.getKryo().writeObject(output, source);
+			kryoGenerator.generate().writeObject(output, source);
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
 		} finally {
@@ -35,9 +45,9 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
-		Output output = new Output(DEFAULT_BUFFER_SIZE);
+		Output output = new Output(bufferSize);
 		try {
-			KryoUtils.getKryo().writeObject(output, source);
+			kryoGenerator.generate().writeObject(output, source);
 			outputStream.write(output.toBytes());
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
@@ -50,7 +60,7 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 	public <T> T deserialize(byte[] bytes, Class<T> clazz) throws DeserializerException {
 		try {
 			Input input = new Input(bytes);
-	        return KryoUtils.getKryo().readObject(input, clazz);
+	        return kryoGenerator.generate().readObject(input, clazz);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
@@ -66,10 +76,9 @@ public class MainKryoSerializer extends AbstractClassTypeSupportSerializer {
 	
 	public <T> T deserialize(Input input, Class<T> clazz) throws DeserializerException {
 		try {
-			return KryoUtils.getKryo().readObject(input, clazz);
+			return kryoGenerator.generate().readObject(input, clazz);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
 	}
-
 }

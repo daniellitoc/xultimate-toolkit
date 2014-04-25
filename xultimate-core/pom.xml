@@ -38,6 +38,7 @@
 		<de.javakaffee.kryo-serializers.version>0.23</de.javakaffee.kryo-serializers.version>
 
 		<com.esotericsoftware.reflectasm.reflectasm.version>1.07</com.esotericsoftware.reflectasm.reflectasm.version>
+		<org.xerial.snappy.version>1.1.1-M1</org.xerial.snappy.version>
 	</properties>
 
 	<dependencies>
@@ -215,6 +216,13 @@
 			<artifactId>reflectasm</artifactId>
 			<version>${com.esotericsoftware.reflectasm.reflectasm.version}</version>
 			<classifier>shaded</classifier>
+		</dependency>
+		
+		<!-- 压缩 -->
+		<dependency>
+		    <groupId>org.xerial.snappy</groupId>
+		    <artifactId>snappy-java</artifactId>
+		    <version>${org.xerial.snappy.version}</version>
 		</dependency>
 
 		<!-- 测试 -->

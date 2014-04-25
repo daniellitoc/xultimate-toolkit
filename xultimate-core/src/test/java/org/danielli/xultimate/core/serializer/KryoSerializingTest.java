@@ -2,8 +2,6 @@ package org.danielli.xultimate.core.serializer;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.core.serializer.kryo.MainKryoSerializer;
-import org.danielli.xultimate.core.serializer.kryo.RpcKryoSerializer;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Assert;
@@ -16,11 +14,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
 public class KryoSerializingTest {
 	
-	@Resource(name = "mainKryoSerializer")
-	private MainKryoSerializer mainKryoSerializer;
+	@Resource(name = "mainKryoSerializerProxy")
+	private Serializer mainKryoSerializer;
 	
-	@Resource(name = "rpcKryoSerializer")
-	private RpcKryoSerializer rpcKryoSerializer;
+	@Resource(name = "mainKryoDeserializerProxy")
+	private Deserializer mainKryoDeserializer;
+	
+	@Resource(name = "rpcKryoSerializerProxy")
+	private Serializer rpcKryoSerializer;
+	
+	@Resource(name = "rpcKryoDeserializerProxy")
+	private Deserializer rpcKryoDeserializer;
 	
 //	@Test
 	public void testBase() {
@@ -29,7 +33,7 @@ public class KryoSerializingTest {
 		person.setAge(19);
 		
 		byte[] data = mainKryoSerializer.serialize(person);
-		person = (User) mainKryoSerializer.deserialize(data, User.class);
+		person = (User) mainKryoDeserializer.deserialize(data, User.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -39,7 +43,7 @@ public class KryoSerializingTest {
 		person.setAge(19);
 		
 		data = rpcKryoSerializer.serialize(person);
-		person = (User) rpcKryoSerializer.deserialize(data, Object.class);
+		person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -58,7 +62,7 @@ public class KryoSerializingTest {
 				person.setName("Daniel Li");
 				person.setAge(j);
 				byte[] data = mainKryoSerializer.serialize(person);
-				person = (User) mainKryoSerializer.deserialize(data, User.class);
+				person = mainKryoDeserializer.deserialize(data, User.class);
 			}
 			PerformanceMonitor.mark("mainKryoSerializer" + i);
 		}
@@ -69,7 +73,7 @@ public class KryoSerializingTest {
 				person.setName("Daniel Li");
 				person.setAge(j);
 				byte[] data = rpcKryoSerializer.serialize(person);
-				person = (User) rpcKryoSerializer.deserialize(data, Object.class);
+				person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
 			}
 			PerformanceMonitor.mark("rpcKryoSerializer" + i);
 		}

@@ -6,10 +6,6 @@ import java.io.ByteArrayOutputStream;
 import javax.annotation.Resource;
 
 import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
-import org.danielli.xultimate.core.serializer.protostuff.MainProtobufSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.MainProtostuffSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.RpcProtobufSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.RpcProtostuffSerializer;
 import org.danielli.xultimate.core.serializer.protostuff.util.LinkedBufferUtils;
 import org.danielli.xultimate.core.serializer.protostuff.util.SchemaUtils;
 import org.danielli.xultimate.util.StringUtils;
@@ -30,31 +26,34 @@ import com.dyuproject.protostuff.Schema;
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
 public class ProtostuffSerializingTest {
 
-	@Resource(name = "mainProtobufSerializer")
-	private MainProtobufSerializer mainProtobufSerializer;
+	@Resource(name = "mainProtobufSerializerProxy")
+	private Serializer mainProtobufSerializer;
 	
-	@Resource(name = "mainProtostuffSerializer")
-	private MainProtostuffSerializer mainProtostuffSerializer;
+	@Resource(name = "mainProtobufDeserializerProxy")
+	private Deserializer mainProtobufDeserializer;
 	
-	@Resource(name = "rpcProtobufSerializer")
-	private RpcProtobufSerializer rpcProtobufSerializer;
+	@Resource(name = "rpcProtobufSerializerProxy")
+	private Serializer rpcProtobufSerializer;
 	
-	@Resource(name = "rpcProtostuffSerializer")
-	private RpcProtostuffSerializer rpcProtostuffSerializer;
+	@Resource(name = "rpcProtobufDeserializerProxy")
+	private Deserializer rpcProtobufDeserializer;
 	
-	@Resource
-	private Serializer protobufSerializer;
-	@Resource
-	private Deserializer protobufDeserializer;
-	@Resource
-	private Serializer protostuffSerializer;
-	@Resource
-	private Deserializer protostuffDeserializer;
+	@Resource(name = "mainProtostuffSerializerProxy")
+	private Serializer mainProtostuffSerializer;
+	
+	@Resource(name = "mainProtostuffDeserializerProxy")
+	private Deserializer mainProtostuffDeserializer;
+	
+	@Resource(name = "rpcProtostuffSerializerProxy")
+	private Serializer rpcProtostuffSerializer;
+	
+	@Resource(name = "rpcProtostuffDeserializerProxy")
+	private Deserializer rpcProtostuffDeserializer;
 	
 //	@Test
 	public void testBase() {
 		Schema<User> schema = SchemaUtils.getSchema(User.class);
-		LinkedBuffer linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+		LinkedBuffer linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 		
 		User person = new User();
 		person.setName("Daniel Li");
@@ -72,7 +71,7 @@ public class ProtostuffSerializingTest {
 		person = new User();
 		person.setName("Daniel Li");
 		person.setAge(19);
-		linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+		linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 		try {
 			byte[] data = ProtostuffIOUtil.toByteArray(person, schema, linkedBuffer);
 			person = new User();
@@ -88,7 +87,7 @@ public class ProtostuffSerializingTest {
 		person.setAge(19);
 		
 		byte[] data = mainProtobufSerializer.serialize(person);
-		person = (User) mainProtobufSerializer.deserialize(data, User.class);
+		person = (User) mainProtobufDeserializer.deserialize(data, User.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -98,7 +97,7 @@ public class ProtostuffSerializingTest {
 		person.setAge(19);
 		
 		data = mainProtostuffSerializer.serialize(person);
-		person = (User) mainProtostuffSerializer.deserialize(data, User.class);
+		person = (User) mainProtostuffDeserializer.deserialize(data, User.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -108,7 +107,7 @@ public class ProtostuffSerializingTest {
 		person.setAge(19);
 		
 		data = rpcProtobufSerializer.serialize(person);
-		person = (User) rpcProtobufSerializer.deserialize(data, Object.class);
+		person = (User) rpcProtobufDeserializer.deserialize(data, Object.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -117,17 +116,101 @@ public class ProtostuffSerializingTest {
 		person.setName("Daniel Li");
 		person.setAge(19);
 		
-		data = rpcProtobufSerializer.serialize(person);
-		person = (User) rpcProtobufSerializer.deserialize(data, Object.class);
+		data = rpcProtostuffSerializer.serialize(person);
+		person = (User) rpcProtostuffDeserializer.deserialize(data, Object.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
 	}
 	
+//	@Test
+	public void testInteger() {
+		LinkedBuffer linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
+		PerformanceMonitor.start("Test3");
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 10000; j++) {
+				SerializerUtils.decodeInt(SerializerUtils.encodeInt(10, true));
+			}
+			PerformanceMonitor.mark("coder" + i);
+		}
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				try {
+					Integer value = 10;
+					ProtostuffIOUtil.mergeFrom(ProtostuffIOUtil.toByteArray(value, SchemaUtils.getSchema(Integer.class), linkedBuffer), value, SchemaUtils.getSchema(Integer.class));
+				} finally {
+					linkedBuffer.clear();
+				}
+			}
+			PerformanceMonitor.mark("ProtostuffIOUtil" + i);
+		}
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				Integer value = 10;
+				mainProtostuffDeserializer.deserialize(mainProtostuffSerializer.serialize(value), Integer.class);
+			}
+			PerformanceMonitor.mark("mainProtostuffDeserializer" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				Integer value = 10;
+				rpcProtostuffDeserializer.deserialize(rpcProtostuffSerializer.serialize(value), Integer.class);
+			}
+			PerformanceMonitor.mark("rpcProtostuffDeserializer" + i);
+		}
+		
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
+		PerformanceMonitor.remove();
+	}
+	
+//	@Test
+	public void testString() {
+		LinkedBuffer linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
+		PerformanceMonitor.start("Test2");
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				StringUtils.newStringUtf8(StringUtils.getBytesUtf8("abcdefghijklmnopqrstuvwsyz"));
+			}
+			PerformanceMonitor.mark("coder" + i);
+		}
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				try {
+					String value = "abcdefghijklmnopqrstuvwsyz";
+					ProtostuffIOUtil.mergeFrom(ProtostuffIOUtil.toByteArray(value, SchemaUtils.getSchema(String.class), linkedBuffer), value, SchemaUtils.getSchema(String.class));
+				} finally {
+					linkedBuffer.clear();
+				}
+			}
+			PerformanceMonitor.mark("ProtostuffIOUtil" + i);
+		}
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				String value = "abcdefghijklmnopqrstuvwsyz";
+				mainProtostuffDeserializer.deserialize(mainProtostuffSerializer.serialize(value), String.class);
+			}
+			PerformanceMonitor.mark("mainProtostuffDeserializer" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				String value = "abcdefghijklmnopqrstuvwsyz";
+				rpcProtostuffDeserializer.deserialize(rpcProtostuffSerializer.serialize(value), String.class);
+			}
+			PerformanceMonitor.mark("rpcProtostuffDeserializer" + i);
+		}
+
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
+		PerformanceMonitor.remove();
+	}
+	
 	@Test
 	public void test() {
 		Schema<User> schema = SchemaUtils.getSchema(User.class);
-		LinkedBuffer linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+		LinkedBuffer linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 		
 		PerformanceMonitor.start("SerializerTest");
 		for (int i = 0; i < 5; i++) {
@@ -135,7 +218,7 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					byte[] data = ProtobufIOUtil.toByteArray(person, schema, linkedBuffer);
 					person = new User();
@@ -144,7 +227,7 @@ public class ProtostuffSerializingTest {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("protobuf手动优化处理完毕" + i);
+			PerformanceMonitor.mark("protobuf 优化" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -152,7 +235,7 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					byte[] data = ProtostuffIOUtil.toByteArray(person, schema, linkedBuffer);
 					person = new User();
@@ -161,7 +244,7 @@ public class ProtostuffSerializingTest {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("protostuff手动优化处理完毕" + i);
+			PerformanceMonitor.mark("protostuff 优化" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -169,24 +252,20 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					ProtobufIOUtil.writeTo(outputStream, person, SchemaUtils.getSchema(User.class), linkedBuffer);
 					ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-					try {
-						person = User.class.newInstance();
-						ProtobufIOUtil.mergeFrom(inputStream, person, SchemaUtils.getSchema(User.class));
-					} catch (Exception e) {
-						
-					}
+					person = User.class.newInstance();
+					ProtobufIOUtil.mergeFrom(inputStream, person, SchemaUtils.getSchema(User.class));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}  finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("protobuf手动IO处理完毕" + i);
+			PerformanceMonitor.mark("protobuf IO 优化" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -194,24 +273,20 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					ProtostuffIOUtil.writeTo(outputStream, person, SchemaUtils.getSchema(User.class), linkedBuffer);
 					ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-					try {
-						person = User.class.newInstance();
-						ProtostuffIOUtil.mergeFrom(inputStream, person, SchemaUtils.getSchema(User.class));
-					} catch (Exception e) {
-						
-					}
+					person = User.class.newInstance();
+					ProtostuffIOUtil.mergeFrom(inputStream, person, SchemaUtils.getSchema(User.class));
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("protostuff手动IO处理完毕" + i);
+			PerformanceMonitor.mark("protostuff IO 优化" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -219,7 +294,7 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					byte[] data = ProtobufIOUtil.toByteArray(person, SchemaUtils.getSchema(User.class), linkedBuffer);
 					try {
@@ -234,7 +309,7 @@ public class ProtostuffSerializingTest {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("Protobuf手动处理完毕" + i);
+			PerformanceMonitor.mark("protobuf" + i);
 		}
 
 		for (int i = 0; i < 5; i++) {
@@ -242,7 +317,7 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(i);
-				linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
+				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(10 * 1024);
 				try {
 					byte[] data = ProtostuffIOUtil.toByteArray(person, SchemaUtils.getSchema(User.class), linkedBuffer);
 					try {
@@ -255,7 +330,7 @@ public class ProtostuffSerializingTest {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("Protostuff手动处理完毕" + i);
+			PerformanceMonitor.mark("protostuff" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -263,7 +338,7 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				person = (User) mainProtobufSerializer.deserialize(mainProtobufSerializer.serialize(person), User.class);
+				person = (User) mainProtobufDeserializer.deserialize(mainProtobufSerializer.serialize(person), User.class);
 			}
 			PerformanceMonitor.mark("mainProtobufSerializer" + i);
 		}
@@ -273,7 +348,20 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				person = (User) mainProtostuffSerializer.deserialize(mainProtostuffSerializer.serialize(person), User.class);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				mainProtobufSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) mainProtobufDeserializer.deserialize(inputStream, User.class);
+			}
+			PerformanceMonitor.mark("mainProtobufSerializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
+				person.setAge(j);
+				person = (User) mainProtostuffDeserializer.deserialize(mainProtostuffSerializer.serialize(person), User.class);
 			}
 			PerformanceMonitor.mark("mainProtostuffSerializer" + i);
 		}
@@ -283,7 +371,20 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				person = (User) rpcProtobufSerializer.deserialize(rpcProtobufSerializer.serialize(person), Object.class);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				mainProtostuffSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) mainProtostuffDeserializer.deserialize(inputStream, User.class);
+			}
+			PerformanceMonitor.mark("mainProtostuffSerializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
+				person.setAge(j);
+				person = (User) rpcProtobufDeserializer.deserialize(rpcProtobufSerializer.serialize(person), Object.class);
 			}
 			PerformanceMonitor.mark("rpcProtobufSerializer" + i);
 		}
@@ -293,7 +394,20 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				person = (User) rpcProtostuffSerializer.deserialize(rpcProtostuffSerializer.serialize(person), Object.class);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcProtobufSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcProtobufDeserializer.deserialize(inputStream, Object.class);
+			}
+			PerformanceMonitor.mark("rpcProtobufSerializer IO" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				User person = new User();
+				person.setName("Daniel Li");
+				person.setAge(j);
+				person = (User) rpcProtostuffDeserializer.deserialize(rpcProtostuffSerializer.serialize(person), Object.class);
 			}
 			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
 		}
@@ -303,121 +417,13 @@ public class ProtostuffSerializingTest {
 				User person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				protobufDeserializer.deserialize(protobufSerializer.serialize(person), User.class);
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				rpcProtostuffSerializer.serialize(person, outputStream);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+				person = (User) rpcProtostuffDeserializer.deserialize(inputStream, Object.class);
 			}
-			PerformanceMonitor.mark("protobufSerializer" + i);
+			PerformanceMonitor.mark("rpcProtostuffSerializer IO" + i);
 		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				User person = new User();
-				person.setName("Daniel Li");
-				person.setAge(j);
-				protostuffDeserializer.deserialize(protostuffSerializer.serialize(person), User.class);
-			}
-			PerformanceMonitor.mark("protostuffSerializer" + i);
-		}
-		
-		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
-		PerformanceMonitor.remove();
-	}
-	
-//	@Test
-	public void testString() {
-		LinkedBuffer linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
-		PerformanceMonitor.start("Test2");
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				StringUtils.newStringUtf8(StringUtils.getBytesUtf8("abcdefghijklmnopqrstuvwsyz"));
-			}
-			PerformanceMonitor.mark("coder" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				try {
-					String value = "abcdefghijklmnopqrstuvwsyz";
-					ProtobufIOUtil.mergeFrom(ProtobufIOUtil.toByteArray(value, SchemaUtils.getSchema(String.class), linkedBuffer), value, SchemaUtils.getSchema(String.class));
-				} finally {
-					linkedBuffer.clear();
-				}
-			}
-			PerformanceMonitor.mark("ProtobufIOUtil" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				String value = "abcdefghijklmnopqrstuvwsyz";
-				protostuffDeserializer.deserialize(protostuffSerializer.serialize(value), String.class);
-			}
-			PerformanceMonitor.mark("protostuffDeserializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				String value = "abcdefghijklmnopqrstuvwsyz";
-				mainProtostuffSerializer.deserialize(mainProtostuffSerializer.serialize(value), String.class);
-			}
-			PerformanceMonitor.mark("mainProtostuffSerializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				String value = "abcdefghijklmnopqrstuvwsyz";
-				rpcProtostuffSerializer.deserialize(rpcProtostuffSerializer.serialize(value), String.class);
-			}
-			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
-		}
-
-		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
-		PerformanceMonitor.remove();
-	}
-	
-//	@Test
-	public void testInteger() {
-		LinkedBuffer linkedBuffer = LinkedBufferUtils.getLinkedBuffer();
-		PerformanceMonitor.start("Test3");
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				SerializerUtils.decodeInt(SerializerUtils.encodeInt(10, true));
-			}
-			PerformanceMonitor.mark("coder" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				try {
-					Integer value = 10;
-					ProtobufIOUtil.mergeFrom(ProtobufIOUtil.toByteArray(value, SchemaUtils.getSchema(Integer.class), linkedBuffer), value, SchemaUtils.getSchema(Integer.class));
-				} finally {
-					linkedBuffer.clear();
-				}
-			}
-			PerformanceMonitor.mark("ProtobufIOUtil" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				Integer value = 10;
-				protostuffDeserializer.deserialize(protostuffSerializer.serialize(value), Integer.class);
-			}
-			PerformanceMonitor.mark("protostuffDeserializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				Integer value = 10;
-				mainProtostuffSerializer.deserialize(mainProtostuffSerializer.serialize(value), Integer.class);
-			}
-			PerformanceMonitor.mark("mainProtostuffSerializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 100000; j++) {
-				Integer value = 10;
-				rpcProtostuffSerializer.deserialize(rpcProtostuffSerializer.serialize(value), Integer.class);
-			}
-			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
-		}
-		
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();

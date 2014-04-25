@@ -66,7 +66,7 @@ public class SerializerUtils {
 		return (int) decodeLong(in);
 	}
 
-	public static byte[] encodeByte(byte in, boolean packZeros) {
+	public static byte[] encodeByte(byte in) {
 		return new byte[] { in };
 	}
 

@@ -28,86 +28,60 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 		
 	<bean id="objectSerializer" class="org.danielli.xultimate.core.serializer.java.ObjectSerializer" />
+	<bean id="nullableObjectSerializer" class="org.danielli.xultimate.core.serializer.support.NullableStreamSerializer" c:deserializer-ref="objectSerializer" c:serializer-ref="objectSerializer" />
 	
 	<bean id="mainKryoSerializer" class="org.danielli.xultimate.core.serializer.kryo.MainKryoSerializer" />
 	<bean id="rpcKryoSerializer" class="org.danielli.xultimate.core.serializer.kryo.RpcKryoSerializer" />
-
+	<bean id="nullableRpcKryoSerializer" class="org.danielli.xultimate.core.serializer.support.NullableStreamSerializer" c:deserializer-ref="rpcKryoSerializer" c:serializer-ref="rpcKryoSerializer" />
+	
 	<util:list id="notSupportClassType" >
+		<value>java.lang.Number</value>
+		<value>java.util.Date</value>
 		<value>java.util.Collection</value>
 		<value>java.util.Map</value>
 	</util:list>
 	<bean id="defaultClassTypeNotSupporter" class="org.danielli.xultimate.core.support.DefaultClassTypeNotSupporter" p:notSupportClassTypes-ref="notSupportClassType" />
 
 	<bean id="mainProtobufSerializer" class="org.danielli.xultimate.core.serializer.protostuff.MainProtobufSerializer" p:classTypeSupporter-ref="defaultClassTypeNotSupporter" />
-	<bean id="mainProtostuffSerializer" class="org.danielli.xultimate.core.serializer.protostuff.MainProtostuffSerializer" p:classTypeSupporter-ref="defaultClassTypeNotSupporter"/>
-
 	<bean id="rpcProtobufSerializer" class="org.danielli.xultimate.core.serializer.protostuff.RpcProtobufSerializer" />
+	<bean id="nullableRpcProtobufSerializer" class="org.danielli.xultimate.core.serializer.support.NullableStreamSerializer" c:deserializer-ref="rpcProtobufSerializer" c:serializer-ref="rpcProtobufSerializer" />
+	
+	<bean id="mainProtostuffSerializer" class="org.danielli.xultimate.core.serializer.protostuff.MainProtostuffSerializer" p:classTypeSupporter-ref="defaultClassTypeNotSupporter"/>
 	<bean id="rpcProtostuffSerializer" class="org.danielli.xultimate.core.serializer.protostuff.RpcProtostuffSerializer" />
+	<bean id="nullableRpcProtostuffSerializer" class="org.danielli.xultimate.core.serializer.support.NullableStreamSerializer" c:deserializer-ref="rpcProtostuffSerializer" c:serializer-ref="rpcProtostuffSerializer" />
 
-	<bean id="stringSerializer" class="org.danielli.xultimate.core.serializer.java.StringSerializer" />
-	<bean id="longSerializer" class="org.danielli.xultimate.core.serializer.java.LongSerializer" />
-	<bean id="shortSerializer" class="org.danielli.xultimate.core.serializer.java.ShortSerializer" />
-	<bean id="integerSerializer" class="org.danielli.xultimate.core.serializer.java.IntegerSerializer" />
-	<bean id="booleanSerializer" class="org.danielli.xultimate.core.serializer.java.BooleanSerializer" />
 	<bean id="dateSerializer" class="org.danielli.xultimate.core.serializer.java.DateSerializer" />
-	<bean id="byteSerializer" class="org.danielli.xultimate.core.serializer.java.ByteSerializer" />
-	<bean id="floatSerializer" class="org.danielli.xultimate.core.serializer.java.FloatSerializer" />
-	<bean id="doubleSerializer" class="org.danielli.xultimate.core.serializer.java.DoubleSerializer" />
 	<util:list id="serializers1">
-		<ref bean="stringSerializer" />
-		<ref bean="longSerializer" />
-		<ref bean="integerSerializer" />
-		<ref bean="shortSerializer" />
-		<ref bean="booleanSerializer" />
-		<ref bean="dateSerializer" />
-		<ref bean="byteSerializer" />
-		<ref bean="floatSerializer" />
-		<ref bean="doubleSerializer" />
-		<ref bean="mainProtobufSerializer"/>
-		<ref bean="rpcProtobufSerializer"/>
-	</util:list>
-	<util:list id="deserializers1">
-		<ref bean="stringSerializer" />
-		<ref bean="booleanSerializer" />
-		<ref bean="shortSerializer" />
-		<ref bean="integerSerializer" />
-		<ref bean="longSerializer" />
-		<ref bean="byteSerializer" />
-		<ref bean="floatSerializer" />
-		<ref bean="doubleSerializer" />
 		<ref bean="dateSerializer" />
 		<ref bean="mainProtobufSerializer"/>
-		<ref bean="rpcProtobufSerializer"/>
 	</util:list>
 	
 	<util:list id="serializers2">
-		<ref bean="stringSerializer" />
-		<ref bean="longSerializer" />
-		<ref bean="integerSerializer" />
-		<ref bean="shortSerializer" />
-		<ref bean="booleanSerializer" />
-		<ref bean="dateSerializer" />
-		<ref bean="byteSerializer" />
-		<ref bean="floatSerializer" />
-		<ref bean="doubleSerializer" />
-		<ref bean="mainProtostuffSerializer"/>
-		<ref bean="rpcProtostuffSerializer"/>
-	</util:list>
-	<util:list id="deserializers2">
-		<ref bean="stringSerializer" />
-		<ref bean="booleanSerializer" />
-		<ref bean="shortSerializer" />
-		<ref bean="integerSerializer" />
-		<ref bean="longSerializer" />
-		<ref bean="byteSerializer" />
-		<ref bean="floatSerializer" />
-		<ref bean="doubleSerializer" />
 		<ref bean="dateSerializer" />
 		<ref bean="mainProtostuffSerializer"/>
-		<ref bean="rpcProtostuffSerializer"/>
 	</util:list>
-	<bean id="protobufSerializer" class="org.danielli.xultimate.core.serializer.support.SerializerFactory" p:serializers-ref="serializers1" />
-	<bean id="protobufDeserializer" class="org.danielli.xultimate.core.serializer.support.DeserializerFactory" p:deserializers-ref="deserializers1" />
-	<bean id="protostuffSerializer" class="org.danielli.xultimate.core.serializer.support.SerializerFactory" p:serializers-ref="serializers2" />
-	<bean id="protostuffDeserializer" class="org.danielli.xultimate.core.serializer.support.DeserializerFactory" p:deserializers-ref="deserializers2" />
+	<bean id="protobufSerializerFactory" class="org.danielli.xultimate.core.serializer.support.SerializerFactory" p:serializers-ref="serializers1" />
+	<bean id="protobufDeserializerFactory" class="org.danielli.xultimate.core.serializer.support.DeserializerFactory" p:deserializers-ref="serializers1" />
+	<bean id="protostuffSerializerFactory" class="org.danielli.xultimate.core.serializer.support.SerializerFactory" p:serializers-ref="serializers2" />
+	<bean id="protostuffDeserializerFactory" class="org.danielli.xultimate.core.serializer.support.DeserializerFactory" p:deserializers-ref="serializers2" />
+	
+	<bean id="mainObjectSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="false" p:packZerosWithoutOutputStream="true" p:serializer-ref="objectSerializer" />
+	<bean id="mainObjectDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="false" p:deserializer-ref="objectSerializer" />
+	<bean id="rpcObjectSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="true" p:packZerosWithoutOutputStream="false" p:serializer-ref="nullableObjectSerializer" />
+	<bean id="rpcObjectDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="true" p:deserializer-ref="nullableObjectSerializer" />	
+	
+	<bean id="mainKryoSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="false" p:packZerosWithoutOutputStream="true" p:serializer-ref="mainKryoSerializer" />
+	<bean id="mainKryoDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="false" p:deserializer-ref="mainKryoSerializer" />
+	<bean id="rpcKryoSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="true" p:packZerosWithoutOutputStream="false" p:serializer-ref="nullableRpcKryoSerializer" />
+	<bean id="rpcKryoDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="true" p:deserializer-ref="nullableRpcKryoSerializer" />	
+	
+	<bean id="mainProtobufSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="false" p:packZerosWithoutOutputStream="true" p:serializer-ref="mainProtobufSerializer" />
+	<bean id="mainProtobufDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="false" p:deserializer-ref="mainProtobufSerializer" />
+	<bean id="rpcProtobufSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="true" p:packZerosWithoutOutputStream="false" p:serializer-ref="nullableRpcProtobufSerializer" />
+	<bean id="rpcProtobufDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="true" p:deserializer-ref="nullableRpcProtobufSerializer" />
+	
+	<bean id="mainProtostuffSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="false" p:packZerosWithoutOutputStream="true" p:serializer-ref="mainProtostuffSerializer" />
+	<bean id="mainProtostuffDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="false" p:deserializer-ref="mainProtostuffSerializer" />
+	<bean id="rpcProtostuffSerializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeSerializer" p:checkKnownType="true" p:exportKnownTypeToOutputStream="true" p:packZerosWithoutOutputStream="false" p:serializer-ref="nullableRpcProtostuffSerializer" />
+	<bean id="rpcProtostuffDeserializerProxy" class="org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer" p:checkKnownType="true" p:importKnownTypeFromInputStream="true" p:deserializer-ref="nullableRpcProtostuffSerializer" />
 </beans>

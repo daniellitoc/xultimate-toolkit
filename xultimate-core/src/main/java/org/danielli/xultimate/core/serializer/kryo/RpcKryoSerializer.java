@@ -6,20 +6,30 @@ import java.io.OutputStream;
 import org.danielli.xultimate.core.serializer.DeserializerException;
 import org.danielli.xultimate.core.serializer.RpcSerializer;
 import org.danielli.xultimate.core.serializer.SerializerException;
-import org.danielli.xultimate.core.serializer.kryo.util.KryoUtils;
+import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 public class RpcKryoSerializer extends RpcSerializer {
 
-	private int defaultBufferSize = 10 * 1024;
+	protected int bufferSize = 10 * 1024;
+	
+	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
+	
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+	
+	public void setKryoGenerator(KryoGenerator kryoGenerator) {
+		this.kryoGenerator = kryoGenerator;
+	}
 	
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
-		Output output = new Output(defaultBufferSize);
+		Output output = new Output(bufferSize);
 		try {
-			KryoUtils.getKryo().writeClassAndObject(output, source);
+			kryoGenerator.generate().writeClassAndObject(output, source);
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
 		} finally {
@@ -30,9 +40,9 @@ public class RpcKryoSerializer extends RpcSerializer {
 
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
-		Output output = new Output(defaultBufferSize);
+		Output output = new Output(bufferSize);
 		try {
-			KryoUtils.getKryo().writeClassAndObject(output, source);
+			kryoGenerator.generate().writeClassAndObject(output, source);
 			outputStream.write(output.toBytes());
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
@@ -46,7 +56,7 @@ public class RpcKryoSerializer extends RpcSerializer {
 	public <T> T deserialize(byte[] bytes, Class<T> clazz) throws DeserializerException {
 		try {
 			Input input = new Input(bytes);
-	        return (T) KryoUtils.getKryo().readClassAndObject(input);
+	        return (T) kryoGenerator.generate().readClassAndObject(input);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
@@ -63,18 +73,9 @@ public class RpcKryoSerializer extends RpcSerializer {
 	@SuppressWarnings("unchecked")
 	public <T> T deserialize(Input input, Class<T> clazz) throws DeserializerException {
 		try {
-	        return  (T) KryoUtils.getKryo().readClassAndObject(input);
+	        return  (T) kryoGenerator.generate().readClassAndObject(input);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
 	}
-
-	public int getDefaultBufferSize() {
-		return defaultBufferSize;
-	}
-
-	public void setDefaultBufferSize(int defaultBufferSize) {
-		this.defaultBufferSize = defaultBufferSize;
-	}
-
 }
