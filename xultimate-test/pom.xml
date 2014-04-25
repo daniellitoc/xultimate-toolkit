@@ -19,6 +19,7 @@
 	
 	<properties>
 		<javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
+		<com.lmax.disruptor.version>3.2.1</com.lmax.disruptor.version>
 	</properties>
 	
 	<dependencies>
@@ -58,6 +59,12 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.servlet.javax.servlet-api.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.lmax</groupId>
+		    <artifactId>disruptor</artifactId>
+		    <version>${com.lmax.disruptor.version}</version>
 		</dependency>
 		
 		<dependency>
