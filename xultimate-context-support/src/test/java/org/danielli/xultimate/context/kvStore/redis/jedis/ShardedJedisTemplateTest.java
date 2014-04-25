@@ -5,11 +5,8 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate;
 import org.danielli.xultimate.core.json.ValueType;
 import org.danielli.xultimate.core.json.fastjson.FastJSONTemplate;
-import org.danielli.xultimate.core.serializer.Deserializer;
-import org.danielli.xultimate.core.serializer.Serializer;
-import org.danielli.xultimate.core.serializer.java.StringSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.MainProtobufSerializer;
-import org.danielli.xultimate.core.serializer.protostuff.RpcProtobufSerializer;
+import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
+import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Test;
@@ -26,20 +23,11 @@ public class ShardedJedisTemplateTest {
 	@Resource(name = "shardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 	
-	@Resource
-	private Serializer protobufSerializer;
+	@Resource(name = "rpcProtostuffSerializerProxy")
+	private BaseTypeSerializer rpcProtostuffSerializerProxy;
 	
-	@Resource
-	private Deserializer protobufDeserializer;
-	
-	@Resource
-	private MainProtobufSerializer mainProtobufSerializer;
-	
-	@Resource
-	private RpcProtobufSerializer rpcProtobufSerializer;
-	
-	@Resource
-	private StringSerializer stringSerializer;
+	@Resource(name = "rpcProtostuffDeserializerProxy")
+	private BaseTypeDeserializer rpcProtostuffDeserializerProxy;
 	
 	@Resource
 	private FastJSONTemplate fastJsonTemplate;
@@ -57,30 +45,14 @@ public class ShardedJedisTemplateTest {
 					
 					@Override
 					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = protobufSerializer.serialize("person");
-						shardedJedis.set(key, protobufSerializer.serialize(person));
-						protobufDeserializer.deserialize(shardedJedis.get(key), Person.class);
+						byte[] key = rpcProtostuffSerializerProxy.serializeString("person");
+						shardedJedis.set(key, rpcProtostuffSerializerProxy.serialize(person));
+						rpcProtostuffDeserializerProxy.deserialize(shardedJedis.get(key), Person.class);
 						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
 					}
 				});
 			}
-			PerformanceMonitor.mark("protobuf序列化对象" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
-					
-					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = rpcProtobufSerializer.serialize("person");
-						shardedJedis.set(key, rpcProtobufSerializer.serialize(person));
-						rpcProtobufSerializer.deserialize(shardedJedis.get(key), Person.class);
-						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
-					}
-				});
-			}
-			PerformanceMonitor.mark("rpcProtobuf序列化对象" + i);
+			PerformanceMonitor.mark("protostuff序列化对象" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -95,95 +67,23 @@ public class ShardedJedisTemplateTest {
 					}
 				});
 			}
-			PerformanceMonitor.mark("JSON序列化对象" + i);
+			PerformanceMonitor.mark("原生 + JSON序列化对象" + i);
 		}
 		
-		PerformanceMonitor.stop();
-		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
-		PerformanceMonitor.remove();
-	}
-	
-//	@Test
-	public void testSerializable () {
-		PerformanceMonitor.start("JedisTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
 				shardedJedisTemplate.execute(new ShardedJedisCallback() {
 					
 					@Override
 					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						String key = "key";
-						shardedJedis.set(key, "value");
-						shardedJedis.get(key);
+						byte[] key = rpcProtostuffSerializerProxy.serializeString("person");
+						shardedJedis.set(key, rpcProtostuffSerializerProxy.serializeString(fastJsonTemplate.writeValueAsString(person)));
+						fastJsonTemplate.readValue(rpcProtostuffDeserializerProxy.deserializeString(shardedJedis.get(key)), new ValueType<Person>() { });
 						shardedJedis.getShard(key).del(key);
 					}
 				});
 			}
-			PerformanceMonitor.mark("原生序列化" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
-					
-					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = stringSerializer.serialize("key");
-						shardedJedis.set(key, stringSerializer.serialize("value"));
-						stringSerializer.deserialize(shardedJedis.get(key), String.class);
-						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
-					}
-				});
-			}
-			PerformanceMonitor.mark("String Serializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
-					
-					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = rpcProtobufSerializer.serialize("key");
-						shardedJedis.set(key, rpcProtobufSerializer.serialize("value"));
-						rpcProtobufSerializer.deserialize(shardedJedis.get(key), String.class);
-						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
-					}
-				});
-			}
-			PerformanceMonitor.mark("PRC Protostuff" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
-					
-					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = mainProtobufSerializer.serialize("key");
-						shardedJedis.set(key, mainProtobufSerializer.serialize("value"));
-						mainProtobufSerializer.deserialize(shardedJedis.get(key), String.class);
-						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
-					}
-				});
-			}
-			PerformanceMonitor.mark("Main Protobuf Serializer" + i);
-		}
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
-					
-					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = protobufSerializer.serialize("key");
-						shardedJedis.set(key, protobufSerializer.serialize("value"));
-						protobufDeserializer.deserialize(shardedJedis.get(key), String.class);
-						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
-					}
-				});
-			}
-			PerformanceMonitor.mark("Protobuf Factory" + i);
+			PerformanceMonitor.mark("String Serializer + JSON序列化对象" + i);
 		}
 		
 		PerformanceMonitor.stop();

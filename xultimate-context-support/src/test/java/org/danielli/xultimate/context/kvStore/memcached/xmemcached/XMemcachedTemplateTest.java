@@ -30,93 +30,40 @@ public class XMemcachedTemplateTest {
 	@Resource(name = "xmemcachedTemplate")
 	private XMemcachedTemplate xMemcachedTemplate;
 	
-	@Resource
-	private Serializer protobufSerializer;
+	@Resource(name = "rpcProtostuffSerializerProxy")
+	private Serializer rpcProtostuffSerializerProxy;
 	
-	@Resource
-	private Deserializer protobufDeserializer;
+	@Resource(name = "rpcProtostuffDeserializerProxy")
+	private Deserializer rpcProtostuffDeserializerProxy;
 	
 	@Resource
 	private SerializingTranscoder serializingTranscoder;
+	@Resource
+	private net.rubyeye.xmemcached.transcoders.SerializingTranscoder defaultTranscoder;
 	
 	@Resource
 	private CacheService cacheService;
 	
 //	@Test
-	public void testSpringCache() {
-		System.out.println("addUser");
-		cacheService.addUser(15, "Daniel Li");
-		System.out.println("getUserNameById");
-		cacheService.getUserNameById(15);
-		System.out.println("deleteUser");
-		cacheService.deleteUser(15);
-		System.out.println("getUserNameById");
-		cacheService.getUserNameById(15);
-		System.out.println("getUserNameById");
-		cacheService.getUserNameById(15);
-	}
-	
-	@Test
-	public void testSerializable () {
+	public void testTranscoder() {
 		final Person person = new Person();
 		person.setName("Daniel Li");
 		person.setAge(18);
 		
 		PerformanceMonitor.start("XMemcachedTemplateTest");
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
-					@Override
-					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-						memcachedClient.set("person", 1000, person);
-						memcachedClient.get("person");
-						memcachedClient.delete("person");
-						return null;
-					}
-				});
+			for (int j = 0; j < 100000; j++) {
+				defaultTranscoder.decode(defaultTranscoder.encode(person));
 			}
 			PerformanceMonitor.mark("原生序列化" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
-					@Override
-					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-						memcachedClient.set("person", 1000, protobufSerializer.serialize(person));
-						protobufDeserializer.deserialize((byte[]) memcachedClient.get("person"), Person.class);
-						memcachedClient.delete("person");
-						return null;
-					}
-				});
+			for (int j = 0; j < 100000; j++) {
+				serializingTranscoder.decode(serializingTranscoder.encode(person));
 			}
 			PerformanceMonitor.mark("protostuff" + i);
 		}
-		
-		xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
-
-			@Override
-			public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-				memcachedClient.setTranscoder(serializingTranscoder);
-				return null;
-			}
-		});
-		
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10000; j++) {
-				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
-					@Override
-					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-						memcachedClient.set("person", 1000, person);
-						memcachedClient.get("person");
-						memcachedClient.delete("person");
-						return null;
-					}
-				});
-			}
-			PerformanceMonitor.mark("内置protostuff" + i);
-		}
-		
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();
@@ -137,7 +84,7 @@ public class XMemcachedTemplateTest {
 	}
 
 //	@Test
-	public void test() {
+	public void testBase() {
 		xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
 			
 			@Override
@@ -162,4 +109,89 @@ public class XMemcachedTemplateTest {
 			}
 		});
 	}
+	
+//	@Test
+	public void testSpringCache() {
+		System.out.println("addUser");
+		cacheService.addUser(15, "Daniel Li");
+		System.out.println("getUserNameById");
+		cacheService.getUserNameById(15);
+		System.out.println("deleteUser");
+		cacheService.deleteUser(15);
+		System.out.println("getUserNameById");
+		cacheService.getUserNameById(15);
+		System.out.println("getUserNameById");
+		cacheService.getUserNameById(15);
+	}
+	
+	/**
+	 * 循环次数太短不明显。
+	 */
+	@Test
+	public void test() {
+		final Person person = new Person();
+		person.setName("Daniel Li");
+		person.setAge(18);
+		
+		PerformanceMonitor.start("XMemcachedTemplateTest");
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
+					@Override
+					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
+						memcachedClient.set("person", 1000, person);
+						memcachedClient.get("person");
+						memcachedClient.delete("person");
+						return null;
+					}
+				});
+			}
+			PerformanceMonitor.mark("原生序列化" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
+					@Override
+					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
+						memcachedClient.set("person", 1000, rpcProtostuffSerializerProxy.serialize(person));
+						rpcProtostuffDeserializerProxy.deserialize((byte[]) memcachedClient.get("person"), Person.class);
+						memcachedClient.delete("person");
+						return null;
+					}
+				});
+			}
+			PerformanceMonitor.mark("protostuff" + i);
+		}
+		
+		xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
+
+			@Override
+			public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
+				memcachedClient.setTranscoder(serializingTranscoder);
+				return null;
+			}
+		});
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 100000; j++) {
+				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
+					@Override
+					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
+						memcachedClient.set("person", 1000, person);
+						memcachedClient.get("person");
+						memcachedClient.delete("person");
+						return null;
+					}
+				});
+			}
+			PerformanceMonitor.mark("内置protostuff" + i);
+		}
+		
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
+		PerformanceMonitor.remove();
+	}
+	
+
 }

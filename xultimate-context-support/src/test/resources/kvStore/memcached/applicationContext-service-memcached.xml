@@ -80,7 +80,7 @@
 		</property>
 		<!-- Serializing transcoder -->
 		<property name="transcoder">
-			<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" p:compressionThreshold="1024" />
+			<ref bean="defaultTranscoder" />
 		</property>
 		<!-- ByteBuffer allocator -->
 		<property name="bufferAllocator">
@@ -89,18 +89,11 @@
 		<!-- Failure mode -->
 		<property name="failureMode" value="true" />
 	</bean>
-	
+	<bean id="defaultTranscoder" class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" p:compressionThreshold="1024" />
 	<bean id="serializingTranscoder" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.SerializingTranscoder" 
 				p:compressionThreshold="1024"
-				p:booleanSerializer-ref="booleanSerializer"
-				p:byteSerializer-ref="byteSerializer"
-				p:dateSerializer-ref="dateSerializer"
-				p:doubleSerializer-ref="doubleSerializer"
-				p:floatSerializer-ref="floatSerializer"
-				p:integerSerializer-ref="integerSerializer"
-				p:longSerializer-ref="longSerializer"
-				p:rpcSerializer-ref="rpcSerializer"
-				p:stringSerializer-ref="stringSerializer" />
+				p:baseTypeDeserializer-ref="rpcProtostuffDeserializerProxy"
+				p:baseTypeSerializer-ref="rpcProtostuffSerializerProxy" />
 	
 	<bean id="memcachedClient" factory-bean="memcachedClientBuilder" factory-method="build" destroy-method="shutdown" />
   	
