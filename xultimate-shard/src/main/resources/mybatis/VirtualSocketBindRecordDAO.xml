@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="org.danielli.xultimate.shard.mybatis.dao.VirtualSocketBindRecordDAO">
+
+	
+	<sql id="commonSQL"> SELECT VSBR.id, VSBR.virtual_socket_id, VSBR.virtual_table_interval_id, VSBR.hash_values_json, VSBR.create_time FROM XULTIMATE_VIRTUAL_SOCKET_BIND_RECORD VSBR </sql>
+	<select id="findByVirtualTableIntervalIdList" resultMap="virtualSocketBindRecordResultMap">
+		<include refid="commonSQL"/>
+		FORCE INDEX (ix_virtualTableIntervalId_virtualSocketId ) WHERE VSBR.virtual_table_interval_id IN 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+	  	</foreach>
+	</select>
+	
+	<resultMap type="org.danielli.xultimate.shard.po.VirtualSocketBindRecord" id="virtualSocketBindRecordResultMap">
+		<id column="id" property="id"/>
+		<result column="virtual_socket_id" property="virtualSocketId" />
+		<result column="virtual_table_interval_id" property="virtualTableIntervalId" />
+		<result column="hash_values_json" property="hashValuesJson"/>
+		<result column="create_time" property="createTime" />
+	</resultMap>
+</mapper> 

@@ -8,19 +8,19 @@
 	
 	<sql id="commonSQL"> SELECT VTI.id, VTI.virtual_table_id, VTI.start_interval, VTI.end_interval, VTI.available, VTI.hash_values_count, VTI.create_time, VTI.update_time FROM XULTIMATE_VIRTUAL_TABLE_INTERVAL VTI </sql>
 	<select id="findByVirtualTableId" resultMap="virtualTableIntervalResultMap">
-		<include refid="commonSQL"/> WHERE VTI.virtual_table_id = #{virtualTableId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+		<include refid="commonSQL"/> WHERE VTI.virtual_table_id = #{virtualTableId}
 	</select>
 	
 	<select id="findByVirtualDatabaseNameAndVirtualTableName" resultMap="virtualTableIntervalResultMap">
 		<include refid="commonSQL"/> 
-		INNER JOIN  XULTIMATE_VIRTUAL_TABLE VT ON (VT.id = VTI.virtual_table_id)
+		INNER JOIN XULTIMATE_VIRTUAL_TABLE VT ON (VT.id = VTI.virtual_table_id)
 		INNER JOIN XULTIMATE_VIRTUAL_DATABASE VD ON (VD.id = VT.virtual_database_id) 
 		WHERE VT.name = #{param2} AND VD.name = #{param1}
 	</select>
 	
 	<resultMap type="org.danielli.xultimate.shard.po.VirtualTableInterval" id="virtualTableIntervalResultMap">
 		<id column="id" property="id"/>
-		<result column="virtual_table_id" property="virtualTableId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="virtual_table_id" property="virtualTableId" />
 		<result column="start_interval" property="startInterval"/>
 		<result column="end_interval" property="endInterval"/>
 		<result column="available" property="available" jdbcType="CHAR" typeHandler="org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler"/>

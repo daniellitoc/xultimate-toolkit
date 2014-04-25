@@ -2,6 +2,7 @@ package org.danielli.xultimate.shard.mybatis.biz.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -35,22 +36,21 @@ public class PartitionedTableIntervalBizImpl implements PartitionedTableInterval
 	@Value("${memcached.expireSeconds}")
 	private Integer expireSeconds;
 	
-	
 	@Override
-	public List<Map<String, Object>> findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(final List<Long> virtualTableIntervalIdList) {
+	public List<Map<String, Object>> findInfosByVirtualTableIdAndVirtualSocketIdSet(final Long virtualTableId, final Set<Long> virtualSocketIdSet) {
 		return xMemcachedTemplate.execute(new XMemcachedReturnedCallback<List<Map<String, Object>>>() {
 			@Override
 			public List<Map<String, Object>> doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-				String virtualTableIntervalIdListKey = FormatterUtils.format("PartitionedTableInterval:virtualTableIntervalIdList:{0}", jsonTemplate.writeValueAsString(virtualTableIntervalIdList));
-				List<Map<String, Object>> partitionedTableIntervalInfos = memcachedClient.get(virtualTableIntervalIdListKey);
+				String partitionedTableIntervalInfosKey = FormatterUtils.format("PartitionedTableInterval:virtualTableId:{0}:virtualSocketIdSet:{1}", virtualTableId, jsonTemplate.writeValueAsString(virtualSocketIdSet));
+				List<Map<String, Object>> partitionedTableIntervalInfos = memcachedClient.get(partitionedTableIntervalInfosKey);
 				if (partitionedTableIntervalInfos == null) {
-					String virtualTableIntervalIdListKeyLock = FormatterUtils.format("{0}.lock", virtualTableIntervalIdListKey);
-					if (memcachedClientMutex.tryLock(memcachedClient, virtualTableIntervalIdListKeyLock)) {
+					String partitionedTableIntervalInfosKeyLock = FormatterUtils.format("{0}.lock", partitionedTableIntervalInfosKey);
+					if (memcachedClientMutex.tryLock(memcachedClient, partitionedTableIntervalInfosKeyLock)) {
 						try {
-							partitionedTableIntervalInfos = partitionedTableIntervalDAO.findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(virtualTableIntervalIdList);
-							memcachedClient.set(virtualTableIntervalIdListKey, expireSeconds, partitionedTableIntervalInfos);
+							partitionedTableIntervalInfos = partitionedTableIntervalDAO.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableId, virtualSocketIdSet);
+							memcachedClient.set(partitionedTableIntervalInfosKey, expireSeconds, partitionedTableIntervalInfos);
 						} finally {
-							memcachedClientMutex.unlock(memcachedClient, virtualTableIntervalIdListKeyLock);
+							memcachedClientMutex.unlock(memcachedClient, partitionedTableIntervalInfosKeyLock);
 						}
 					} else {
 						Thread.sleep(500);

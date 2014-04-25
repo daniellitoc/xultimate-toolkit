@@ -3,7 +3,7 @@ package org.danielli.xultimate.shard.po;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.danielli.xultimate.util.Assert;
+import org.apache.commons.lang3.Range;
 
 /**
  * 分区表的数据划分区间。
@@ -66,7 +66,9 @@ public class PartitionedTableInterval implements Serializable {
 	}
 	
 	public boolean betweenStartIntervalAndEndInterval(Long intervalValue) {
-		Assert.notNull(intervalValue, "this argument 'intervalValue' is required; it must not be null");
-		return intervalValue.compareTo(startInterval) >= 0 && intervalValue.compareTo(endInterval) < 0;
+//		Assert.notNull(intervalValue, "this argument 'intervalValue' is required; it must not be null");
+//		return intervalValue.compareTo(startInterval) >= 0 && intervalValue.compareTo(endInterval) < 0;
+		Range<Long> range = Range.between(startInterval, endInterval);
+		return range.contains(intervalValue);
 	}
 }

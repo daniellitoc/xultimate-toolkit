@@ -2,14 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
 <mapper namespace="org.danielli.xultimate.shard.mybatis.dao.PartitionedTableDAO">
 	
-	<sql id="commonSQL"> SELECT PT.id, PT.virtual_socket_bind_record_id, PT.shard_id, PT.create_time FROM XULTIMATE_PARTITIONED_TABLE PT </sql>
-	<select id="findByVirtualSocketBindRecordId" resultMap="partitionedTableResultMap">
-		<include refid="commonSQL"/> WHERE PT.virtual_socket_bind_record_id = #{virtualSocketBindRecordId, typeHandler=org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler}
+	<sql id="commonSQL"> SELECT PT.id, PT.virtual_table_id, PT.virtual_socket_id, PT.shard_id, PT.create_time FROM XULTIMATE_PARTITIONED_TABLE PT </sql>
+	<select id="findByVirtualTableIdAndVirtualSocketId" resultMap="partitionedTableResultMap">
+		<include refid="commonSQL"/> 
+		WHERE PT.virtual_table_id = #{param1}
+		AND PT.virtual_socket_id = #{param2}
 	</select>
 	
 	<resultMap type="org.danielli.xultimate.shard.po.PartitionedTable" id="partitionedTableResultMap">
 		<id column="id" property="id"/>
-		<result column="virtual_socket_bind_record_id" property="virtualSocketBindRecordId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="virtual_table_id" property="virtualTableId" />
+		<result column="virtual_socket_id" property="virtualSocketId" />
 		<result column="shard_id" property="shardId"/>
 		<result column="create_time" property="createTime" />
 	</resultMap>

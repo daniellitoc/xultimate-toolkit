@@ -12,7 +12,7 @@
 	<resultMap type="org.danielli.xultimate.shard.po.VirtualTable" id="virtualTableResultMap">
 		<id column="id" property="id"/>
 		<result column="name" property="name"/>
-		<result column="virtual_database_id" property="virtualDatabaseId" typeHandler="org.danielli.xultimate.orm.mybatis.type.LongNullParameterTypeHandler"/>
+		<result column="virtual_database_id" property="virtualDatabaseId" />
 		<result column="create_time" property="createTime"/>
 	</resultMap>
 </mapper> 

@@ -67,23 +67,24 @@ VALUES
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_PARTITIONED_TABLE` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `virtual_socket_bind_record_id` bigint NOT NULL,
+  `virtual_socket_id` bigint NOT NULL,
+  `virtual_table_id` bigint NOT NULL,
   `shard_id` bigint NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `ix_virtualSocketBindRecordId` (`virtual_socket_bind_record_id`) USING BTREE
+  KEY `ix_virtualTableId_virtualSocketId` (`virtual_table_id`, `virtual_socket_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT IGNORE INTO XULTIMATE_PARTITIONED_TABLE(id, virtual_socket_bind_record_id, shard_id)
+INSERT IGNORE INTO XULTIMATE_PARTITIONED_TABLE(id, virtual_table_id, virtual_socket_id, shard_id)
 VALUES
-(1, 1, 1),
-(2, 1, 2),
-(3, 2, 1),
-(4, 2, 2),
-(5, 3, 1),
-(6, 3, 2),
-(7, 4, 1),
-(8, 4, 2),
-(9, 5, 1);
+(1, 1, 1, 1),
+(2, 1, 1, 2),
+(3, 1, 2, 1),
+(4, 1, 2, 2),
+(5, 1, 3, 1),
+(6, 1, 3, 2),
+(7, 1, 4, 1),
+(8, 1, 4, 2),
+(9, 1, 5, 1);
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_PARTITIONED_TABLE_INTERVAL` (
   `id` bigint NOT NULL AUTO_INCREMENT,

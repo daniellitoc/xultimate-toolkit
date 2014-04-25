@@ -14,8 +14,10 @@ public class PartitionedTable implements Serializable {
 	
 	/** 标识 */
 	private Long id;
-	/** 虚拟Socket绑定记录ID */
-	private Long virtualSocketBindRecordId;
+	/** 虚拟表ID */
+	private Long virtualTableId;
+	/** 虚拟Socket ID */
+	private Long virtualSocketId;
 	/** 表分区ID */
 	private Long shardId;
 	/** 创建时间 */
@@ -45,11 +47,19 @@ public class PartitionedTable implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public Long getVirtualSocketBindRecordId() {
-		return virtualSocketBindRecordId;
+	public Long getVirtualTableId() {
+		return virtualTableId;
 	}
 
-	public void setVirtualSocketBindRecordId(Long virtualSocketBindRecordId) {
-		this.virtualSocketBindRecordId = virtualSocketBindRecordId;
+	public void setVirtualTableId(Long virtualTableId) {
+		this.virtualTableId = virtualTableId;
+	}
+	
+	public Long getVirtualSocketId() {
+		return virtualSocketId;
+	}
+
+	public void setVirtualSocketId(Long virtualSocketId) {
+		this.virtualSocketId = virtualSocketId;
 	}
 }

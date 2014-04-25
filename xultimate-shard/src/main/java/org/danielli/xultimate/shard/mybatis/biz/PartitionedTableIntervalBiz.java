@@ -2,6 +2,7 @@ package org.danielli.xultimate.shard.mybatis.biz;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -17,5 +18,5 @@ public interface PartitionedTableIntervalBiz {
 	 * @param virtualTableIntervalIdList 虚拟表区间ID列表。
 	 * @return 分区表的数据划分区间信息列表。
 	 */
-	List<Map<String, Object>> findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(List<Long> virtualTableIntervalIdList);
+	List<Map<String, Object>> findInfosByVirtualTableIdAndVirtualSocketIdSet(Long virtualTableId, Set<Long> virtualSocketIdSet);
 }

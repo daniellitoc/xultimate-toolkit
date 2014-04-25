@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.danielli.xultimate.shard.mybatis.biz.PartitionedTableIntervalBiz;
+import org.danielli.xultimate.shard.mybatis.biz.VirtualSocketBindRecordBiz;
 import org.danielli.xultimate.shard.mybatis.biz.VirtualTableIntervalBiz;
 import org.danielli.xultimate.shard.po.PartitionedTableInterval;
 import org.danielli.xultimate.shard.po.VirtualSocketBindRecord;
@@ -30,6 +31,9 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 	@Resource(name = "virtualTableIntervalBizImpl")
 	private VirtualTableIntervalBiz virtualTableIntervalBiz;
 	
+	@Resource(name = "virtualSocketBindRecordBizImpl")
+	private VirtualSocketBindRecordBiz virtualSocketBindRecordBiz;
+	
 	private VirtualTableInterval findVirtualTableIntervalId(String virtualDatabaseName, String virtualTableName, Long intervalValue) {
 		List<VirtualTableInterval> virtualTableIntervalList = virtualTableIntervalBiz.findByVirtualDatabaseNameAndVirtualTableName(virtualDatabaseName, virtualTableName);
 		for (VirtualTableInterval virtualTableInterval : virtualTableIntervalList) {
@@ -44,18 +48,38 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		return null;
 	}
 	
+	private Set<Long> findVirtualSocketIdSet(List<VirtualSocketBindRecord> virtualSocketBindRecordList, Long intervalValue, Integer hashValuesCount) {
+		Set<Long> virtualSocketIdSet = new HashSet<>();
+		for (VirtualSocketBindRecord virtualSocketBindRecord : virtualSocketBindRecordList) {
+			if (!ArrayUtils.contains(virtualSocketBindRecord.getHashValues(), (int) (intervalValue % hashValuesCount))) {
+				continue;
+			}
+			virtualSocketIdSet.add(virtualSocketBindRecord.getVirtualSocketId());
+			break;
+		}
+		return virtualSocketIdSet;
+	}
+	
+	private Set<Long> findVirtualSocketIdSet(List<VirtualSocketBindRecord> virtualSocketBindRecordList) {
+		Set<Long> virtualSocketIdSet = new HashSet<>();
+		for (VirtualSocketBindRecord virtualSocketBindRecord : virtualSocketBindRecordList) {
+			virtualSocketIdSet.add(virtualSocketBindRecord.getVirtualSocketId());
+		}
+		return virtualSocketIdSet;
+	}
+	
 	@Override
 	public ShardInfo createShardInfo(String virtualDatabaseName, String virtualTableName, Long intervalValue) {
 		VirtualTableInterval virtualTableInterval  = findVirtualTableIntervalId(virtualDatabaseName, virtualTableName, intervalValue);
 		if (virtualTableInterval == null) return null;
-		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(Arrays.asList(virtualTableInterval.getId()));
+		
+		List<VirtualSocketBindRecord> virtualSocketBindRecordList = virtualSocketBindRecordBiz.findByVirtualTableIntervalIdList(Arrays.asList(virtualTableInterval.getId()));
+		Set<Long> virtualSocketIdSet = findVirtualSocketIdSet(virtualSocketBindRecordList, intervalValue, virtualTableInterval.getHashValuesCount());
+		if (CollectionUtils.isEmpty(virtualSocketIdSet)) return null;
+		
+		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableInterval.getVirtualTableId(), virtualSocketIdSet);
 		
 		for (Map<String, Object> partitionedTableIntervalInfo : partitionedTableIntervalInfoList) {
-			VirtualSocketBindRecord virtualSocketBindRecord = new VirtualSocketBindRecord();
-			virtualSocketBindRecord.setHashValuesJson((String) partitionedTableIntervalInfo.get("virtualSocketBindRecordHashValuesJson"));
-			if (!ArrayUtils.contains(virtualSocketBindRecord.getHashValues(), (int) (intervalValue % virtualTableInterval.getHashValuesCount()))) {
-				continue;
-			}
 			PartitionedTableInterval partitionedTableInterval = new PartitionedTableInterval();
 			partitionedTableInterval.setStartInterval((Long) partitionedTableIntervalInfo.get("partitionedTableStartInterval"));
 			partitionedTableInterval.setEndInterval((Long) partitionedTableIntervalInfo.get("partitionedTableEndInterval"));
@@ -77,13 +101,26 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		if (CollectionUtils.isEmpty(virtualTableIntervalList)) {
 			return shardInfoSet;
 		}
+		
 		List<Long> virtualTableIntervalIdList = new ArrayList<>();
+		Long virtualTableId = null;
 		for (VirtualTableInterval virtualTableInterval : virtualTableIntervalList) {
 			if (virtualTableInterval.getAvailable()) {
 				virtualTableIntervalIdList.add(virtualTableInterval.getId());
+				virtualTableId = virtualTableInterval.getVirtualTableId();
 			}
 		}
-		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findPartitionedTableIntervalInfosByvirtualTableIntervalIdList(virtualTableIntervalIdList);
+		if (virtualTableId == null) {
+			return shardInfoSet;
+		}
+		
+		List<VirtualSocketBindRecord> virtualSocketBindRecordList = virtualSocketBindRecordBiz.findByVirtualTableIntervalIdList(virtualTableIntervalIdList);
+		Set<Long> virtualSocketIdSet = findVirtualSocketIdSet(virtualSocketBindRecordList);
+		if (CollectionUtils.isEmpty(virtualSocketIdSet))  {
+			return shardInfoSet;
+		}
+		
+		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableId, virtualSocketIdSet);
 		
 		for (Map<String, Object> partitionedTableIntervalInfo : partitionedTableIntervalInfoList) {
 			ShardInfo shardInfo = new ShardInfo();
