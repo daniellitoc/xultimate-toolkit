@@ -17,7 +17,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 整合其他utils。包括commons-io、commons-collections、commons-codec等。
 * 添加UnicodeInputStream/UnicodeReader解决读取ANSI文本文件乱码。
 * 提供JSONTemplate，包括fastjson和jackson的封装；提供JsonUtils生成JSOUP格式。
-* 提供Serializer和Deserializer，包括对JAVA（基本数据类型、对象）、kryo、protostuff的封装；提供SerializerFactory/DeserializerFactory灵活配置指定类型序列化。
+* 提供Serializer和Deserializer，包括对JAVA（Date、对象）、kryo、protostuff的封装；提供NullableStreamSerializer、BaseTypeSerializer/BaseTypeDeserializer、SerializerFactory/DeserializerFactory灵活配置指定类型序列化。
+* 提供Compressor和Decompressor，包括对GZIP和Snappy的封装。
 * 对tamper、cglib、reflectasm的使用。
 * 包含大部分相关功能的测试类。
 * 测试类中所有使用过PerformanceMonitor的都包含相关代码的性能测试。
@@ -84,13 +85,13 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括HTTL(HTTLEngineUtils)、Freemarker、StringTemeplateV3、StringTemplateV4、Velocity的模板处理Utils类。
 * 提供Formatter，包括对HTTL、Spel、FreeMarker、MessageFormat、StringTemplateV3、StrpingTemplateV4、Velocity的封装。
 * 包括对FastDFS Java Api的封装，主要有ClientGlobalInitializer、StorageClientTemplate、FastDFSUtils等。
-* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制protostuff或Kryo。
+* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制java、protobuf、protostuff或Kryo。
 * 提供XMemcachedCacheManager用于支持Spring Cache和Spring缓存注解。
 * 提供MemcachedClientMutex，内部使用add实现分布式互斥锁。
 * 提供MemcachedClientLimiter，用于限制访问记录。
 * 提供JedisTemplate/ShardedJedisTemplate，是对Jedis的封装，不支持内部修改序列化。
 * 提供序列主键生成器(基于Redis)，包括ShardedJedisMaxValueIncrementer/JedisMaxValueIncrementer。见xultimate-jdbc。
-* 提供quartz的集群实例，同时，支持类似与JobDetailFactoryBean的Spring Bean配置形式。
+* 提供quartz的集群实例确保高可用，同时，支持类似与JobDetailFactoryBean的Spring Bean配置形式。
 * 提供Spring Mail的使用ShowCase，包括各种使用情况、如用HTTL模板做邮件模板、加密SMTP用户密码、收件人等默认值、包含昵称、使用TaskExecutor异步处理等。
 * 提供EmailAddressBuilder代替new InternetEmail(...).toString()形式。
 * 包含大部分相关功能的测试类。
@@ -170,18 +171,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供VolatileTest，展示volatile关键字的使用效果。
 
 
-### 打算(序列化) ###
-
-* 用ProtobufOutput提供的static方法替换我之前封装的SerializerUtils。
-* 输出时配合使用LinkedBuffer和ProtobufOutput和writeTo(LinkedBuffer buffer...)替代writeDelimitedTo(DataOutput out...)类的方法。
-* 使用mergeDelimitedFrom(InputStream in, T message, Schema<T> schema, LinkedBuffer buffer)类方法。
-* 序列化缓冲区大小平均值。
-* KryoUtils不合适，需要拆分。
-
-
 ### 打算(MyBatis) ###
 
-* 看一下common-lang里的NumberRange。可不可以使用NumberRange代替PO的Start和End，使用MyBatis类型处理器自动完成转换。
 * 将StateSet修改为泛型类(E extends Enum<E>)，然后用1 << element.ordinal()的方式代替常量。
 
 
