@@ -168,7 +168,6 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 通过sh/collect.sh数据，由sh/analyze.sh提取数据，最后完成MYSQL QPS的图形分析。
 * 收集的类，包括线程部分中volatile的具体效果，以及disruptor、CountDownLatch、Semaphore、CyclicBarrier等的使用Demo。
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例。
-* 提供VolatileTest，展示volatile关键字的使用效果。
 
 
 ### 打算(MyBatis) ###
