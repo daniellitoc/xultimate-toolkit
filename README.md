@@ -142,6 +142,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 
 * 主要根据一篇文章进行的重新设计，将概念进行了重新的抽象，结构也进行了修改。用于垂直拆分(分库)、水平拆分(分表)的规则处理。
 * 提供ShardInfoGenerator，属于公众接口，按此方式应用可以分布式部署。
+* 提供ShardUtils，用于处理分库、分表后结果处理的排序、分页、AVG、SUM、COUNT、去重等操作。
 * 添加po包，包含了最小粒度的数据模型。分表规则目前先采用数据库存放。
 * MyBatisShardInfoGenerator为其ShardInfoGenerator的默认实现方式。
 * 优势: 数据划分规则集中处理。实现单表到多库多表的处理，采用HASH和范围结合的方式，同时具备无需数据迁移且避免存在热点表的问题。

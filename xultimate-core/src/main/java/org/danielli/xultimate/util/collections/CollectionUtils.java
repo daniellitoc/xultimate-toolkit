@@ -165,4 +165,9 @@ public class CollectionUtils {
 		return subtract(union(set1, set2), intersection(set1, set2));
     }
 	
+	public static <T> List<T> subList(List<T> list, int fromIndex, int toIndex) {
+		if (list == null)
+			return null;
+		return list.subList(fromIndex, Math.min(list.size(), toIndex));
+	}
 }
