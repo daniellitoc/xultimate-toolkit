@@ -14,9 +14,9 @@ import org.danielli.xultimate.core.serializer.RpcSerializer;
 import org.danielli.xultimate.core.serializer.SerializerException;
 import org.danielli.xultimate.util.reflect.ClassUtils;
 
-public class ObjectSerializer extends RpcSerializer {
+public class JavaObjectSerializer extends RpcSerializer {
 
-	protected int bufferSize = 10 * 1024;
+	protected int bufferSize = 256;
 	
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;

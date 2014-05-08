@@ -13,7 +13,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class RpcKryoSerializer extends RpcSerializer {
 
-	protected int bufferSize = 10 * 1024;
+	protected int bufferSize = 256;
 	
 	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
 	
