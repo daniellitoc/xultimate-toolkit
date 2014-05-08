@@ -1,6 +1,8 @@
 package org.danielli.xultimate.shard;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -46,6 +48,12 @@ public class ShardInfoGeneratorTest {
 			LOGGER.info("\t主机{}, 分片ID{}", shardInfo.getVirtualSocketAddress(), shardInfo.getPartitionedTableShardId());
 		}
 		PerformanceMonitor.mark("并行查询操作");
+		Map<ShardInfo, Collection<Long>> shardInfoMap = shardInfoGenerator.createShardInfosByIntervalValue("test", "test_table", Arrays.asList(1L, 200L, 201L, 202L, 203L, 204L));
+		LOGGER.info("范围查询需要: ");
+		for (Map.Entry<ShardInfo, Collection<Long>> shardInfo : shardInfoMap.entrySet()) {
+			LOGGER.info("IDs<{}>: \t主机{}, 分片ID{}", Arrays.toString(shardInfo.getValue().toArray()), shardInfo.getKey().getVirtualSocketAddress(), shardInfo.getKey().getPartitionedTableShardId());
+		}
+		PerformanceMonitor.mark("范围查询操作");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
 		PerformanceMonitor.remove();

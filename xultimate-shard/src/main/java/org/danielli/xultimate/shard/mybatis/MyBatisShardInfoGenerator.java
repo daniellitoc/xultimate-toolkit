@@ -3,6 +3,7 @@ package org.danielli.xultimate.shard.mybatis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +35,14 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 	@Resource(name = "virtualSocketBindRecordBizImpl")
 	private VirtualSocketBindRecordBiz virtualSocketBindRecordBiz;
 	
-	private VirtualTableInterval findVirtualTableIntervalId(String virtualDatabaseName, String virtualTableName, Long intervalValue) {
-		List<VirtualTableInterval> virtualTableIntervalList = virtualTableIntervalBiz.findByVirtualDatabaseNameAndVirtualTableName(virtualDatabaseName, virtualTableName);
+	private VirtualTableInterval findVirtualTableIntervalId(List<VirtualTableInterval> virtualTableIntervalList, Long intervalValue) {
 		for (VirtualTableInterval virtualTableInterval : virtualTableIntervalList) {
 			if (!virtualTableInterval.betweenStartIntervalAndEndInterval(intervalValue)) {
 				continue;
 			}
 			if (!virtualTableInterval.getAvailable()) {
 				virtualTableIntervalBiz.updateAvailableById(virtualTableInterval.getId(), true);
+				virtualTableInterval.setAvailable(true);
 			}
 			return virtualTableInterval;
 		}
@@ -68,9 +69,8 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		return virtualSocketIdSet;
 	}
 	
-	@Override
-	public ShardInfo createShardInfo(String virtualDatabaseName, String virtualTableName, Long intervalValue) {
-		VirtualTableInterval virtualTableInterval  = findVirtualTableIntervalId(virtualDatabaseName, virtualTableName, intervalValue);
+	private ShardInfo createShardInfo(List<VirtualTableInterval> virtualTableIntervalList, Long intervalValue) {
+		VirtualTableInterval virtualTableInterval  = findVirtualTableIntervalId(virtualTableIntervalList, intervalValue);
 		if (virtualTableInterval == null) return null;
 		
 		List<VirtualSocketBindRecord> virtualSocketBindRecordList = virtualSocketBindRecordBiz.findByVirtualTableIntervalIdList(Arrays.asList(virtualTableInterval.getId()));
@@ -93,13 +93,38 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 		}
 		return null;
 	}
-
+	
 	@Override
-	public Collection<ShardInfo> createShardInfos(String virtualDatabaseName, String virtualTableName) {
-		Set<ShardInfo> shardInfoSet = new HashSet<>();
+	public ShardInfo createShardInfo(String virtualDatabaseName, String virtualTableName, Long intervalValue) {
+		List<VirtualTableInterval> virtualTableIntervalList = virtualTableIntervalBiz.findByVirtualDatabaseNameAndVirtualTableName(virtualDatabaseName, virtualTableName);
+		return createShardInfo(virtualTableIntervalList, intervalValue);
+	}
+	
+	
+	
+	@Override
+	public Map<ShardInfo, Collection<Long>> createShardInfosByIntervalValue(String virtualDatabaseName, String virtualTableName, Collection<Long> intervalValues) {
+		List<VirtualTableInterval> virtualTableIntervalList = virtualTableIntervalBiz.findByVirtualDatabaseNameAndVirtualTableName(virtualDatabaseName, virtualTableName);
+		
+		Map<ShardInfo, Collection<Long>> shardInfoMap = new HashMap<>();
+		for (Long intervalValue : intervalValues) {
+			ShardInfo shardInfo = createShardInfo(virtualTableIntervalList, intervalValue);
+			if (shardInfo != null) {
+				Collection<Long> resultValue = shardInfoMap.get(shardInfo);
+				if (resultValue == null) {
+					resultValue = new ArrayList<>();
+					shardInfoMap.put(shardInfo, resultValue);
+				}
+				resultValue.add(intervalValue);
+			}
+		}
+		return shardInfoMap;
+	}
+
+	private List<Map<String, Object>> findPartitionedTableIntervalInfoList(String virtualDatabaseName, String virtualTableName) {
 		List<VirtualTableInterval> virtualTableIntervalList = virtualTableIntervalBiz.findByVirtualDatabaseNameAndVirtualTableName(virtualDatabaseName, virtualTableName);
 		if (CollectionUtils.isEmpty(virtualTableIntervalList)) {
-			return shardInfoSet;
+			return null;
 		}
 		
 		List<Long> virtualTableIntervalIdList = new ArrayList<>();
@@ -111,24 +136,33 @@ public class MyBatisShardInfoGenerator implements ShardInfoGenerator {
 			}
 		}
 		if (virtualTableId == null) {
-			return shardInfoSet;
+			return null;
 		}
 		
 		List<VirtualSocketBindRecord> virtualSocketBindRecordList = virtualSocketBindRecordBiz.findByVirtualTableIntervalIdList(virtualTableIntervalIdList);
 		Set<Long> virtualSocketIdSet = findVirtualSocketIdSet(virtualSocketBindRecordList);
 		if (CollectionUtils.isEmpty(virtualSocketIdSet))  {
+			return null;
+		}
+		
+		return partitionedTableIntervalBiz.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableId, virtualSocketIdSet);
+	}
+	
+	@Override
+	public Collection<ShardInfo> createShardInfos(String virtualDatabaseName, String virtualTableName) {
+		List<Map<String, Object>> partitionedTableIntervalInfoList = findPartitionedTableIntervalInfoList(virtualDatabaseName, virtualTableName);
+		if (CollectionUtils.isEmpty(partitionedTableIntervalInfoList)) {
+			return new HashSet<>();
+		} else {
+			Set<ShardInfo> shardInfoSet = new HashSet<>();
+			for (Map<String, Object> partitionedTableIntervalInfo : partitionedTableIntervalInfoList) {
+				ShardInfo shardInfo = new ShardInfo();
+				shardInfo.setPartitionedTableShardId((Long) partitionedTableIntervalInfo.get("partitionedTableShardId"));
+				shardInfo.setVirtualSocketAddress((String) partitionedTableIntervalInfo.get("virtualSocketAddress"));
+				shardInfoSet.add(shardInfo);
+			}
 			return shardInfoSet;
 		}
-		
-		List<Map<String, Object>> partitionedTableIntervalInfoList = partitionedTableIntervalBiz.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableId, virtualSocketIdSet);
-		
-		for (Map<String, Object> partitionedTableIntervalInfo : partitionedTableIntervalInfoList) {
-			ShardInfo shardInfo = new ShardInfo();
-			shardInfo.setPartitionedTableShardId((Long) partitionedTableIntervalInfo.get("partitionedTableShardId"));
-			shardInfo.setVirtualSocketAddress((String) partitionedTableIntervalInfo.get("virtualSocketAddress"));
-			shardInfoSet.add(shardInfo);
-		}
-		return shardInfoSet;
 	}
 
 }
