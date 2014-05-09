@@ -27,7 +27,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 		
-	<bean id="objectSerializer" class="org.danielli.xultimate.core.serializer.java.ObjectSerializer" />
+	<bean id="objectSerializer" class="org.danielli.xultimate.core.serializer.java.JavaObjectSerializer" />
 	<bean id="nullableObjectSerializer" class="org.danielli.xultimate.core.serializer.support.NullableStreamSerializer" c:deserializer-ref="objectSerializer" c:serializer-ref="objectSerializer" />
 	
 	<bean id="mainKryoSerializer" class="org.danielli.xultimate.core.serializer.kryo.MainKryoSerializer" />
