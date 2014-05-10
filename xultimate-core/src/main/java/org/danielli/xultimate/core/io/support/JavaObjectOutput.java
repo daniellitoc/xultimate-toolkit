@@ -36,8 +36,8 @@ public class JavaObjectOutput extends AbstractObjectOutput {
 		this.objectOutputStream = new ObjectOutputStream(this);
 	}
 
-	public JavaObjectOutput (OutputStream outputStream) throws IOException {
-		super(outputStream);
+	public JavaObjectOutput (OutputStream outputStream, int bufferSize, int maxBufferSize) throws IOException {
+		super(outputStream, bufferSize, maxBufferSize);
 		this.objectOutputStream = new ObjectOutputStream(this);
 	}
 

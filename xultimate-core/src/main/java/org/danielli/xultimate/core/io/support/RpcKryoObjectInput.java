@@ -32,11 +32,6 @@ public class RpcKryoObjectInput extends AbstractObjectInput {
 		this.kryo = kryo;
 	}
 
-	public RpcKryoObjectInput (InputStream inputStream, Kryo kryo) {
-		super(inputStream);
-		this.kryo = kryo;
-	}
-
 	public RpcKryoObjectInput (InputStream inputStream, int bufferSize, Kryo kryo) {
 		super(inputStream, bufferSize);
 		this.kryo = kryo;

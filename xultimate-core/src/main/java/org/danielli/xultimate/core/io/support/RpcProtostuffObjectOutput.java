@@ -53,8 +53,8 @@ public class RpcProtostuffObjectOutput extends AbstractObjectOutput {
 		this.kryo = kryo;
 	}
 
-	public RpcProtostuffObjectOutput (OutputStream outputStream, LinkedBuffer linkedBuffer, Kryo kryo) {
-		super(outputStream);
+	public RpcProtostuffObjectOutput (OutputStream outputStream, int bufferSize, int maxBufferSize, LinkedBuffer linkedBuffer, Kryo kryo) {
+		super(outputStream, bufferSize, maxBufferSize);
 		this.buffer = linkedBuffer;
 		this.kryo = kryo;
 	}

@@ -46,12 +46,6 @@ public class RpcProtostuffObjectInput extends AbstractObjectInput {
 		this.kryo = kryo;
 	}
 
-	public RpcProtostuffObjectInput (InputStream inputStream, LinkedBuffer linkedBuffer, Kryo kryo) {
-		super(inputStream);
-		this.buffer = linkedBuffer;
-		this.kryo = kryo;
-	}
-
 	public RpcProtostuffObjectInput (InputStream inputStream, int bufferSize, LinkedBuffer linkedBuffer, Kryo kryo) {
 		super(inputStream, bufferSize);
 		this.buffer = linkedBuffer;

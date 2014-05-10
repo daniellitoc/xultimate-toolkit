@@ -33,7 +33,7 @@ public class RpcKryoSerializer extends RpcSerializer {
 	
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
-		Output output = new Output(bufferSize);
+		Output output = new Output(bufferSize, -1);
 		serialize(source, output);
 		return output.toBytes();
 	}

@@ -36,9 +36,9 @@ public class RpcKryoObjectOutput extends AbstractObjectOutput {
 		super(buffer, maxBufferSize);
 		this.kryo = kryo;
 	}
-
-	public RpcKryoObjectOutput (OutputStream outputStream, Kryo kryo) {
-		super(outputStream);
+	
+	public RpcKryoObjectOutput (OutputStream outputStream, int bufferSize, int maxBufferSize, Kryo kryo) {
+		super(outputStream, bufferSize, maxBufferSize);
 		this.kryo = kryo;
 	}
 

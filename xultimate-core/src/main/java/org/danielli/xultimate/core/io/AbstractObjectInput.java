@@ -25,10 +25,6 @@ public abstract class AbstractObjectInput extends Input {
 		super(buffer, offset, count);
 	}
 
-	public AbstractObjectInput (InputStream inputStream) {
-		super(inputStream);
-	}
-
 	public AbstractObjectInput (InputStream inputStream, int bufferSize) {
 		super(inputStream, bufferSize);
 	}
