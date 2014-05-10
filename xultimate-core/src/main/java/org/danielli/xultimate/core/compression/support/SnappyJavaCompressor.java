@@ -22,6 +22,11 @@ import org.xerial.snappy.SnappyOutputStream;
  */
 public class SnappyJavaCompressor implements Compressor<byte[], byte[]>, Decompressor<byte[], byte[]> {
 
+	public static final SnappyJavaCompressor COMPRESSOR = new SnappyJavaCompressor();
+	
+	private SnappyJavaCompressor() {
+	}
+	
 	@Override
 	public byte[] decompress(byte[] source) throws DecompressorException {
 		try {

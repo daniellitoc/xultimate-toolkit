@@ -28,5 +28,5 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	
 	<bean id="gZipCompressor" class="org.danielli.xultimate.core.compression.support.GZipCompressor" />
-	<bean id="snappyJavaCompressor" class="org.danielli.xultimate.core.compression.support.SnappyJavaCompressor" />
+	<util:constant id="snappyJavaCompressor" static-field="org.danielli.xultimate.core.compression.support.SnappyJavaCompressor.COMPRESSOR"/>
 </beans>

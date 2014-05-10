@@ -20,6 +20,9 @@ public class NullCompressor implements Compressor<byte[], byte[]>, Decompressor<
 	
 	public static final NullCompressor COMPRESSOR = new NullCompressor();
 
+	private NullCompressor() {
+	}
+	
 	@Override
 	public byte[] decompress(byte[] source) throws DecompressorException {
 		return source;
