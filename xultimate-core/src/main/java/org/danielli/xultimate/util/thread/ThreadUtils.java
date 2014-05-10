@@ -8,7 +8,11 @@ public class ThreadUtils {
 	 */
 	public static void waitUntilLe(int activeThreadCount) {
 		while (Thread.activeCount() > activeThreadCount) {
-			Thread.yield();
+			try {
+				Thread.sleep(1 * 1000);
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 	}
 	
