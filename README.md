@@ -39,8 +39,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 以上图片处理为第一版，现增加第二版，主要用于支持BufferedImage和File两种方式。取出了getImageInfo，改为在DefaultImageResource内提供，目前先使用第一种，之后视情况在做合并。
 * 提供BootstrapFactoryBean、ServerBootstrapFactoryBean，通过Spring管理Netty中Bootstrap、ServerBootstrap对象的生命周期。ShowCase见xultimate-crawler。
 * 提供SocketChannelInitializerFactoryBean，通过Spring管理Netty中ChannelInitializer\<SocketChannel\>对象的生命周期。ShowCase见xultimate-crawler。
-* 提供KryoCodec、ObjectCodec，通过Kryo、Java默认的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。ShowCase见xultimate-crawler。
-* 提供ProtobufCodec、ProtostuffCodec，通过Protobuf、Protostuff的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理。ShowCase见xultimate-crawler。
+* 提供KryoCodec、ObjectCodec，通过Kryo、Java默认的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理；同时具备压缩功能，可配置为GZIP、Snappy。ShowCase见xultimate-crawler。
+* 提供ProtobufCodec、ProtostuffCodec，通过Protobuf、Protostuff的序列化/解序列化方式，支持以单例形式在Netty中使用，可通过Spring管理；同时具备压缩功能，可配置为GZIP、Snappy。ShowCase见xultimate-crawler。
 * 性能检测类PerformanceMonitorForEachMethodInterceptor，是对StopWatch的AOP行为处理，用于检测一个调用链中的每个标记方法，每个方法单独输出。
 * 性能检测类PerformanceMonitorForOneMethodInterceptor，是对StopWatch的AOP行为处理，用于检测一个调用链中的每个标记方法，每个线程开始后第一个标记方法作为总输出。
 * 加密属性置换器EncryptPropertyPlaceholderConfigurer，通过扩展Spring的属性置换器，提供加密功能。
@@ -86,7 +86,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括HTTL(HTTLEngineUtils)、Freemarker、StringTemeplateV3、StringTemplateV4、Velocity的模板处理Utils类。
 * 提供Formatter，包括对HTTL、Spel、FreeMarker、MessageFormat、StringTemplateV3、StrpingTemplateV4、Velocity的封装。
 * 包括对FastDFS Java Api的封装，主要有ClientGlobalInitializer、StorageClientTemplate、FastDFSUtils等。
-* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制Java、Kryo、Protobuf、Protostuff；具备压缩功能，可配置为GZIP、Snappy。
+* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制Java、Kryo、Protobuf、Protostuff；同时具备压缩功能，可配置为GZIP、Snappy。
 * 提供XMemcachedCacheManager用于支持Spring Cache和Spring缓存注解。
 * 提供MemcachedClientMutex，内部使用add实现分布式互斥锁。
 * 提供MemcachedClientLimiter，用于限制访问记录。
