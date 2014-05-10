@@ -17,7 +17,8 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 整合其他utils。包括commons-io、commons-collections、commons-codec等。
 * 添加UnicodeInputStream/UnicodeReader解决读取ANSI文本文件乱码。
 * 提供JSONTemplate，包括fastjson和jackson的封装；提供JsonUtils生成JSOUP格式。
-* 提供Serializer和Deserializer，包括对JAVA（Date、对象）、kryo、protostuff的封装；提供NullableStreamSerializer、BaseTypeSerializer/BaseTypeDeserializer、SerializerFactory/DeserializerFactory灵活配置指定类型序列化。
+* 提供Serializer和Deserializer，包括对Java、Kryo、Protobuf、Protostuff的封装。
+* 提供AbstractObjectInput和AbstractObjectOutput，包含Java、Kryo、Protobuf、Protostuff的实现。
 * 提供Compressor和Decompressor，包括对GZIP和Snappy的封装。
 * 对tamper、cglib、reflectasm的使用。
 * 包含大部分相关功能的测试类。
@@ -85,7 +86,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括HTTL(HTTLEngineUtils)、Freemarker、StringTemeplateV3、StringTemplateV4、Velocity的模板处理Utils类。
 * 提供Formatter，包括对HTTL、Spel、FreeMarker、MessageFormat、StringTemplateV3、StrpingTemplateV4、Velocity的封装。
 * 包括对FastDFS Java Api的封装，主要有ClientGlobalInitializer、StorageClientTemplate、FastDFSUtils等。
-* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制java、protobuf、protostuff或Kryo。
+* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制Java、Kryo、Protobuf、Protostuff；具备压缩功能，可配置为GZIP、Snappy。
 * 提供XMemcachedCacheManager用于支持Spring Cache和Spring缓存注解。
 * 提供MemcachedClientMutex，内部使用add实现分布式互斥锁。
 * 提供MemcachedClientLimiter，用于限制访问记录。
