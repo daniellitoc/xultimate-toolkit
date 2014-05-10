@@ -46,6 +46,14 @@ public class ObjectCodec extends ChannelHandlerAdapter {
 		this.bufferSize = bufferSize;
 	}
 	
+	public void setCompressor(Compressor<byte[], byte[]> compressor) {
+		this.compressor = compressor;
+	}
+
+	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
+		this.decompressor = decompressor;
+	}
+	
 	private final MessageToMessageEncoder<Serializable> encoder = new MessageToMessageEncoder<Serializable>() {
 
         @Override
@@ -84,7 +92,16 @@ public class ObjectCodec extends ChannelHandlerAdapter {
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    	JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.decompress(msg.array()));
+//    	JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.wrapper((new ByteBufInputStream(msg))), bufferSize);
+    	final byte[] array;
+        if (msg.hasArray()) {
+             array = msg.array();
+        } else {
+        	 int length = msg.readableBytes(); 
+             array = new byte[length];
+             msg.getBytes(msg.readerIndex(), array, 0, length);
+        }
+        JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.decompress(array));
     	try {
     		while (javaObjectInput.available() > 0) {
     			out.add(javaObjectInput.readObject());

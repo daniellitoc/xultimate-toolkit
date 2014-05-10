@@ -51,6 +51,14 @@ public class ProtobufCodec extends ChannelHandlerAdapter {
 		this.bufferSize = bufferSize;
 	}
 	
+	public void setCompressor(Compressor<byte[], byte[]> compressor) {
+		this.compressor = compressor;
+	}
+
+	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
+		this.decompressor = decompressor;
+	}
+	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
 
         @Override
@@ -89,7 +97,16 @@ public class ProtobufCodec extends ChannelHandlerAdapter {
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    	RpcProtobufObjectInput protobufObjectInput = new RpcProtobufObjectInput(decompressor.decompress(msg.array()), LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
+//    	RpcProtobufObjectInput protobufObjectInput = new RpcProtobufObjectInput(decompressor.wrapper((new ByteBufInputStream(msg))), bufferSize, LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
+    	final byte[] array;
+        if (msg.hasArray()) {
+             array = msg.array();
+        } else {
+        	 int length = msg.readableBytes(); 
+             array = new byte[length];
+             msg.getBytes(msg.readerIndex(), array, 0, length);
+        }
+        RpcProtobufObjectInput protobufObjectInput = new RpcProtobufObjectInput(decompressor.decompress(array), LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
     	try {
     		while (protobufObjectInput.available() > 0) {
     			out.add(protobufObjectInput.readObject());

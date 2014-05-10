@@ -50,6 +50,14 @@ public class KryoCodec extends ChannelHandlerAdapter {
 		this.bufferSize = bufferSize;
 	}
 	
+	public void setCompressor(Compressor<byte[], byte[]> compressor) {
+		this.compressor = compressor;
+	}
+
+	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
+		this.decompressor = decompressor;
+	}
+	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
 
         @Override
@@ -88,7 +96,16 @@ public class KryoCodec extends ChannelHandlerAdapter {
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    	RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.decompress(msg.array()), kryoGenerator.generate());
+//    	RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.wrapper((new ByteBufInputStream(msg))), bufferSize, kryoGenerator.generate());
+    	final byte[] array;
+        if (msg.hasArray()) {
+             array = msg.array();
+        } else {
+        	 int length = msg.readableBytes(); 
+             array = new byte[length];
+             msg.getBytes(msg.readerIndex(), array, 0, length);
+        }
+        RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.decompress(array), kryoGenerator.generate());
     	try {
     		while (kryoObjectInput.available() > 0) {
     			out.add(kryoObjectInput.readObject());
