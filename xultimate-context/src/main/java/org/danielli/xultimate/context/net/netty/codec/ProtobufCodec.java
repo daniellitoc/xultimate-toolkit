@@ -1,8 +1,6 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -13,8 +11,14 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
-import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
+import org.danielli.xultimate.core.compression.Compressor;
+import org.danielli.xultimate.core.compression.Decompressor;
+import org.danielli.xultimate.core.compression.support.NullCompressor;
+import org.danielli.xultimate.core.io.support.RpcProtobufObjectInput;
+import org.danielli.xultimate.core.io.support.RpcProtobufObjectOutput;
+import org.danielli.xultimate.core.serializer.kryo.KryoGenerator;
+import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
+import org.danielli.xultimate.core.serializer.protostuff.util.LinkedBufferUtils;
 
 /**
  * 通过{@code RpcProtobufSerializer}提供的功能完成序列化/解序列化支持。
@@ -24,20 +28,27 @@ import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
  */
 @Sharable
 public class ProtobufCodec extends ChannelHandlerAdapter {
+	
+	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
+	
+	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
+	
+	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
+	
+	protected int bufferSize = 256;
+	
+	public ProtobufCodec() {
 
-//	private RpcProtobufSerializer rpcSerializer;
-//	
-//	public ProtobufCodec(RpcProtobufSerializer rpcSerializer) {
-//		this.rpcSerializer = rpcSerializer;
-//	}
+	}
 	
-	protected BaseTypeSerializer serializer;
+	public ProtobufCodec(KryoGenerator kryoGenerator, Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
+		this.kryoGenerator = kryoGenerator;
+		this.compressor = compressor;
+		this.decompressor = decompressor;
+	}
 	
-	protected BaseTypeDeserializer deserializer;
-	
-	public ProtobufCodec(BaseTypeSerializer serializer, BaseTypeDeserializer deserializer) {
-		this.serializer = serializer;
-		this.deserializer = deserializer;
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
 	}
 	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
@@ -67,37 +78,24 @@ public class ProtobufCodec extends ChannelHandlerAdapter {
     }
     
     protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out)  throws Exception {
-//    	// TODO 此处可改进。不一定要4个字节。见Protostuff源码。
-//    	byte[] data = rpcSerializer.serialize(msg);
-//    	out.add(ctx.alloc().buffer(SerializerUtils.INT_BYTE_SIZE).writeInt(data.length));
-//    	out.add(Unpooled.wrappedBuffer(data));
-    	ByteBuf byteBuf = Unpooled.directBuffer();
-    	ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
+    	RpcProtobufObjectOutput protobufObjectOutput = new RpcProtobufObjectOutput(bufferSize, LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate()) ;
     	try {
-    		serializer.serialize(msg, byteBufOutputStream);
+    		protobufObjectOutput.writeObject(msg);
+    		byte[] result = protobufObjectOutput.toBytes();
+    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
     	} finally {
-    		byteBufOutputStream.close();
+    		protobufObjectOutput.close();
     	}
-    	out.add(byteBuf);
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-//    	// TODO 此处可改进。不一定要4个字节。见Protostuff源码。
-//    	for (int i = msg.readerIndex(), length = 0; i < msg.readableBytes(); i += length) {
-//    		length = msg.getInt(i);
-//        	i += SerializerUtils.INT_BYTE_SIZE;
-//        	byte[] data = new byte[length];
-//        	msg.getBytes(i, data, 0, length);
-//            out.add(rpcSerializer.deserialize(data, Object.class));
-//    	}
-    	ByteBufInputStream inputStream = new ByteBufInputStream(msg);
+    	RpcProtobufObjectInput protobufObjectInput = new RpcProtobufObjectInput(decompressor.decompress(msg.array()), LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
     	try {
-    		while (inputStream.available() > 0) {
-    			Object object = deserializer.deserialize(inputStream, Object.class);
-        		out.add(object);
+    		while (protobufObjectInput.available() > 0) {
+    			out.add(protobufObjectInput.readObject());
         	}
     	} finally {
-    		inputStream.close();
+    		protobufObjectInput.close();
     	}
     }
 }

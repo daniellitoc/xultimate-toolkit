@@ -1,8 +1,6 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -13,10 +11,13 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
-import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
-
-import com.esotericsoftware.kryo.io.Input;
+import org.danielli.xultimate.core.compression.Compressor;
+import org.danielli.xultimate.core.compression.Decompressor;
+import org.danielli.xultimate.core.compression.support.NullCompressor;
+import org.danielli.xultimate.core.io.support.RpcKryoObjectInput;
+import org.danielli.xultimate.core.io.support.RpcKryoObjectOutput;
+import org.danielli.xultimate.core.serializer.kryo.KryoGenerator;
+import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
 
 /**
  * 通过{@code RpcKryoSerializer}提供的功能完成序列化/解序列化支持。
@@ -26,20 +27,27 @@ import com.esotericsoftware.kryo.io.Input;
  */
 @Sharable
 public class KryoCodec extends ChannelHandlerAdapter {
+	
+	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
+	
+	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
+	
+	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
+	
+	protected int bufferSize = 256;
+	
+	public KryoCodec() {
 
-//	private RpcKryoSerializer rpcSerializer;
-//	
-//	public KryoCodec(RpcKryoSerializer rpcSerializer) {
-//		this.rpcSerializer = rpcSerializer;
-//	}
+	}
 	
-	protected BaseTypeSerializer serializer;
+	public KryoCodec(KryoGenerator kryoGenerator, Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
+		this.kryoGenerator = kryoGenerator;
+		this.compressor = compressor;
+		this.decompressor = decompressor;
+	}
 	
-	protected BaseTypeDeserializer deserializer;
-	
-	public KryoCodec(BaseTypeSerializer serializer, BaseTypeDeserializer deserializer) {
-		this.serializer = serializer;
-		this.deserializer = deserializer;
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
 	}
 	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
@@ -69,28 +77,24 @@ public class KryoCodec extends ChannelHandlerAdapter {
     }
     
     protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out)  throws Exception {
-//    	byte[] data = rpcSerializer.serialize(msg);
-//    	out.add(Unpooled.wrappedBuffer(data));
-    	ByteBuf byteBuf = Unpooled.directBuffer();
-    	ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
+    	RpcKryoObjectOutput kryoObjectOutput = new RpcKryoObjectOutput(bufferSize, kryoGenerator.generate());
     	try {
-    		serializer.serialize(msg, byteBufOutputStream);
+    		kryoObjectOutput.writeObject(msg);
+    		byte[] result = kryoObjectOutput.toBytes();
+    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
     	} finally {
-    		byteBufOutputStream.close();
+    		kryoObjectOutput.close();
     	}
-    	out.add(byteBuf);
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    	Input input = new Input(new ByteBufInputStream(msg));
+    	RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.decompress(msg.array()), kryoGenerator.generate());
     	try {
-    		while (input.available() > 0) {
-        		Object object = deserializer.deserialize(input, Object.class);
-    			out.add(object);
+    		while (kryoObjectInput.available() > 0) {
+    			out.add(kryoObjectInput.readObject());
         	}
     	} finally {
-    		input.close();
+    		kryoObjectInput.close();
     	}
-    	
     }
 }

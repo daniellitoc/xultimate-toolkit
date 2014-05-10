@@ -1,8 +1,6 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -14,8 +12,11 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import java.io.Serializable;
 import java.util.List;
 
-import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
-import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
+import org.danielli.xultimate.core.compression.Compressor;
+import org.danielli.xultimate.core.compression.Decompressor;
+import org.danielli.xultimate.core.compression.support.NullCompressor;
+import org.danielli.xultimate.core.io.support.JavaObjectInput;
+import org.danielli.xultimate.core.io.support.JavaObjectOutput;
 
 /**
  * 通过{@code ObjectSerializer}提供的功能完成序列化/解序列化支持。
@@ -25,20 +26,24 @@ import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
  */
 @Sharable
 public class ObjectCodec extends ChannelHandlerAdapter {
+	
+	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
+	
+	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
+	
+	protected int bufferSize = 256;
+	
+	public ObjectCodec() {
 
-//	private ObjectSerializer rpcSerializer;
-//	
-//	public ObjectCodec(ObjectSerializer rpcSerializer) {
-//		this.rpcSerializer = rpcSerializer;
-//	}
+	}
 	
-	protected BaseTypeSerializer serializer;
+	public ObjectCodec(Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
+		this.compressor = compressor;
+		this.decompressor = decompressor;
+	}
 	
-	protected BaseTypeDeserializer deserializer;
-	
-	public ObjectCodec(BaseTypeSerializer serializer, BaseTypeDeserializer deserializer) {
-		this.serializer = serializer;
-		this.deserializer = deserializer;
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
 	}
 	
 	private final MessageToMessageEncoder<Serializable> encoder = new MessageToMessageEncoder<Serializable>() {
@@ -68,27 +73,24 @@ public class ObjectCodec extends ChannelHandlerAdapter {
     }
     
     protected void encode(ChannelHandlerContext ctx, Serializable msg, List<Object> out)  throws Exception {
-//    	byte[] data = rpcSerializer.serialize(msg);
-//    	out.add(Unpooled.wrappedBuffer(data));
-    	ByteBuf byteBuf = Unpooled.directBuffer();
-    	ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
+    	JavaObjectOutput javaObjectOutput = new JavaObjectOutput(bufferSize) ;
     	try {
-    		serializer.serialize(msg, byteBufOutputStream);
+    		javaObjectOutput.writeObject(msg);
+    		byte[] result = javaObjectOutput.toBytes();
+    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
     	} finally {
-    		byteBufOutputStream.close();
+    		javaObjectOutput.close();
     	}
-    	out.add(byteBuf);
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    	ByteBufInputStream inputStream = new ByteBufInputStream(msg);
+    	JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.decompress(msg.array()));
     	try {
-    		while (inputStream.available() > 0) {
-    			Serializable object = deserializer.deserialize(inputStream, Serializable.class);
-        		out.add(object);
+    		while (javaObjectInput.available() > 0) {
+    			out.add(javaObjectInput.readObject());
         	}
     	} finally {
-    		inputStream.close();
+    		javaObjectInput.close();
     	}
     }
 }
