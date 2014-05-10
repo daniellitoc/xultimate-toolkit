@@ -19,6 +19,11 @@ import com.alibaba.fastjson.JSON;
  */
 public class FastJSONTemplate implements JSONTemplate {
 
+	public final static FastJSONTemplate INSTANCE = new FastJSONTemplate();
+	
+	private FastJSONTemplate() {
+	}
+	
 	@Override
 	public <T> String writeValueAsString(T value) throws JSONException {
 		try {

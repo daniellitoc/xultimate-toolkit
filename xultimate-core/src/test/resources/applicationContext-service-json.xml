@@ -30,5 +30,5 @@
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 	<bean id="jacksonTemplate" class="org.danielli.xultimate.core.json.jackson.JacksonTemplate" p:objectMapper-ref="objectMapper" />
 	
-	<bean id="fastJSONTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
+	<util:constant id="fastJSONTemplate" static-field="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate.INSTANCE"/>
 </beans>

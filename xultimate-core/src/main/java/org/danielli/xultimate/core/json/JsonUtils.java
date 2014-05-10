@@ -11,8 +11,6 @@ import org.danielli.xultimate.core.json.fastjson.FastJSONTemplate;
  * @since 18 Jun 2013
  */
 public class JsonUtils {
-
-	public static JSONTemplate jsonTemplate = new FastJSONTemplate();
 	
 	/**
 	 * 用于返回Jsonp格式的数据。
@@ -37,7 +35,7 @@ public class JsonUtils {
      * and constructing String, but more efficient.
      */
 	public static <T> String writeValueAsString(T value) throws JSONException {
-		return jsonTemplate.writeValueAsString(value);
+		return FastJSONTemplate.INSTANCE.writeValueAsString(value);
 	}
 	
     /**
@@ -45,6 +43,6 @@ public class JsonUtils {
      * Java value.
      */
 	public static <T> T readValue(String content, ValueType<T> valueType) throws JSONException {
-		return jsonTemplate.readValue(content, valueType);
+		return FastJSONTemplate.INSTANCE.readValue(content, valueType);
 	}
 }
