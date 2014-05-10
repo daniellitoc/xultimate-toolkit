@@ -38,7 +38,7 @@
 			</value>
 		</property>	
 	</bean>
-	<bean id="messageFormatter" class="org.danielli.xultimate.context.format.support.MessageFormatter" />
+	<util:constant id="messageFormatter" static-field="org.danielli.xultimate.context.format.support.MessageFormatter.FORMATTER"/>
 	<bean id="spelFormatter" class="org.danielli.xultimate.context.format.support.SpelFormatter">
 		<property name="expressionParser">
 			<bean class="org.springframework.expression.spel.standard.SpelExpressionParser" />

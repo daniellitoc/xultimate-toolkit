@@ -9,8 +9,6 @@ import org.danielli.xultimate.context.format.support.MessageFormatter;
  * @since 18 Jun 2013
  */
 public class FormatterUtils {
-
-	public static Formatter<String, Object[], String> messageFormatter = new MessageFormatter();
 	
 	/**
 	 * 格式化。
@@ -21,6 +19,6 @@ public class FormatterUtils {
 	 * @throws FormatException 格式化异常，会对格式化过程中出现的异常封装并抛出。
 	 */
 	public static String format(String source, Object... parameter) throws FormatException {
-		return messageFormatter.format(source, parameter);
+		return MessageFormatter.FORMATTER.format(source, parameter);
 	}
 }

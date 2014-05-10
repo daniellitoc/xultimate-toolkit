@@ -30,11 +30,11 @@ public class XMemcachedTemplateTest {
 	@Resource(name = "xmemcachedTemplate")
 	private XMemcachedTemplate xMemcachedTemplate;
 	
-	@Resource(name = "rpcProtostuffSerializerProxy")
-	private Serializer rpcProtostuffSerializerProxy;
+	@Resource(name = "rpcProtostuffSerializer")
+	private Serializer rpcProtostuffSerializer;
 	
-	@Resource(name = "rpcProtostuffDeserializerProxy")
-	private Deserializer rpcProtostuffDeserializerProxy;
+	@Resource(name = "rpcProtostuffSerializer")
+	private Deserializer rpcProtostuffDeserializer;
 	
 	@Resource
 	private SerializingTranscoder serializingTranscoder;
@@ -154,8 +154,8 @@ public class XMemcachedTemplateTest {
 				xMemcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
 					@Override
 					public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-						memcachedClient.set("person", 1000, rpcProtostuffSerializerProxy.serialize(person));
-						rpcProtostuffDeserializerProxy.deserialize((byte[]) memcachedClient.get("person"), Person.class);
+						memcachedClient.set("person", 1000, rpcProtostuffSerializer.serialize(person));
+						rpcProtostuffDeserializer.deserialize((byte[]) memcachedClient.get("person"), Person.class);
 						memcachedClient.delete("person");
 						return null;
 					}

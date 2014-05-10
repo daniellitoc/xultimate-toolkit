@@ -15,6 +15,11 @@ import org.danielli.xultimate.context.format.Formatter;
  */
 public class MessageFormatter implements Formatter<String, Object[], String> {
 
+	public static final MessageFormatter FORMATTER = new MessageFormatter();
+	
+	private MessageFormatter() {
+	}
+	
 	@Override
 	public String format(String source, Object[] parameter) throws FormatException {
 		try {

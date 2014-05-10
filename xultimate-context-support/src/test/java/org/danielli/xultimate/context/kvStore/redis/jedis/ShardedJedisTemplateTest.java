@@ -5,8 +5,8 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate;
 import org.danielli.xultimate.core.json.ValueType;
 import org.danielli.xultimate.core.json.fastjson.FastJSONTemplate;
-import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
-import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
+import org.danielli.xultimate.core.serializer.Deserializer;
+import org.danielli.xultimate.core.serializer.Serializer;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Test;
@@ -23,11 +23,11 @@ public class ShardedJedisTemplateTest {
 	@Resource(name = "shardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 	
-	@Resource(name = "rpcProtostuffSerializerProxy")
-	private BaseTypeSerializer rpcProtostuffSerializerProxy;
+	@Resource(name = "rpcProtostuffSerializer")
+	private Serializer rpcProtostuffSerializer;
 	
-	@Resource(name = "rpcProtostuffDeserializerProxy")
-	private BaseTypeDeserializer rpcProtostuffDeserializerProxy;
+	@Resource(name = "rpcProtostuffSerializer")
+	private Deserializer rpcProtostuffDeserializer;
 	
 	@Resource
 	private FastJSONTemplate fastJsonTemplate;
@@ -35,7 +35,7 @@ public class ShardedJedisTemplateTest {
 	@Test
 	public void test() {
 		final Person person = new Person();
-		person.setName("Daniel Li");
+		person.setName("Daniel Li 呵呵！");
 		person.setAge(18);
 		
 		PerformanceMonitor.start("JedisTemplateTest");
@@ -45,9 +45,9 @@ public class ShardedJedisTemplateTest {
 					
 					@Override
 					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = rpcProtostuffSerializerProxy.serializeString("person");
-						shardedJedis.set(key, rpcProtostuffSerializerProxy.serialize(person));
-						rpcProtostuffDeserializerProxy.deserialize(shardedJedis.get(key), Person.class);
+						byte[] key = rpcProtostuffSerializer.serialize("person");
+						shardedJedis.set(key, rpcProtostuffSerializer.serialize(person));
+						rpcProtostuffDeserializer.deserialize(shardedJedis.get(key), Person.class);
 						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
 					}
 				});
@@ -76,9 +76,9 @@ public class ShardedJedisTemplateTest {
 					
 					@Override
 					public void doInShardedJedis(ShardedJedis shardedJedis) {
-						byte[] key = rpcProtostuffSerializerProxy.serializeString("person");
-						shardedJedis.set(key, rpcProtostuffSerializerProxy.serializeString(fastJsonTemplate.writeValueAsString(person)));
-						fastJsonTemplate.readValue(rpcProtostuffDeserializerProxy.deserializeString(shardedJedis.get(key)), new ValueType<Person>() { });
+						byte[] key = rpcProtostuffSerializer.serialize("person");
+						shardedJedis.set(key, rpcProtostuffSerializer.serialize(fastJsonTemplate.writeValueAsString(person)));
+						fastJsonTemplate.readValue(rpcProtostuffDeserializer.deserialize(shardedJedis.get(key), String.class), new ValueType<Person>() { });
 						shardedJedis.getShard(key).del(key);
 					}
 				});

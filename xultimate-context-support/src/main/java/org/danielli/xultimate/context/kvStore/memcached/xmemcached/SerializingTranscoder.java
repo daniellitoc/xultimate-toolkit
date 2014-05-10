@@ -3,25 +3,21 @@ package org.danielli.xultimate.context.kvStore.memcached.xmemcached;
 import java.util.Date;
 
 import net.rubyeye.xmemcached.transcoders.CachedData;
+import net.rubyeye.xmemcached.transcoders.CompressionMode;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
 
-import org.danielli.xultimate.core.serializer.support.BaseTypeDeserializer;
-import org.danielli.xultimate.core.serializer.support.BaseTypeSerializer;
+import org.danielli.xultimate.core.serializer.RpcSerializer;
+import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
+import org.danielli.xultimate.util.StringUtils;
+import org.joda.time.DateTime;
 
 /**
  * 替代其默认的序列化。
  * 
  * @author Daniel Li
  * @since 19 Jun 2013
- *
  */
 public class SerializingTranscoder extends BaseSerializingTranscoder implements Transcoder<Object> {
-
-	private final int maxSize;
-
-	public final int getMaxSize() {
-		return this.maxSize;
-	}
 
 	// General flags
 	public static final int SERIALIZED = 1;
@@ -34,12 +30,19 @@ public class SerializingTranscoder extends BaseSerializingTranscoder implements 
 	public static final int SPECIAL_INT = (2 << 2);
 	public static final int SPECIAL_BOOLEAN = (3 << 2);
 	public static final int SPECIAL_DATE = (4 << 2);
-	public static final int SPECIAL_DOUBLE = (5 << 2);
-	public static final int SPECIAL_CHAR = (6 << 2);
-	public static final int SPECIAL_FLOAT = (7 << 2);
-	public static final int SPECIAL_SHORT = (8 << 2);
-	public static final int SPECIAL_BYTE = (9 << 2);
-	public static final int SPECIAL_BYTEARRAY = (10 << 2);
+	public static final int SPECIAL_DATE_TIME = (5 << 2);
+	public static final int SPECIAL_DOUBLE = (6 << 2);
+	public static final int SPECIAL_CHAR = (7 << 2);
+	public static final int SPECIAL_FLOAT = (8 << 2);
+	public static final int SPECIAL_SHORT = (9 << 2);
+	public static final int SPECIAL_BYTE = (10 << 2);
+	public static final int SPECIAL_BYTEARRAY = (11 << 2);
+	
+	private final int maxSize;
+
+	protected RpcSerializer rpcSerializer;
+	
+	protected boolean packZeros = true;
 	
 	/**
 	 * Get a serializing transcoder with the default max data size.
@@ -55,58 +58,51 @@ public class SerializingTranscoder extends BaseSerializingTranscoder implements 
 		this.maxSize = max;
 	}
 	
-	@Override
-	public boolean isPrimitiveAsString() {
-		return false;
+	public final int getMaxSize() {
+		return this.maxSize;
 	}
-	
-	@Override
-	public boolean isPackZeros() {
-		return true;
-	}
-	
-	protected BaseTypeSerializer baseTypeSerializer;
-	
-	protected BaseTypeDeserializer baseTypeDeserializer;
-	
+
 	@Override
 	public CachedData encode(Object o) {
 		byte[] b = null;
 		int flags = SPECIAL_STRING;
 		if (o instanceof String) {
-			b = baseTypeSerializer.serializeString((String) o);
+			b = StringUtils.getBytesUtf8((String) o);
 		} else if (o instanceof Long) {
-			b = baseTypeSerializer.serializeLong((Long) o);
+			b = SerializerUtils.encodeLong((long) o, packZeros);
 			flags |= SPECIAL_LONG;
 		} else if (o instanceof Integer) {
-			b = baseTypeSerializer.serializeInt((Integer) o);
+			b = SerializerUtils.encodeInt((int) o, packZeros);
 			flags |= SPECIAL_INT;
 		} else if (o instanceof Boolean) {
-			b = baseTypeSerializer.serializeBoolean((Boolean) o);
+			b = SerializerUtils.encodeBoolean((boolean) o);
 			flags |= SPECIAL_BOOLEAN;
 		} else if (o instanceof Date) {
-			b = baseTypeSerializer.serializeLong(((Date) o).getTime());
+			b = SerializerUtils.encodeLong(((Date) o).getTime(), packZeros);
+			flags |= SPECIAL_DATE;
+		} else if (o instanceof DateTime) {
+			b = SerializerUtils.encodeLong(((DateTime) o).getMillis(), packZeros);
 			flags |= SPECIAL_DATE;
 		} else if (o instanceof Double) {
-			b = baseTypeSerializer.serializeDouble((Double) o);
+			b = SerializerUtils.encodeDouble((double) o, packZeros);
 			flags |= SPECIAL_DOUBLE;
 		} else if (o instanceof Character) {
-			b = baseTypeSerializer.serializeChar((Character) o);
+			b = SerializerUtils.encodeChar((char) o, packZeros);
 			flags |= SPECIAL_CHAR;
 		} else if (o instanceof Float) {
-			b = baseTypeSerializer.serializeFloat((Byte) o);
+			b = SerializerUtils.encodeFloat((float) o, packZeros);
 			flags |= SPECIAL_FLOAT;
 		} else if (o instanceof Short) {
-			b = baseTypeSerializer.serializeShort((Short) o);
+			b = SerializerUtils.encodeShort((short) o, packZeros);
 			flags |= SPECIAL_SHORT;
 		} else if (o instanceof Byte) {
-			b = baseTypeSerializer.serializeByte((Byte) o);
+			b = SerializerUtils.encodeByte((byte) o);
 			flags |= SPECIAL_BYTE;
 		} else if (o instanceof byte[]) {
 			b = (byte[]) o;
 			flags |= SPECIAL_BYTEARRAY;
 		} else {
-			b = baseTypeSerializer.serialize(o);
+			b = rpcSerializer.serialize(o);
 			flags |= SERIALIZED;
 		}
 		assert b != null;
@@ -114,16 +110,13 @@ public class SerializingTranscoder extends BaseSerializingTranscoder implements 
 			byte[] compressed = compress(b);
 			if (compressed.length < b.length) {
 				if (log.isDebugEnabled()) {
-					log.debug("Compressed " + o.getClass().getName() + " from "
-							+ b.length + " to " + compressed.length);
+					log.debug("Compressed " + o.getClass().getName() + " from " + b.length + " to " + compressed.length);
 				}
 				b = compressed;
 				flags |= COMPRESSED;
 			} else {
 				if (log.isDebugEnabled()) {
-					log.debug("Compression increased the size of "
-							+ o.getClass().getName() + " from " + b.length
-							+ " to " + compressed.length);
+					log.debug("Compression increased the size of " + o.getClass().getName() + " from " + b.length + " to " + compressed.length);
 				}
 			}
 		}
@@ -142,39 +135,42 @@ public class SerializingTranscoder extends BaseSerializingTranscoder implements 
 		return decode0(d,data, flags);
 	}
 	
-	protected final Object decode0(CachedData cachedData,byte[] data, int flags) {
+	protected final Object decode0(CachedData cachedData, byte[] data, int flags) {
 		Object rv = null;
 		if ((flags & SERIALIZED) != 0 && data != null) {
-			rv = baseTypeDeserializer.deserialize(data, Object.class);
+			rv = rpcSerializer.deserialize(data, Object.class);
 		} else {
 			if (flags != SPECIAL_STRING && data != null) {
 				switch (flags) {
 				case SPECIAL_LONG:
-					rv = baseTypeDeserializer.deserializeLong(data);
+					rv = SerializerUtils.decodeLong(data);
 					break;
 				case SPECIAL_INT:
-					rv = baseTypeDeserializer.deserializeInt(data);
+					rv = SerializerUtils.decodeInt(data);
 					break;
 				case SPECIAL_BOOLEAN:
-					rv = baseTypeDeserializer.deserializeBoolean(data);
+					rv = SerializerUtils.decodeBoolean(data);
 					break;
 				case SPECIAL_DATE:
-					rv = new Date(baseTypeDeserializer.deserializeLong(data));
+					rv = new Date(SerializerUtils.decodeLong(data));
+					break;
+				case SPECIAL_DATE_TIME:
+					rv = new DateTime(SerializerUtils.decodeLong(data));
 					break;
 				case SPECIAL_DOUBLE:
-					rv = baseTypeDeserializer.deserializeDouble(data);
+					rv = SerializerUtils.decodeDouble(data);
 					break;			
 				case SPECIAL_CHAR:
-					rv = baseTypeDeserializer.deserializeChar(data);
+					rv = SerializerUtils.decodeChar(data);
 					break;	
 				case SPECIAL_FLOAT:
-					rv = baseTypeDeserializer.deserializeFloat(data);
+					rv = SerializerUtils.decodeFloat(data);
 					break;
 				case SPECIAL_SHORT:
-					rv = baseTypeDeserializer.deserializeShort(data);
+					rv = SerializerUtils.decodeShort(data);
 					break;
 				case SPECIAL_BYTE:
-					rv = baseTypeDeserializer.deserializeByte(data);
+					rv = SerializerUtils.decodeByte(data);
 					break;
 				case SPECIAL_BYTEARRAY:
 					rv = data;
@@ -183,23 +179,38 @@ public class SerializingTranscoder extends BaseSerializingTranscoder implements 
 					log.warn(String.format("Undecodeable with flags %x", flags));
 				}
 			} else {
-				rv = baseTypeDeserializer.deserializeString(data);
+				rv = StringUtils.newStringUtf8(data);
 			}
 		}
 		return rv;
 	}
+	
+	
+	/** 始终为false */
+	@Override
+	public final boolean isPrimitiveAsString() {
+		return false;
+	}
+	
+	/** 空实现。 */
+	@Override
+	public final void setPrimitiveAsString(boolean primitiveAsString) { }
 
 	@Override
-	public void setPrimitiveAsString(boolean primitiveAsString) { }
-
-	@Override
-	public void setPackZeros(boolean packZeros) { }
-
-	public void setBaseTypeSerializer(BaseTypeSerializer baseTypeSerializer) {
-		this.baseTypeSerializer = baseTypeSerializer;
+	public boolean isPackZeros() {
+		return packZeros;
 	}
 
-	public void setBaseTypeDeserializer(BaseTypeDeserializer baseTypeDeserializer) {
-		this.baseTypeDeserializer = baseTypeDeserializer;
+	@Override
+	public void setPackZeros(boolean packZeros) {
+		this.packZeros = packZeros;
+	}
+
+	/** 空实现。 */
+	@Override
+	public void setCompressionMode(CompressionMode compressMode) { }
+
+	public void setRpcSerializer(RpcSerializer rpcSerializer) {
+		this.rpcSerializer = rpcSerializer;
 	}
 }
