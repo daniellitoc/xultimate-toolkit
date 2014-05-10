@@ -10,6 +10,9 @@ import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.reflect.ClassUtils;
 
+/**
+ * @deprecated 暂时无用。
+ */
 public class BaseTypeDeserializer implements Deserializer {
 	
 	protected boolean checkKnownType = true;

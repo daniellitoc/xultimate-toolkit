@@ -7,13 +7,17 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 
 import org.danielli.xultimate.core.serializer.DeserializerException;
 import org.danielli.xultimate.core.serializer.RpcSerializer;
 import org.danielli.xultimate.core.serializer.SerializerException;
-import org.danielli.xultimate.util.reflect.ClassUtils;
 
+/**
+ * Java序列化实现。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ */
 public class JavaObjectSerializer extends RpcSerializer {
 
 	protected int bufferSize = 256;
@@ -23,18 +27,9 @@ public class JavaObjectSerializer extends RpcSerializer {
 	}
 	
 	@Override
-	public boolean support(Class<?> classType) {
-		return ClassUtils.isAssignable(Serializable.class, classType);
-	}
-	
-	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bufferSize);
-		try {
-			serialize(source, outputStream);
-		} catch (Exception e) {
-			throw new SerializerException(e.getMessage(), e);
-		}
+		serialize(source, outputStream);
 		return outputStream.toByteArray();
 	}
 
@@ -58,11 +53,7 @@ public class JavaObjectSerializer extends RpcSerializer {
 	@Override
 	public <T> T deserialize(byte[] bytes, Class<T> clazz) throws DeserializerException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-		try {
-			return (T) deserialize(inputStream, clazz);
-		} catch (Exception e) {
-			throw new SerializerException(e.getMessage(), e);
-		}
+		return (T) deserialize(inputStream, clazz);
 	}
 
 	@SuppressWarnings("unchecked")

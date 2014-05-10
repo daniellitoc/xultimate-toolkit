@@ -8,7 +8,10 @@ import java.io.OutputStream;
 
 import javax.annotation.Resource;
 
+import org.danielli.xultimate.core.io.support.RpcKryoObjectInput;
+import org.danielli.xultimate.core.io.support.RpcKryoObjectOutput;
 import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
+import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
 import org.danielli.xultimate.util.StringUtils;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
@@ -18,23 +21,14 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
 public class KryoSerializingTest {
 	
-	@Resource(name = "mainKryoSerializerProxy")
-	private Serializer mainKryoSerializer;
-	
-	@Resource(name = "mainKryoDeserializerProxy")
-	private Deserializer mainKryoDeserializer;
-	
-	@Resource(name = "rpcKryoSerializerProxy")
+	@Resource(name = "rpcKryoSerializer")
 	private Serializer rpcKryoSerializer;
 	
-	@Resource(name = "rpcKryoDeserializerProxy")
+	@Resource(name = "rpcKryoSerializer")
 	private Deserializer rpcKryoDeserializer;
 	
 //	@Test
@@ -43,95 +37,129 @@ public class KryoSerializingTest {
 		person.setName("Daniel Li");
 		person.setAge(19);
 		
-		byte[] data = mainKryoSerializer.serialize(person);
-		person = (User) mainKryoDeserializer.deserialize(data, User.class);
-		
-		Assert.assertEquals("Daniel Li", person.getName());
-		Assert.assertEquals((Integer) 19, person.getAge());
-		
-		person = new User();
-		person.setName("Daniel Li");
-		person.setAge(19);
-		
-		data = rpcKryoSerializer.serialize(person);
+		byte[] data = rpcKryoSerializer.serialize(person);
 		person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
 	}
 	
-	@Test
-	public void testString() throws IOException {
+//	@Test
+	public void testString() throws IOException, ClassNotFoundException {
 		PerformanceMonitor.start("SerializerTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 300000; j++) {
-				Output output = new Output(1024);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeString("2.5.3");
-				Input input = new Input(output.toBytes());
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				input.readString();
 				input.close();
 				
 			}
-			PerformanceMonitor.mark("2.5.3 Kryo" + i);
+			PerformanceMonitor.mark("2.5.3 Kryo writeString" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 300000; j++) {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.writeObject("2.5.3");
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.close();
+				input.readObject();
+				input.close();
+				
+			}
+			PerformanceMonitor.mark("2.5.3 Kryo writeObject" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 300000; j++) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(256);
 				serializeString("2.5.3", outputStream);
 				ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
 				outputStream.close();
 				deserializeString(arrayInputStream);
 				arrayInputStream.close();
 			}
-			PerformanceMonitor.mark("2.5.3 Java" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 300000; j++) {
-				Output output = new Output(1024);
-				output.writeString("org.danielli.xultimate.remoting.service.AccountService");
-				Input input = new Input(output.toBytes());
-				output.close();
-				input.readString();
-				input.close();
-			}
-			PerformanceMonitor.mark("org.danielli.xultimate.remoting.service.AccountService Kryo" + i);
+			PerformanceMonitor.mark("2.5.3 Java writeString" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 300000; j++) {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.writeString("org.danielli.xultimate.remoting.service.AccountService");
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.close();
+				input.readString();
+				input.close();
+				
+			}
+			PerformanceMonitor.mark("org.danielli.xultimate.remoting.service.AccountService Kryo writeString" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 300000; j++) {
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.writeObject("org.danielli.xultimate.remoting.service.AccountService");
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.close();
+				input.readObject();
+				input.close();
+				
+			}
+			PerformanceMonitor.mark("org.danielli.xultimate.remoting.service.AccountService Kryo writeObject" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 300000; j++) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(256);
 				serializeString("org.danielli.xultimate.remoting.service.AccountService", outputStream);
 				ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
 				outputStream.close();
 				deserializeString(arrayInputStream);
 				arrayInputStream.close();
 			}
-			PerformanceMonitor.mark("org.danielli.xultimate.remoting.service.AccountService Java" + i);
+			PerformanceMonitor.mark("org.danielli.xultimate.remoting.service.AccountService Java writeString" + i);
 		}
+		
+		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 300000; j++) {
-				Output output = new Output(1024);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeString("insertAccount");
-				Input input = new Input(output.toBytes());
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				input.readString();
 				input.close();
+				
 			}
-			PerformanceMonitor.mark("insertAccount Kryo" + i);
+			PerformanceMonitor.mark("insertAccount Kryo writeString" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 300000; j++) {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.writeObject("insertAccount");
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.close();
+				input.readObject();
+				input.close();
+				
+			}
+			PerformanceMonitor.mark("insertAccount Kryo writeObject" + i);
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 300000; j++) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream(256);
 				serializeString("insertAccount", outputStream);
 				ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
 				outputStream.close();
 				deserializeString(arrayInputStream);
 				arrayInputStream.close();
 			}
-			PerformanceMonitor.mark("insertAccount Java" + i);
+			PerformanceMonitor.mark("insertAccount Java writeString" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));
@@ -169,8 +197,8 @@ public class KryoSerializingTest {
 		}
 	}
 	
-//	@Test
-	public void test() {
+	@Test
+	public void test() throws IOException, ClassNotFoundException {
 		User person = new User();
 		person.setName("Daniel Li");
 		person.setAge(19);
@@ -181,10 +209,10 @@ public class KryoSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				byte[] data = mainKryoSerializer.serialize(person);
-				person = mainKryoDeserializer.deserialize(data, User.class);
+				byte[] data = rpcKryoSerializer.serialize(person);
+				person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
 			}
-			PerformanceMonitor.mark("mainKryoSerializer" + i);
+			PerformanceMonitor.mark("rpcKryoSerializer" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -192,10 +220,14 @@ public class KryoSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				byte[] data = rpcKryoSerializer.serialize(person);
-				person = (User) rpcKryoDeserializer.deserialize(data, Object.class);
+				RpcKryoObjectOutput output = new RpcKryoObjectOutput(256, ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.writeObject(person);
+				RpcKryoObjectInput input = new RpcKryoObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
+				output.close();
+				person = (User) input.readObject();
+				input.close();
 			}
-			PerformanceMonitor.mark("rpcKryoSerializer" + i);
+			PerformanceMonitor.mark("RpcKryoObjectOutput & RpcKryoObjectInput" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));

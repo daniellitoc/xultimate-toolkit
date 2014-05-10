@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.danielli.xultimate.core.serializer.kryo.KryoGenerator;
+import org.joda.time.DateTime;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
@@ -44,11 +45,15 @@ import de.javakaffee.kryoserializers.JdkProxySerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import de.javakaffee.kryoserializers.SynchronizedCollectionsSerializer;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
 
 public class DefaultKryoGenerator implements KryoGenerator {
 	
 	public static final DefaultKryoGenerator INSTANCE = new DefaultKryoGenerator();
-
+	
+	protected DefaultKryoGenerator() {
+	}
+	
 	@Override
 	public Kryo generate() {
 		Kryo kryo = new KryoReflectionFactorySupport() {
@@ -83,6 +88,7 @@ public class DefaultKryoGenerator implements KryoGenerator {
 		
 		kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
 
+		kryo.register(DateTime.class, new JodaDateTimeSerializer());
 		kryo.register(Currency.class, new CurrencySerializer());
 	    kryo.register(StringBuffer.class, new StringBufferSerializer());
 	    kryo.register(StringBuilder.class, new StringBuilderSerializer());

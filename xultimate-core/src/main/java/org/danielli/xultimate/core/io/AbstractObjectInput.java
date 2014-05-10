@@ -3,7 +3,15 @@ package org.danielli.xultimate.core.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class AbstractObjectInput extends DataInput {
+import com.esotericsoftware.kryo.io.Input;
+
+/**
+ * 抽象对象输入流。
+ * 
+ * @author Daniel Li
+ * @since 10 May 2014
+ */
+public abstract class AbstractObjectInput extends Input {
 
 	public AbstractObjectInput (int bufferSize) {
 		super(bufferSize);

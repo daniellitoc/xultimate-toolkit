@@ -10,6 +10,9 @@ public class ThreadLocalKryoGenerator implements KryoGenerator {
 	
 	private KryoGenerator kryoGenerator = DefaultKryoGenerator.INSTANCE;
 	
+	private ThreadLocalKryoGenerator() {
+	}
+	
 	@Override
 	public Kryo generate() {
 		Kryo currentKryo = KryoContext.currentKryo();

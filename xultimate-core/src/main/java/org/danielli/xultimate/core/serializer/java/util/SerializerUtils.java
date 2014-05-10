@@ -1,7 +1,12 @@
 package org.danielli.xultimate.core.serializer.java.util;
 
 
-
+/**
+ * 基本类型序列化实现。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ */
 public class SerializerUtils {
 	
 	public static final int LONG_BYTE_SIZE = 8;
@@ -34,8 +39,8 @@ public class SerializerUtils {
 		return rv;
 	}
 	
-	public static byte[] encodeDouble(double value) {
-		return encodeLong(Double.doubleToLongBits(value), false);
+	public static byte[] encodeDouble(double value, boolean packZeros) {
+		return encodeLong(Double.doubleToLongBits(value), packZeros);
 	}
 
 	public static double decodeDouble(byte[] values) {
@@ -55,8 +60,8 @@ public class SerializerUtils {
 		return rv;
 	}
 
-	public static byte[] encodeFloat(float in) {
-		return encodeInt(Float.floatToIntBits(in), false);
+	public static byte[] encodeFloat(float in, boolean packZeros) {
+		return encodeInt(Float.floatToIntBits(in), packZeros);
 	}
 
 	public static float decodeFloat(byte[] in) {

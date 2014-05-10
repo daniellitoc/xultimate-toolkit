@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.core.io.support.RpcProtostuffObjectInput;
-import org.danielli.xultimate.core.io.support.RpcProtostuffObjectOutput;
+import org.danielli.xultimate.core.io.support.RpcProtobufObjectInput;
+import org.danielli.xultimate.core.io.support.RpcProtobufObjectOutput;
 import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
 import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenerator;
 import org.danielli.xultimate.core.serializer.protostuff.util.LinkedBufferUtils;
@@ -21,19 +21,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.dyuproject.protostuff.LinkedBuffer;
-import com.dyuproject.protostuff.ProtostuffIOUtil;
+import com.dyuproject.protostuff.ProtobufIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
-public class ProtostuffSerializingTest {
+public class ProtobufSerializingTest {
 	
-	@Resource(name = "rpcProtostuffSerializer")
-	private Serializer rpcProtostuffSerializer;
+	@Resource(name = "rpcProtobufSerializer")
+	private Serializer rpcProtobufSerializer;
 	
-	@Resource(name = "rpcProtostuffSerializer")
-	private Deserializer rpcProtostuffDeserializer;
+	@Resource(name = "rpcProtobufSerializer")
+	private Deserializer rpcProtobufDeserializer;
 	
 //	@Test
 	public void testBase() {
@@ -41,8 +41,8 @@ public class ProtostuffSerializingTest {
 		person.setName("Daniel Li");
 		person.setAge(19);
 		
-		byte[] data = rpcProtostuffSerializer.serialize(person);
-		person = (User) rpcProtostuffDeserializer.deserialize(data, Object.class);
+		byte[] data = rpcProtobufSerializer.serialize(person);
+		person = (User) rpcProtobufDeserializer.deserialize(data, Object.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
@@ -54,9 +54,9 @@ public class ProtostuffSerializingTest {
 		person.setName("Daniel Li");
 		person.setAge(19);
 		try {
-			data = ProtostuffIOUtil.toByteArray(person, schema, linkedBuffer);
+			data = ProtobufIOUtil.toByteArray(person, schema, linkedBuffer);
 			person = new User();
-			ProtostuffIOUtil.mergeFrom(data, person, schema);
+			ProtobufIOUtil.mergeFrom(data, person, schema);
 		} finally {
 			linkedBuffer.clear();
 		}
@@ -80,46 +80,46 @@ public class ProtostuffSerializingTest {
 			for (int j = 0; j < 100000; j++) {
 				try {
 					Integer value = 10;
-					ProtostuffIOUtil.mergeFrom(ProtostuffIOUtil.toByteArray(value, integerSchema, linkedBuffer), value, integerSchema);
+					ProtobufIOUtil.mergeFrom(ProtobufIOUtil.toByteArray(value, integerSchema, linkedBuffer), value, integerSchema);
 				} finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("ProtostuffIOUtil" + i);
+			PerformanceMonitor.mark("ProtobufIOUtil" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				Integer value = 10;
-				rpcProtostuffDeserializer.deserialize(rpcProtostuffSerializer.serialize(value), Integer.class);
+				rpcProtobufDeserializer.deserialize(rpcProtobufSerializer.serialize(value), Integer.class);
 			}
-			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
+			PerformanceMonitor.mark("rpcProtobufSerializer" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				Integer value = 10;
-				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(value);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = (Integer) input.readObject();
 				input.close();
 			}
-			PerformanceMonitor.mark("RpcProtostuffObjectInput readObject" + i);
+			PerformanceMonitor.mark("RpcProtobufObjectInput readObject" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				Integer value = 10;
-				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeInt(value, true);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = input.readInt(true);
 				input.close();
 			}
-			PerformanceMonitor.mark("RpcProtostuffObjectInput readInt" + i);
+			PerformanceMonitor.mark("RpcProtobufObjectInput readInt" + i);
 		}
 		
 		PerformanceMonitor.stop();
@@ -143,18 +143,18 @@ public class ProtostuffSerializingTest {
 			for (int j = 0; j < 100000; j++) {
 				try {
 					String value = "abcdefghijklmnopqrstuvwsyz";
-					ProtostuffIOUtil.mergeFrom(ProtostuffIOUtil.toByteArray(value, integerSchema, linkedBuffer), value, integerSchema);
+					ProtobufIOUtil.mergeFrom(ProtobufIOUtil.toByteArray(value, integerSchema, linkedBuffer), value, integerSchema);
 				} finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("ProtostuffIOUtil" + i);
+			PerformanceMonitor.mark("ProtobufIOUtil" + i);
 		}
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				String value = "abcdefghijklmnopqrstuvwsyz";
-				rpcProtostuffDeserializer.deserialize(rpcProtostuffSerializer.serialize(value), Integer.class);
+				rpcProtobufDeserializer.deserialize(rpcProtobufSerializer.serialize(value), Integer.class);
 			}
 			PerformanceMonitor.mark("rpcProtobufSerializer" + i);
 		}
@@ -162,27 +162,27 @@ public class ProtostuffSerializingTest {
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				String value = "abcdefghijklmnopqrstuvwsyz";
-				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(value);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = (String) input.readObject();
 				input.close();
 			}
-			PerformanceMonitor.mark("RpcProtostuffObjectInput readObject" + i);
+			PerformanceMonitor.mark("RpcProtobufObjectInput readObject" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				String value = "abcdefghijklmnopqrstuvwsyz";
-				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeString(value);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = input.readString();
 				input.close();
 			}
-			PerformanceMonitor.mark("RpcProtostuffObjectInput readString" + i);
+			PerformanceMonitor.mark("RpcProtobufObjectInput readString" + i);
 		}
 
 		PerformanceMonitor.stop();
@@ -206,16 +206,15 @@ public class ProtostuffSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				linkedBuffer = LinkedBufferUtils.getCurrentLinkedBuffer(256);
 				try {
-					byte[] data = ProtostuffIOUtil.toByteArray(person, schema, linkedBuffer);
+					byte[] data = ProtobufIOUtil.toByteArray(person, schema, linkedBuffer);
 					person = new User();
-					ProtostuffIOUtil.mergeFrom(data, person, schema);
+					ProtobufIOUtil.mergeFrom(data, person, schema);
 				} finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("ProtostuffIOUtil" + i);
+			PerformanceMonitor.mark("ProtobufIOUtil" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -225,15 +224,15 @@ public class ProtostuffSerializingTest {
 				person.setAge(i);
 				try {
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					ProtostuffIOUtil.writeTo(outputStream, person, schema, linkedBuffer);
+					ProtobufIOUtil.writeTo(outputStream, person, schema, linkedBuffer);
 					ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 					person = schema.newMessage();
-					ProtostuffIOUtil.mergeFrom(inputStream, person, schema);
+					ProtobufIOUtil.mergeFrom(inputStream, person, schema);
 				} finally {
 					linkedBuffer.clear();
 				}
 			}
-			PerformanceMonitor.mark("ProtostuffIOUtil IO" + i);
+			PerformanceMonitor.mark("ProtobufIOUtil IO" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -241,10 +240,10 @@ public class ProtostuffSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				byte[] data = rpcProtostuffSerializer.serialize(person);
-				person = (User) rpcProtostuffDeserializer.deserialize(data, Object.class);
+				byte[] data = rpcProtobufSerializer.serialize(person);
+				person = (User) rpcProtobufDeserializer.deserialize(data, Object.class);
 			}
-			PerformanceMonitor.mark("rpcProtostuffSerializer" + i);
+			PerformanceMonitor.mark("rpcProtobufSerializer" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -252,14 +251,14 @@ public class ProtostuffSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(person);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				person = (User) input.readObject();
 				input.close();
 			}
-			PerformanceMonitor.mark("RpcProtostuffObjectOutput & RpcProtostuffObjectInput" + i);
+			PerformanceMonitor.mark("RpcProtobufObjectOutput & RpcProtobufObjectInput" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));

@@ -1,7 +1,11 @@
 package org.danielli.xultimate.core.serializer;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 
+import org.danielli.xultimate.core.io.support.JavaObjectInput;
+import org.danielli.xultimate.core.io.support.JavaObjectOutput;
 import org.danielli.xultimate.util.performance.PerformanceMonitor;
 import org.danielli.xultimate.util.time.stopwatch.support.AdvancedStopWatchSummary;
 import org.junit.Assert;
@@ -14,17 +18,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:/applicationContext-service-serializer.xml" })
 public class JavaSerializingTest {
 	
-	@Resource(name = "mainObjectSerializerProxy")
-	private Serializer mainObjectSerializerProxy;
+	@Resource(name = "javaObjectSerializer")
+	private Serializer javaObjectSerializer;
 	
-	@Resource(name = "mainObjectDeserializerProxy")
-	private Deserializer mainObjectDeserializerProxy;
-	
-	@Resource(name = "rpcObjectSerializerProxy")
-	private Serializer rpcObjectSerializerProxy;
-	
-	@Resource(name = "rpcObjectDeserializerProxy")
-	private Deserializer rpcObjectDeserializerProxy;
+	@Resource(name = "javaObjectSerializer")
+	private Deserializer javaObjectDeserializer;
 	
 //	@Test
 	public void testBase() {
@@ -32,25 +30,15 @@ public class JavaSerializingTest {
 		person.setName("Daniel Li");
 		person.setAge(19);
 		
-		byte[] data = mainObjectSerializerProxy.serialize(person);
-		person = (User) mainObjectDeserializerProxy.deserialize(data, User.class);
-		
-		Assert.assertEquals("Daniel Li", person.getName());
-		Assert.assertEquals((Integer) 19, person.getAge());
-		
-		person = new User();
-		person.setName("Daniel Li");
-		person.setAge(19);
-		
-		data = rpcObjectSerializerProxy.serialize(person);
-		person = (User) rpcObjectDeserializerProxy.deserialize(data, Object.class);
+		byte[] data = javaObjectSerializer.serialize(person);
+		person = (User) javaObjectDeserializer.deserialize(data, User.class);
 		
 		Assert.assertEquals("Daniel Li", person.getName());
 		Assert.assertEquals((Integer) 19, person.getAge());
 	}
 	
 	@Test
-	public void test() {
+	public void test() throws IOException, ClassNotFoundException {
 		User person = new User();
 		person.setName("Daniel Li");
 		person.setAge(19);
@@ -61,10 +49,10 @@ public class JavaSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				byte[] data = mainObjectSerializerProxy.serialize(person);
-				person = mainObjectDeserializerProxy.deserialize(data, User.class);
+				byte[] data = javaObjectSerializer.serialize(person);
+				person = (User) javaObjectDeserializer.deserialize(data, Object.class);
 			}
-			PerformanceMonitor.mark("mainKryoSerializer" + i);
+			PerformanceMonitor.mark("javaObjectSerializer" + i);
 		}
 		
 		for (int i = 0; i < 5; i++) {
@@ -72,10 +60,14 @@ public class JavaSerializingTest {
 				person = new User();
 				person.setName("Daniel Li");
 				person.setAge(j);
-				byte[] data = rpcObjectSerializerProxy.serialize(person);
-				person = (User) rpcObjectDeserializerProxy.deserialize(data, Object.class);
+				JavaObjectOutput output = new JavaObjectOutput(256);
+				output.writeObject(person);
+				JavaObjectInput input = new JavaObjectInput(output.toBytes());
+				output.close();
+				person = (User) input.readObject();
+				input.close();
 			}
-			PerformanceMonitor.mark("rpcKryoSerializer" + i);
+			PerformanceMonitor.mark("JavaObjectOutput & JavaObjectInput" + i);
 		}
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(true));

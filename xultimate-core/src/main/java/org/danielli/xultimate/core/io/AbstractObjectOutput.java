@@ -3,7 +3,15 @@ package org.danielli.xultimate.core.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public abstract class AbstractObjectOutput extends DataOutput {
+import com.esotericsoftware.kryo.io.Output;
+
+/**
+ * 抽象对象输出流。
+ * 
+ * @author Daniel Li
+ * @since 10 May 2014
+ */
+public abstract class AbstractObjectOutput extends Output {
 
 	public AbstractObjectOutput (int bufferSize) {
 		super(bufferSize);

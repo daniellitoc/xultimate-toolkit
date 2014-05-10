@@ -9,6 +9,9 @@ import org.danielli.xultimate.core.serializer.SerializerException;
 import org.danielli.xultimate.core.serializer.java.util.SerializerUtils;
 import org.danielli.xultimate.util.StringUtils;
 
+/**
+ * @deprecated 暂时无用。
+ */
 public class BaseTypeSerializer implements Serializer {
 
 	public static final int SERIALIZED = 1;

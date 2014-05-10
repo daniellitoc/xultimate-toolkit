@@ -12,6 +12,7 @@ import org.danielli.xultimate.util.ArrayUtils;
  * 
  * @author Daniel Li
  * @since 18 Jun 2013
+ * @deprecated 暂时无用。
  */
 public class SerializerFactory implements Serializer {
 	

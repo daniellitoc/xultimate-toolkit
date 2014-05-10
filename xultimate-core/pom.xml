@@ -35,7 +35,7 @@
 
 		<com.dyuproject.protostuff.version>1.0.7</com.dyuproject.protostuff.version>
 		<com.esotericsoftware.kryo.version>2.21</com.esotericsoftware.kryo.version>
-		<de.javakaffee.kryo-serializers.version>0.23</de.javakaffee.kryo-serializers.version>
+		<de.javakaffee.kryo-serializers.version>0.26</de.javakaffee.kryo-serializers.version>
 
 		<com.esotericsoftware.reflectasm.reflectasm.version>1.07</com.esotericsoftware.reflectasm.reflectasm.version>
 		<org.xerial.snappy.version>1.1.1-M1</org.xerial.snappy.version>

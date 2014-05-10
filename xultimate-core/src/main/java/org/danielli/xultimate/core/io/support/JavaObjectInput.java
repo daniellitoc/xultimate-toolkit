@@ -1,4 +1,4 @@
-package org.danielli.xultimate.core.serializer.java;
+package org.danielli.xultimate.core.io.support;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,6 +6,12 @@ import java.io.ObjectInputStream;
 
 import org.danielli.xultimate.core.io.AbstractObjectInput;
 
+/**
+ * Java序列化机制的对象输入流。
+ * 
+ * @author Daniel Li
+ * @since 10 May 2014
+ */
 public class JavaObjectInput extends AbstractObjectInput {
 
 	private final ObjectInputStream objectInputStream;

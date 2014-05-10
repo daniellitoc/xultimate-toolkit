@@ -11,6 +11,12 @@ import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenera
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
+/**
+ * Kryo序列化实现。
+ * 
+ * @author Daniel Li
+ * @since 18 Jun 2013
+ */
 public class RpcKryoSerializer extends RpcSerializer {
 
 	protected int bufferSize = 256;
@@ -28,38 +34,30 @@ public class RpcKryoSerializer extends RpcSerializer {
 	@Override
 	public <T> byte[] serialize(T source) throws SerializerException {
 		Output output = new Output(bufferSize);
-		try {
-			kryoGenerator.generate().writeClassAndObject(output, source);
-		} catch (Exception e) {
-			throw new SerializerException(e.getMessage(), e);
-		} finally {
-			output.flush();
-		}
+		serialize(source, output);
 		return output.toBytes();
 	}
 
 	@Override
 	public <T> void serialize(T source, OutputStream outputStream) throws SerializerException {
-		Output output = new Output(bufferSize);
+		if (!(outputStream instanceof Output)) {
+			throw new SerializerException("Parameter 'outputStream' must be com.esotericsoftware.kryo.io.Output type");
+		}
+		serialize(source, (Output) outputStream);
+	}
+	
+	public <T> void serialize(T source, Output output) throws SerializerException {
 		try {
 			kryoGenerator.generate().writeClassAndObject(output, source);
-			outputStream.write(output.toBytes());
 		} catch (Exception e) {
 			throw new SerializerException(e.getMessage(), e);
-		} finally {
-			output.flush();
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T deserialize(byte[] bytes, Class<T> clazz) throws DeserializerException {
-		try {
-			Input input = new Input(bytes);
-	        return (T) kryoGenerator.generate().readClassAndObject(input);
-		} catch (Exception e) {
-			throw new DeserializerException(e.getMessage(), e);
-		}
+		Input input = new Input(bytes);
+		return deserialize(input, clazz);
 	}
 
 	@Override
@@ -73,7 +71,7 @@ public class RpcKryoSerializer extends RpcSerializer {
 	@SuppressWarnings("unchecked")
 	public <T> T deserialize(Input input, Class<T> clazz) throws DeserializerException {
 		try {
-	        return  (T) kryoGenerator.generate().readClassAndObject(input);
+			return (T) kryoGenerator.generate().readClassAndObject(input);
 		} catch (Exception e) {
 			throw new DeserializerException(e.getMessage(), e);
 		}
