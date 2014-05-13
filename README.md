@@ -131,6 +131,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供StateSetTypeHandler，数据库使用TINYINT存储。用来代替BIT/SET。支持部分匹配和完全匹配功能，解决BIT/SET部分匹配无法利用索引问题。(目前支持8个类型，但查询数量多，可以考虑4个，这样最多有16个组合)
 * 提供IntegerNullParameterTypeHandler、LongNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的-1。展示是将数据端的-1处理为Java端的null。可以更好的建立高效索引。-1为默认值，可继承修改。
 * 提供StringNullParameterTypeHandler、ClobNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的""。展示是将数据端的""处理为Java端的null。可以更好的建立高效索引。""为默认值，可继承修改。
+* 提供ReverseStringNullParameterTypeHandler，主要用于将字符串反转，实现后缀索引。同时设参时将Java端的null值处理为数据端的""。展示是将数据端的""处理为Java端的null。可以更好的建立高效索引。""为默认值，可继承修改。
 * 去除类似Hibernate那样的复杂映射，将模型定义从领域模型改为POJO，采用最直接的数据库-实体类的映射，保持简单映射。
 * 提供了PerformanceTest，测试不使用事物注解、使用事物注解(NOT_SUPPORT)、使用事物注解(REQUIRED,readOnly=false)、使用事物注解(REQUIRED,readOnly=true)的执行效率。
 * 包含大部分相关功能的测试类。

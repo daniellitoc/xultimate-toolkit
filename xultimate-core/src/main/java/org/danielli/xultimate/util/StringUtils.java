@@ -817,5 +817,21 @@ public class StringUtils {
     	return org.apache.commons.lang3.StringUtils.split(str, separatorChars);
     }
     
-    
+    /**
+     * <p>Reverses a String as per {@link StringBuilder#reverse()}.</p>
+     *
+     * <p>A {@code null} String returns {@code null}.</p>
+     *
+     * <pre>
+     * StringUtils.reverse(null)  = null
+     * StringUtils.reverse("")    = ""
+     * StringUtils.reverse("bat") = "tab"
+     * </pre>
+     *
+     * @param str  the String to reverse, may be null
+     * @return the reversed String, {@code null} if null String input
+     */
+    public static String reverse(String str) {
+    	return org.apache.commons.lang3.StringUtils.reverse(str);
+    }
 }
