@@ -16,11 +16,6 @@ public class JavaObjectInput extends AbstractObjectInput {
 
 	private final ObjectInputStream objectInputStream;
 
-	public JavaObjectInput (int bufferSize) throws IOException {
-		super(bufferSize);
-		this.objectInputStream = new ObjectInputStream(this);
-	}
-
 	public JavaObjectInput (byte[] buffer) throws IOException {
 		super(buffer);
 		this.objectInputStream = new ObjectInputStream(this);

@@ -176,16 +176,13 @@ public class RpcProtobufSerializer extends RpcSerializer {
 				Class<T> type = kryoGenerator.generate().readClass(input).getType();
 				Schema<T> schema = RuntimeSchema.getSchema(type);
 //				MutableObject<T> holder = new MutableObject<T>();
-				LinkedBuffer buffer = LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize);
 				try {
 //					ProtobufIOUtil.mergeDelimitedFrom(input, holder, schema, buffer);
 					T result = schema.newMessage();
-					ProtobufIOUtil.mergeDelimitedFrom(input, result, schema, buffer);
+					ProtobufIOUtil.mergeDelimitedFrom(input, result, schema);
 					return result;
 				} catch (Exception e) {
 					throw new DeserializerException(e.getMessage(), e);
-				} finally {
-					buffer.clear();
 				}
 //				return holder.getValue();
 			}

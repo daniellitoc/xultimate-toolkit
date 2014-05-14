@@ -70,7 +70,7 @@ public class SerializerTest {
 				person.setAge(i);
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(person);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				person = (User) input.readObject();
 				input.close();
@@ -85,7 +85,7 @@ public class SerializerTest {
 				person.setAge(i);
 				RpcProtostuffObjectOutput output = new RpcProtostuffObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(person);
-				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtostuffObjectInput input = new RpcProtostuffObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				person = (User) input.readObject();
 				input.close();

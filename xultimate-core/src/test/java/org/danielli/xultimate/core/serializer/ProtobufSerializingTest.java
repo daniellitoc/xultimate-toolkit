@@ -101,7 +101,7 @@ public class ProtobufSerializingTest {
 				Integer value = 10;
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(value);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = (Integer) input.readObject();
 				input.close();
@@ -114,7 +114,7 @@ public class ProtobufSerializingTest {
 				Integer value = 10;
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeInt(value, true);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = input.readInt(true);
 				input.close();
@@ -164,7 +164,7 @@ public class ProtobufSerializingTest {
 				String value = "abcdefghijklmnopqrstuvwsyz";
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(value);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = (String) input.readObject();
 				input.close();
@@ -177,7 +177,7 @@ public class ProtobufSerializingTest {
 				String value = "abcdefghijklmnopqrstuvwsyz";
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeString(value);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				value = input.readString();
 				input.close();
@@ -253,7 +253,7 @@ public class ProtobufSerializingTest {
 				person.setAge(j);
 				RpcProtobufObjectOutput output = new RpcProtobufObjectOutput(256, LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.writeObject(person);
-				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), LinkedBufferUtils.getCurrentLinkedBuffer(256), ThreadLocalKryoGenerator.INSTANCE.generate());
+				RpcProtobufObjectInput input = new RpcProtobufObjectInput(output.toBytes(), ThreadLocalKryoGenerator.INSTANCE.generate());
 				output.close();
 				person = (User) input.readObject();
 				input.close();

@@ -7,7 +7,6 @@ import java.util.Date;
 import org.danielli.xultimate.core.io.AbstractObjectInput;
 import org.joda.time.DateTime;
 
-import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtobufIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
@@ -24,31 +23,25 @@ public class RpcProtobufObjectInput extends AbstractObjectInput {
 //	@SuppressWarnings("rawtypes")
 //	public static final Schema<MutableObject> SCHEMA = RuntimeSchema.getSchema(MutableObject.class);
 	
-	private final LinkedBuffer buffer;
-	
 	private final Kryo kryo;
 
-	public RpcProtobufObjectInput (int bufferSize, LinkedBuffer linkedBuffer, Kryo kryo) {
+	public RpcProtobufObjectInput (int bufferSize, Kryo kryo) {
 		super(bufferSize);
-		this.buffer = linkedBuffer;
 		this.kryo = kryo;
 	}
 
-	public RpcProtobufObjectInput (byte[] buffer, LinkedBuffer linkedBuffer, Kryo kryo) {
+	public RpcProtobufObjectInput (byte[] buffer, Kryo kryo) {
 		super(buffer);
-		this.buffer = linkedBuffer;
 		this.kryo = kryo;
 	}
 
-	public RpcProtobufObjectInput (byte[] buffer, int offset, int count, LinkedBuffer linkedBuffer, Kryo kryo) {
+	public RpcProtobufObjectInput (byte[] buffer, int offset, int count, Kryo kryo) {
 		super(buffer, offset, count);
-		this.buffer = linkedBuffer;
 		this.kryo = kryo;
 	}
 
-	public RpcProtobufObjectInput (InputStream inputStream, int bufferSize, LinkedBuffer linkedBuffer, Kryo kryo) {
+	public RpcProtobufObjectInput (InputStream inputStream, int bufferSize, Kryo kryo) {
 		super(inputStream, bufferSize);
-		this.buffer = linkedBuffer;
 		this.kryo = kryo;
 	}
 	
@@ -89,14 +82,10 @@ public class RpcProtobufObjectInput extends AbstractObjectInput {
 			Class<Object> type = kryo.readClass(this).getType();
 			Schema<Object> schema = RuntimeSchema.getSchema(type);
 //			MutableObject<Object> holder = new MutableObject<Object>();
-			try {
-//				ProtobufIOUtil.mergeDelimitedFrom(this, holder, SCHEMA, buffer);
-				Object result = schema.newMessage();
-				ProtobufIOUtil.mergeDelimitedFrom(this, result, schema, buffer);
-				return result;
-			} finally {
-				buffer.clear();
-			}
+//			ProtobufIOUtil.mergeDelimitedFrom(this, holder, SCHEMA, buffer);
+			Object result = schema.newMessage();
+			ProtobufIOUtil.mergeDelimitedFrom(this, result, schema);
+			return result;
 //			return holder.getValue();
 		}
 	}
