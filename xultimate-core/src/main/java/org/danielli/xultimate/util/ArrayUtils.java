@@ -373,6 +373,27 @@ public class ArrayUtils {
     }
     
     /**
+     * <p>Adds all the elements of the given arrays into a new array.</p>
+     * <p>The new array contains all of the element of {@code array1} followed
+     * by all of the elements {@code array2}. When an array is returned, it is always
+     * a new array.</p>
+     *
+     * <pre>
+     * ArrayUtils.addAll(array1, null)   = cloned copy of array1
+     * ArrayUtils.addAll(null, array2)   = cloned copy of array2
+     * ArrayUtils.addAll([], [])         = []
+     * </pre>
+     *
+     * @param array1  the first array whose elements are added to the new array.
+     * @param array2  the second array whose elements are added to the new array.
+     * @return The new byte[] array.
+     * @since 2.1
+     */
+    public static byte[] addAll(byte[] array1, byte... array2) {
+    	return org.apache.commons.lang3.ArrayUtils.addAll(array1, array2);
+    }
+    
+    /**
      * <p>Create a type-safe generic array.</p>
      *
      * <p>The Java language does not allow an array to be created from a generic type:</p>
