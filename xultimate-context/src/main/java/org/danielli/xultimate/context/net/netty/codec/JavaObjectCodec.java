@@ -1,6 +1,7 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -12,9 +13,6 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import java.io.Serializable;
 import java.util.List;
 
-import org.danielli.xultimate.core.compression.Compressor;
-import org.danielli.xultimate.core.compression.Decompressor;
-import org.danielli.xultimate.core.compression.support.NullCompressor;
 import org.danielli.xultimate.core.io.support.JavaObjectInput;
 import org.danielli.xultimate.core.io.support.JavaObjectOutput;
 
@@ -25,40 +23,23 @@ import org.danielli.xultimate.core.io.support.JavaObjectOutput;
  * @since 18 Jun 2013
  */
 @Sharable
-public class ObjectCodec extends ChannelHandlerAdapter {
-	
-	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
-	
-	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
+public class JavaObjectCodec extends ChannelHandlerAdapter {
 	
 	protected int bufferSize = 256;
 	
-	public ObjectCodec() {
+	public JavaObjectCodec() {
 
-	}
-	
-	public ObjectCodec(Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
-		this.compressor = compressor;
-		this.decompressor = decompressor;
 	}
 	
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
 	
-	public void setCompressor(Compressor<byte[], byte[]> compressor) {
-		this.compressor = compressor;
-	}
-
-	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
-		this.decompressor = decompressor;
-	}
-	
 	private final MessageToMessageEncoder<Serializable> encoder = new MessageToMessageEncoder<Serializable>() {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Serializable msg, List<Object> out) throws Exception {
-        	ObjectCodec.this.encode(ctx, msg, out);
+        	JavaObjectCodec.this.encode(ctx, msg, out);
         }
     };
 
@@ -66,7 +47,7 @@ public class ObjectCodec extends ChannelHandlerAdapter {
 
         @Override
         protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        	ObjectCodec.this.decode(ctx, msg, out);
+        	JavaObjectCodec.this.decode(ctx, msg, out);
         }
     };
     
@@ -85,23 +66,14 @@ public class ObjectCodec extends ChannelHandlerAdapter {
     	try {
     		javaObjectOutput.writeObject(msg);
     		byte[] result = javaObjectOutput.toBytes();
-    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
+    		out.add(Unpooled.wrappedBuffer(result));
     	} finally {
     		javaObjectOutput.close();
     	}
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-//    	JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.wrapper((new ByteBufInputStream(msg))), bufferSize);
-    	final byte[] array;
-        if (msg.hasArray()) {
-             array = msg.array();
-        } else {
-        	 int length = msg.readableBytes(); 
-             array = new byte[length];
-             msg.getBytes(msg.readerIndex(), array, 0, length);
-        }
-        JavaObjectInput javaObjectInput = new JavaObjectInput(decompressor.decompress(array));
+    	JavaObjectInput javaObjectInput = new JavaObjectInput(new ByteBufInputStream(msg), bufferSize);
     	try {
     		while (javaObjectInput.available() > 0) {
     			out.add(javaObjectInput.readObject());

@@ -1,6 +1,7 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -11,9 +12,6 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-import org.danielli.xultimate.core.compression.Compressor;
-import org.danielli.xultimate.core.compression.Decompressor;
-import org.danielli.xultimate.core.compression.support.NullCompressor;
 import org.danielli.xultimate.core.io.support.RpcProtostuffObjectInput;
 import org.danielli.xultimate.core.io.support.RpcProtostuffObjectOutput;
 import org.danielli.xultimate.core.serializer.kryo.KryoGenerator;
@@ -27,43 +25,29 @@ import org.danielli.xultimate.core.serializer.protostuff.util.LinkedBufferUtils;
  * @since 18 Jun 2013
  */
 @Sharable
-public class ProtostuffCodec extends ChannelHandlerAdapter {
+public class RpcProtostuffObjectCodec extends ChannelHandlerAdapter {
 
 	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
 	
-	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
-	
-	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
-	
 	protected int bufferSize = 256;
 	
-	public ProtostuffCodec() {
+	public RpcProtostuffObjectCodec() {
 
 	}
 	
-	public ProtostuffCodec(KryoGenerator kryoGenerator, Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
+	public RpcProtostuffObjectCodec(KryoGenerator kryoGenerator) {
 		this.kryoGenerator = kryoGenerator;
-		this.compressor = compressor;
-		this.decompressor = decompressor;
 	}
 	
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
 	
-	public void setCompressor(Compressor<byte[], byte[]> compressor) {
-		this.compressor = compressor;
-	}
-
-	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
-		this.decompressor = decompressor;
-	}
-	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-        	ProtostuffCodec.this.encode(ctx, msg, out);
+        	RpcProtostuffObjectCodec.this.encode(ctx, msg, out);
         }
     };
 
@@ -71,7 +55,7 @@ public class ProtostuffCodec extends ChannelHandlerAdapter {
 
         @Override
         protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        	ProtostuffCodec.this.decode(ctx, msg, out);
+        	RpcProtostuffObjectCodec.this.decode(ctx, msg, out);
         }
     };
     
@@ -90,23 +74,14 @@ public class ProtostuffCodec extends ChannelHandlerAdapter {
     	try {
     		protostuffObjectOutput.writeObject(msg);
     		byte[] result = protostuffObjectOutput.toBytes();
-    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
+    		out.add(Unpooled.wrappedBuffer(result));
     	} finally {
     		protostuffObjectOutput.close();
     	}
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-//      RpcProtostuffObjectInput protostuffObjectInput = new RpcProtostuffObjectInput(decompressor.wrapper(new ByteBufInputStream(msg)), bufferSize, LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
-    	final byte[] array;
-        if (msg.hasArray()) {
-             array = msg.array();
-        } else {
-        	 int length = msg.readableBytes(); 
-             array = new byte[length];
-             msg.getBytes(msg.readerIndex(), array, 0, length);
-        }
-    	RpcProtostuffObjectInput protostuffObjectInput = new RpcProtostuffObjectInput(decompressor.decompress(array), LinkedBufferUtils.getCurrentLinkedBuffer(bufferSize), kryoGenerator.generate());
+    	RpcProtostuffObjectInput protostuffObjectInput = new RpcProtostuffObjectInput(new ByteBufInputStream(msg), bufferSize, kryoGenerator.generate());
     	try {
     		while (protostuffObjectInput.available() > 0) {
     			out.add(protostuffObjectInput.readObject());

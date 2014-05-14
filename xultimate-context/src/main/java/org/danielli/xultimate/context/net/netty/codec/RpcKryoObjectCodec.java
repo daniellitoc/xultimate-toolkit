@@ -1,6 +1,7 @@
 package org.danielli.xultimate.context.net.netty.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -11,9 +12,6 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-import org.danielli.xultimate.core.compression.Compressor;
-import org.danielli.xultimate.core.compression.Decompressor;
-import org.danielli.xultimate.core.compression.support.NullCompressor;
 import org.danielli.xultimate.core.io.support.RpcKryoObjectInput;
 import org.danielli.xultimate.core.io.support.RpcKryoObjectOutput;
 import org.danielli.xultimate.core.serializer.kryo.KryoGenerator;
@@ -26,43 +24,29 @@ import org.danielli.xultimate.core.serializer.kryo.support.ThreadLocalKryoGenera
  * @since 18 Jun 2013
  */
 @Sharable
-public class KryoCodec extends ChannelHandlerAdapter {
+public class RpcKryoObjectCodec extends ChannelHandlerAdapter {
 	
 	protected KryoGenerator kryoGenerator = ThreadLocalKryoGenerator.INSTANCE;
 	
-	protected Compressor<byte[], byte[]> compressor = NullCompressor.COMPRESSOR;
-	
-	protected Decompressor<byte[], byte[]> decompressor = NullCompressor.COMPRESSOR;
-	
 	protected int bufferSize = 256;
 	
-	public KryoCodec() {
+	public RpcKryoObjectCodec() {
 
 	}
 	
-	public KryoCodec(KryoGenerator kryoGenerator, Compressor<byte[], byte[]> compressor, Decompressor<byte[], byte[]> decompressor) {
+	public RpcKryoObjectCodec(KryoGenerator kryoGenerator) {
 		this.kryoGenerator = kryoGenerator;
-		this.compressor = compressor;
-		this.decompressor = decompressor;
 	}
 	
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
 	
-	public void setCompressor(Compressor<byte[], byte[]> compressor) {
-		this.compressor = compressor;
-	}
-
-	public void setDecompressor(Decompressor<byte[], byte[]> decompressor) {
-		this.decompressor = decompressor;
-	}
-	
 	private final MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<Object>() {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-        	KryoCodec.this.encode(ctx, msg, out);
+        	RpcKryoObjectCodec.this.encode(ctx, msg, out);
         }
     };
 
@@ -70,7 +54,7 @@ public class KryoCodec extends ChannelHandlerAdapter {
 
         @Override
         protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        	KryoCodec.this.decode(ctx, msg, out);
+        	RpcKryoObjectCodec.this.decode(ctx, msg, out);
         }
     };
     
@@ -89,23 +73,14 @@ public class KryoCodec extends ChannelHandlerAdapter {
     	try {
     		kryoObjectOutput.writeObject(msg);
     		byte[] result = kryoObjectOutput.toBytes();
-    		out.add(Unpooled.wrappedBuffer(compressor.compress(result)));
+    		out.add(Unpooled.wrappedBuffer(result));
     	} finally {
     		kryoObjectOutput.close();
     	}
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-//    	RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.wrapper((new ByteBufInputStream(msg))), bufferSize, kryoGenerator.generate());
-    	final byte[] array;
-        if (msg.hasArray()) {
-             array = msg.array();
-        } else {
-        	 int length = msg.readableBytes(); 
-             array = new byte[length];
-             msg.getBytes(msg.readerIndex(), array, 0, length);
-        }
-        RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(decompressor.decompress(array), kryoGenerator.generate());
+    	RpcKryoObjectInput kryoObjectInput = new RpcKryoObjectInput(new ByteBufInputStream(msg), bufferSize, kryoGenerator.generate());
     	try {
     		while (kryoObjectInput.available() > 0) {
     			out.add(kryoObjectInput.readObject());
