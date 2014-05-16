@@ -100,7 +100,7 @@
 				org.quartz.jobStore.clusterCheckinInterval = 20000 
 			</value>
 		</property>
-		 <property name="triggers">
+		<property name="triggers">
 	        <list>
 	            <ref bean="cronTrigger" />
 	            <ref bean="simpleTrigger" />
@@ -120,6 +120,12 @@
 				org.quartz.jobStore.clusterCheckinInterval = 20000
 			</value>
 		</property>
+		<property name="triggers">
+	        <list>
+	            <ref bean="cronTrigger" />
+	            <ref bean="simpleTrigger" />
+	        </list>
+	    </property>
 	</bean>
 	
 </beans>
