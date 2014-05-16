@@ -20,9 +20,14 @@ public class RSACryptorTest {
 	@Resource(name = "stringStringRSACryptor")
 	private Decryptor<String, String> decryptor;
 	
+	@Resource(name = "pathStringStringRSACryptor")
+	private Encryptor<String, String> pathStringStringRSAEncryptor;
+	@Resource(name = "pathStringStringRSACryptor")
+	private Decryptor<String, String> pathStringStringRSADecryptor;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSACryptorTest.class);
 
-	@Test
+//	@Test
 	public void test() {
 		String source = "ultimate";
 		PerformanceMonitor.start("RSACryptorTest");
@@ -30,6 +35,21 @@ public class RSACryptorTest {
 		LOGGER.info("{}: {}", new Object[] { source, result });
 		PerformanceMonitor.mark("Encryptor.encrypt()");
 		LOGGER.info("{}: {}", new Object[] { result, decryptor.decrypt(result) });
+		PerformanceMonitor.mark("Decryptor.decrypt()");
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
+		PerformanceMonitor.remove();
+	}
+	
+	@Test
+	public void testPath() {
+		String source = "ultimate";
+		PerformanceMonitor.start("RSACryptorTest");
+		String result = pathStringStringRSAEncryptor.encrypt(source);
+		LOGGER.info("{}: {}", new Object[] { source, result });
+		LOGGER.info("{}: {}", new Object[] { source, pathStringStringRSAEncryptor.encrypt(source) });
+		PerformanceMonitor.mark("Encryptor.encrypt()");
+		LOGGER.info("{}: {}", new Object[] { result, pathStringStringRSADecryptor.decrypt(result) });
 		PerformanceMonitor.mark("Decryptor.decrypt()");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));

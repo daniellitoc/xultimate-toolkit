@@ -31,6 +31,15 @@
 	<bean id="byteArrayStringHexCodec" class="org.danielli.xultimate.context.codec.support.ByteArrayStringCoder" p:decoder-ref="hexCodec" p:encoder-ref="hexCodec" />
 	<bean id="stringStringAESCryptor" class="org.danielli.xultimate.context.crypto.support.StringStringCryptor" p:decoder-ref="byteArrayStringHexCodec" p:encoder-ref="byteArrayStringHexCodec" p:decryptor-ref="aesCryptor" p:encryptor-ref="aesCryptor" />
 
+
+	<bean id="pathAesCryptor" class="org.danielli.xultimate.context.crypto.support.SymmetricAlgorithmsCryptor" p:asymmetricAlgorithms="RSA" p:secretKeyPath="/tmp/aes.key" p:symmetricAlgorithms="AES" />
+	<bean id="pathStringStringAESCryptor" class="org.danielli.xultimate.context.crypto.support.StringStringCryptor" p:decoder-ref="byteArrayStringHexCodec" p:encoder-ref="byteArrayStringHexCodec" p:decryptor-ref="pathAesCryptor" p:encryptor-ref="pathAesCryptor" />
+
+
 	<bean id="rsaCryptor" class="org.danielli.xultimate.context.crypto.support.AsymmetricAlgorithmsCryptor" p:asymmetricAlgorithms="RSA" />
 	<bean id="stringStringRSACryptor" class="org.danielli.xultimate.context.crypto.support.StringStringCryptor" p:decoder-ref="byteArrayStringHexCodec" p:encoder-ref="byteArrayStringHexCodec" p:decryptor-ref="rsaCryptor" p:encryptor-ref="rsaCryptor" />
+	
+	
+	<bean id="pathRsaCryptor" class="org.danielli.xultimate.context.crypto.support.AsymmetricAlgorithmsCryptor" p:asymmetricAlgorithms="RSA" p:keyPairPath="/tmp/rsa.key" />
+	<bean id="pathStringStringRSACryptor" class="org.danielli.xultimate.context.crypto.support.StringStringCryptor" p:decoder-ref="byteArrayStringHexCodec" p:encoder-ref="byteArrayStringHexCodec" p:decryptor-ref="pathRsaCryptor" p:encryptor-ref="pathRsaCryptor" />
 </beans>

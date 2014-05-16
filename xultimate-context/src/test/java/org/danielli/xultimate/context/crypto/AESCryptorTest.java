@@ -20,9 +20,14 @@ public class AESCryptorTest {
 	@Resource(name = "stringStringAESCryptor")
 	private Decryptor<String, String> decryptor;
 	
+	@Resource(name = "pathStringStringAESCryptor")
+	private Encryptor<String, String> pathStringStringAESEncryptor;
+	@Resource(name = "pathStringStringAESCryptor")
+	private Decryptor<String, String> pathStringStringAESDecryptor;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AESCryptorTest.class);
 
-	@Test
+//	@Test
 	public void test() {
 		String source = "ultimate";
 		PerformanceMonitor.start("AESCryptorTest");
@@ -30,6 +35,20 @@ public class AESCryptorTest {
 		PerformanceMonitor.mark("Encryptor.encrypt()");
 		source = "dcbe8df70f8da53e3a323ccf7e9ed758";
 		LOGGER.info("{}: {}", new Object[] { source, decryptor.decrypt(source) });
+		PerformanceMonitor.mark("Decryptor.decrypt()");
+		PerformanceMonitor.stop();
+		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
+		PerformanceMonitor.remove();
+	}
+	
+	@Test
+	public void testPath() {
+		String source = "ultimate";
+		PerformanceMonitor.start("AESCryptorTest");
+		LOGGER.info("{}: {}", new Object[] { source, pathStringStringAESEncryptor.encrypt(source) });
+		PerformanceMonitor.mark("Encryptor.encrypt()");
+		source = pathStringStringAESEncryptor.encrypt(source);
+		LOGGER.info("{}: {}", new Object[] { source, pathStringStringAESDecryptor.decrypt(source) });
 		PerformanceMonitor.mark("Decryptor.decrypt()");
 		PerformanceMonitor.stop();
 		PerformanceMonitor.summarize(new AdvancedStopWatchSummary(false));
