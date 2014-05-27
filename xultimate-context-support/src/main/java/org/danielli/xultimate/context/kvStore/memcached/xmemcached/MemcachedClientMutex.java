@@ -26,8 +26,8 @@ import net.rubyeye.xmemcached.exception.MemcachedException;
  */
 public class MemcachedClientMutex {
 
-	/** 失效时间 */
-	private int expSeconds;
+	/** 失效时间，默认永不过期 */
+	protected int expSeconds = 0;
 
 	/**
 	 * 设置失效时间。
