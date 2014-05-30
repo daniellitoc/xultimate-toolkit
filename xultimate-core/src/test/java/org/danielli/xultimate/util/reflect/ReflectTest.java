@@ -28,7 +28,7 @@ public class ReflectTest {
 		}
 		
 		Method method = User.class.getMethod("setUsername", String.class);
-		// 超过sun.reflect.inflationThreshold个阀值后会被编译成直接代码。
+		// 超过sun.reflect.inflationThreshold个阀值后会被编译成字节码。
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 2000000; j++) {
 				method.invoke(someObject, "Daniel Li");
