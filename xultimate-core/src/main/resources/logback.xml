@@ -82,9 +82,13 @@
 	<logger name="org.mybatis" level="DEBUG" />
 	<logger name="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" level="DEBUG" />
 	<!-- MyBatis，打印SQL输出 -->
+	<!-- 
 	<logger name="org.danielli.xultimate.orm.mybatis.area.dao" level="DEBUG" />
 	<logger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" />
 	<logger name="org.danielli.xultimate.shard.mybatis.dao" level="DEBUG" />
+	 -->
+	<!-- 如果设置了Configuration的logPrefix属性，可以使用，否则只能使用上面的形式 -->
+	<logger name="org.danielli.xultimate.mybatis" level="TRACE" />
 	
 	<!-- Solr日志配置 -->
 	<logger name="org.apache.zookeeper" level="WARN" />

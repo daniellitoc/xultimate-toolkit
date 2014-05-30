@@ -72,6 +72,7 @@
 				<property name="defaultExecutorType" value="BATCH" />
 				<!-- 数据库超过25000秒仍未响应则超时 -->
 				<property name="defaultStatementTimeout" value="25000" />
+				<property name="logPrefix" value="org.danielli.xultimate.mybatis." />
 			</bean>
 		</property>
 	</bean>
