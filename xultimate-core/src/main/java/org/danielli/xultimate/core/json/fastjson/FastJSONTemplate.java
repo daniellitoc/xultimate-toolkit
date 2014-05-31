@@ -77,4 +77,31 @@ public class FastJSONTemplate implements JSONTemplate {
 			throw new JSONException(e.getMessage(), e);
 		} 
 	}
+	
+	@Override
+	public <T> T readValue(byte[] src, Class<T> clazz) throws JSONException {
+		try {
+			return JSON.parseObject(src, clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		} 
+	}
+	
+	@Override
+	public <T> T readValue(InputStream src, Class<T> clazz) throws JSONException {
+		try {
+			return JSON.parseObject(IOUtils.toByteArray(src), clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		} 
+	}
+	
+	@Override
+	public <T> T readValue(String content, Class<T> clazz) throws JSONException {
+		try {
+			return JSON.parseObject(content, clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		} 
+	}
 }

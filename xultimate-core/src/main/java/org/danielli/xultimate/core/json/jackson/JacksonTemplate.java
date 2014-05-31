@@ -83,5 +83,32 @@ public class JacksonTemplate implements JSONTemplate {
 			throw new JSONException(e.getMessage(), e);
 		} 
 	}
+	
+	@Override
+	public <T> T readValue(byte[] src, Class<T> clazz) throws JSONException {
+		try {
+			return objectMapper.readValue(src, clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public <T> T readValue(InputStream src, Class<T> clazz) throws JSONException {
+		try {
+			return objectMapper.readValue(src, clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public <T> T readValue(String content, Class<T> clazz) throws JSONException {
+		try {
+			return objectMapper.readValue(content, clazz);
+		} catch (Exception e) {
+			throw new JSONException(e.getMessage(), e);
+		}
+	}
 
 }

@@ -57,4 +57,22 @@ public interface JSONTemplate {
      * Java value.
      */
 	<T> T readValue(InputStream src, ValueType<T> valueType) throws JSONException;
+	
+    /**
+     * Method that can be used to serialize any JSON output as
+     * Java value.
+     */
+	<T> T readValue(String content, Class<T> clazz) throws JSONException;
+	
+	/**
+     * Method that can be used to serialize any JSON output as
+     * Java value.
+     */
+	<T> T readValue(byte[] src, Class<T> clazz) throws JSONException;
+	
+	/**
+     * Method that can be used to serialize any JSON output as
+     * Java value.
+     */
+	<T> T readValue(InputStream src, Class<T> clazz) throws JSONException;
 }
