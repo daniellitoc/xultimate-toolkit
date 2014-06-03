@@ -45,4 +45,12 @@ public class JsonUtils {
 	public static <T> T readValue(String content, ValueType<T> valueType) throws JSONException {
 		return FastJSONTemplate.INSTANCE.readValue(content, valueType);
 	}
+	
+    /**
+     * Method that can be used to serialize any JSON output as
+     * Java value.
+     */
+	public static <T> T readValue(String content, Class<T> clazz) throws JSONException {
+		return FastJSONTemplate.INSTANCE.readValue(content, clazz);
+	}
 }
