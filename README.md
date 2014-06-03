@@ -169,8 +169,9 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 通过memcached-session-manager实现Session共享集群。
 * TProfiler性能监测工具的topmethod.log日志文件的图形分析。
 * 通过sh/collect.sh数据，由sh/analyze.sh提取数据，最后完成MYSQL QPS的图形分析。
-* 收集的类，包括线程部分中volatile的具体效果，以及forkjoin、disruptor、CountDownLatch、Semaphore、CyclicBarrier等的ShowCase。
-* 收集的类，包括<<深入理解Java虚拟机>>部分的案例。
+* 包括线程部分中volatile的具体效果，以及concurrentlinkdhashmap、forkjoin、disruptor、CountDownLatch、Semaphore、CyclicBarrier等的ShowCase。
+* 收集的类，包括<<深入理解Java虚拟机>>部分的案例，以及自己的几个扩充。
+* 包括JDK中，NIO、AIO的API使用的ShowCase，没考虑线程池部分。只介绍API。
 
 
 ### 打算(MyBatis) ###
