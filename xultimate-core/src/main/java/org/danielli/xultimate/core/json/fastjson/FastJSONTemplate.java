@@ -54,7 +54,7 @@ public class FastJSONTemplate implements JSONTemplate {
 	@Override
 	public <T> T readValue(String content, ValueType<T> valueType) throws JSONException {
 		try {
-			return JSON.parseObject(content, new ValueTypeAdapter<>(valueType));
+			return JSON.parseObject(content, valueType.getType());
 		} catch (Exception e) {
 			throw new JSONException(e.getMessage(), e);
 		} 
