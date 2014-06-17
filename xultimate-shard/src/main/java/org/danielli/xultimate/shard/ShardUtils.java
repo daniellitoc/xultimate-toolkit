@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -181,6 +182,55 @@ public abstract class ShardUtils {
 				}			
 			}
 			return new ArrayList<>(result.values());
+		}
+	}
+	
+	/**
+	 * 将集合分割成多个子集合。
+	 * 
+	 * @param elements 原集合。
+	 * @param splitSize 分割大小。
+	 * @return 子集合列表。
+	 */
+	public static <E> List<List<E>> splitList(List<E> elements, int splitSize) {
+		if (elements == null) {
+			return new ArrayList<>(0);
+		} else {
+			int splitLength = (elements.size() + (splitSize - 1)) / splitSize;
+			List<List<E>> result = new ArrayList<>(splitLength);
+			{
+				Iterator<E> elementIterator = elements.iterator();
+				for (int i = 0; i < splitLength; i++) {
+					List<E> subResult = new ArrayList<>(Math.min(splitSize, elements.size() - i * splitSize));
+					for (int j = i * splitSize; j < Math.min((i + 1) * splitSize, elements.size()); j++) {
+						subResult.add(elementIterator.next());
+					}
+					result.add(subResult);
+				}
+			}
+			return result;
+		}
+	}
+	
+	/**
+	 * 将集合分割成多个子集合并进行操作。
+	 * 
+	 * @param elements 原集合。
+	 * @param splitSize 分割大小。
+	 * @param action 子集合操作。
+	 */
+	public static <E> void splitList(List<E> elements, int splitSize, Action action) {
+		if (elements == null) {
+			return;
+		} else {
+			Iterator<E> elementIterator = elements.iterator();
+			for (int i = 0; i < (elements.size() + (splitSize - 1)) / splitSize; i++) {
+				List<E> subResult = new ArrayList<>(Math.min(splitSize, elements.size() - i * splitSize));
+				for (int j = i * splitSize; j < Math.min((i + 1) * splitSize, elements.size()); j++) {
+					subResult.add(elementIterator.next());
+				}
+				action.execute(subResult);
+			}
 		}
 	}
 }
