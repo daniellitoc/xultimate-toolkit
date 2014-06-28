@@ -44,4 +44,17 @@ public class EnumUtils {
 		return enumList.get(ordinal);
 	}
 	
+    /**
+     * <p>Gets the {@code List} of enums.</p>
+     *
+     * <p>This method is useful when you need a list of enums rather than an array.</p>
+     *
+     * @param <E> the type of the enumeration
+     * @param enumClass  the class of the enum to query, not null
+     * @return the modifiable list of enums, never null
+     */
+    public static <E extends Enum<E>> List<E> getEnumList(Class<E> enumClass) {
+        return org.apache.commons.lang3.EnumUtils.getEnumList(enumClass);
+    }
+	
 }

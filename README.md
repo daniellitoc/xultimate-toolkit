@@ -72,7 +72,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供MySQL主键生成器(基于表)，通过重写Spring的MySQLMaxValueIncrementer，添加step功能。即可部署在不同机器/表中同时主键不会重复。
 * 提供序列主键生成器(基于序列)，通过重写Spring的AbstractSequenceMaxValueIncrementer，添加step功能。即可部署在不同机器/表中同时主键不会重复。包含Oracle和H2的各自实现。
 * 提供主键生成器AbstractKeyMaxValueIncrementer(基于Key/Value)，即可部署在不同机器/Key中同时主键不会重复。包括JedisMaxValueIncrementer和ShardedJedisMaxValueIncrementer实现，见xultimate-context-support。
-* 提供StateSet，使用TINYINT替代MySQL中BIT和SET数据类型，支持"="和"FIND_IN_SET"的需求并且会通过索引进行匹配。见测试类理解，具体使用见xultimate-mybatis。
+* 提供StateSet，使用TINYINT替代MySQL中BIT和SET数据类型，支持"="和"FIND_IN_SET"的需求并且会通过索引进行匹配。原来使用数字，目前使用枚举代替数字。见测试类理解，具体使用见xultimate-mybatis。
 * 提供RoutingDataSource和DataSourceContext。用于实现数据源切换功能(分库)。分表见下xultimate-hibernate、xultimate-shard。
 * 添加ChainedTransactionManager，采用Best Efforts 1PC模式处理多事物。代码拷贝自spring-data-commons项目。无法配合RoutingDataSource完成分布式事物功能。
 * 添加RoutingDataSourceTransactionManager, 采用Best Efforts 1PC模式处理多事物。使用懒加载的方式，实现分布式事物。见测试。
@@ -128,7 +128,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 提供动态查询的操作实体，解析见测试，用法上没有Hibernate提供的易用，推荐只面向后台动态查询页面使用。
 * 提供BigDecimalTypeHandler，数据端使用BIGINT/UNSIGNED INT存储。
 * 提供BooleanTypeHandler，数据库使用CHAR(0)存储。""表示true、NULL表示false。缺点是无法建立索引，因此不适合用于高效检索条件部分。
-* 提供StateSetTypeHandler，数据库使用TINYINT存储。用来代替BIT/SET。支持部分匹配和完全匹配功能，解决BIT/SET部分匹配无法利用索引问题。(目前支持8个类型，但查询数量多，可以考虑4个，这样最多有16个组合)
+* 提供StateSetTypeHandler，数据库使用TINYINT存储。用来代替BIT/SET。支持部分匹配和完全匹配功能，解决BIT/SET部分匹配无法利用索引问题。(原来支持8个类型，但查询数量多，现在支持4个，这样最多有15个组合)
 * 提供IntegerNullParameterTypeHandler、LongNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的-1。展示是将数据端的-1处理为Java端的null。可以更好的建立高效索引。-1为默认值，可继承修改。
 * 提供StringNullParameterTypeHandler、ClobNullParameterTypeHandler，主要用于设参时将Java端的null值处理为数据端的""。展示是将数据端的""处理为Java端的null。可以更好的建立高效索引。""为默认值，可继承修改。
 * 提供ReverseStringNullParameterTypeHandler，主要用于将字符串反转，实现后缀索引。同时设参时将Java端的null值处理为数据端的""。展示是将数据端的""处理为Java端的null。可以更好的建立高效索引。""为默认值，可继承修改。
@@ -172,11 +172,6 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括线程部分中volatile的具体效果，以及concurrentlinkdhashmap、forkjoin、disruptor、CountDownLatch、Semaphore、CyclicBarrier等的ShowCase。
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例，以及自己的几个扩充。
 * 包括JDK中，NIO、AIO的API使用的ShowCase，没考虑线程池部分。只介绍API。
-
-
-### 打算(MyBatis) ###
-
-* 将StateSet修改为泛型类(E extends Enum<E>)，然后用1 << element.ordinal()的方式代替常量。
 
 
 ### 打算(Memcached) ###

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.danielli.xultimate.jdbc.type.StateSet;
 import org.danielli.xultimate.orm.mybatis.MyBatisRepository;
 import org.danielli.xultimate.orm.mybatis.po.TestPo;
+import org.danielli.xultimate.orm.mybatis.po.e.TestEnum;
 
 @MyBatisRepository
 public interface TestPoDAO {
@@ -21,7 +22,7 @@ public interface TestPoDAO {
 	
 	List<TestPo> findByIsLock(@Param("isLock") Boolean isLock);
 	
-	List<TestPo> findByStateSet(StateSet stateSet);
+	List<TestPo> findByStateSet(@Param("stateSet") StateSet<TestEnum> stateSet);
 	
 	List<TestPo> findByStateSets(List<Byte> stateSets);
 }

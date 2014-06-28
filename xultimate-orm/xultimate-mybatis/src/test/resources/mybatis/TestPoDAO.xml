@@ -31,7 +31,7 @@
 			#{updateTime}, 
 			#{isLock, jdbcType=CHAR, typeHandler=org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler}, 
 			#{hasLogin},
-			#{stateSet}, 
+			#{stateSet, javaType=org.danielli.xultimate.orm.mybatis.po.e.TestEnum, typeHandler=org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler}, 
 			inet_aton(#{loginIp})
 		)
 	</insert>
@@ -50,7 +50,7 @@
 		<result column="update_time" property="updateTime"/>
 		<result column="is_lock" property="isLock" jdbcType="CHAR" typeHandler="org.danielli.xultimate.orm.mybatis.type.BooleanTypeHandler"/>
 		<result column="has_login" property="hasLogin"/>
-		<result column="state_set" property="stateSet" />
+		<result column="state_set" property="stateSet" javaType="org.danielli.xultimate.orm.mybatis.po.e.TestEnum" typeHandler="org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler" />
 		<result column="login_ip" property="loginIp"/>
 	</resultMap>
 	
@@ -81,7 +81,7 @@
 	</select>
 	
 	<select id="findByStateSet" resultMap="testPoMapper">
-		<include refid="commonSQL"/> WHERE state_set = #{stateSet}
+		<include refid="commonSQL"/> WHERE state_set = #{stateSet, javaType=org.danielli.xultimate.orm.mybatis.po.e.TestEnum, typeHandler=org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler}
 	</select>
 	
 	<select id="findByStateSets" resultMap="testPoMapper">

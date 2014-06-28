@@ -6,9 +6,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.danielli.xultimate.jdbc.type.StateSet;
-import org.danielli.xultimate.jdbc.type.StateSetUtils;
 import org.danielli.xultimate.orm.mybatis.po.TestPo;
 import org.danielli.xultimate.orm.mybatis.po.e.Sex;
+import org.danielli.xultimate.orm.mybatis.po.e.TestEnum;
 import org.danielli.xultimate.orm.mybatis.type.service.TestPoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +39,9 @@ public class TestPoServiceTest {
 		testPo1.setSex(Sex.MALE);
 		testPo1.setIsLock(false);
 		testPo1.setHasLogin(false);
-		StateSet stateSet1 = new StateSet();
-		stateSet1.add(TestPo.CAN_EXECUTE);
-		stateSet1.add(TestPo.CAN_WRITE);
+		StateSet<TestEnum> stateSet1 = StateSet.of(TestEnum.class);
+		stateSet1.add(TestEnum.CAN_EXECUTE);
+		stateSet1.add(TestEnum.CAN_WRITE);
 		testPo1.setStateSet(stateSet1);
 		testPo1.setLoginIp("192.168.1.3");
 		
@@ -59,15 +59,14 @@ public class TestPoServiceTest {
 		testPo2.setSex(Sex.MALE);
 		testPo2.setIsLock(true);
 		testPo2.setHasLogin(true);
-		StateSet stateSet2 = new StateSet();
-		stateSet2.add(TestPo.CAN_EXECUTE);
-		stateSet2.add(TestPo.CAN_READ);
+		StateSet<TestEnum> stateSet2 = StateSet.of(TestEnum.class);
+		stateSet2.add(TestEnum.CAN_EXECUTE);
+		stateSet2.add(TestEnum.CAN_READ);
 		testPo2.setStateSet(stateSet2);
 		testPo2.setLoginIp(null);
 		
 		testPoService.save(testPo2);
 		LOGGER.info("Add TestPo: {}", testPo2);
-		
 		
 		
 		try {
@@ -81,10 +80,10 @@ public class TestPoServiceTest {
 			testPo3.setIntroduction(null);
 			testPo3.setSex(Sex.MALE);
 			testPo3.setIsLock(null);
-			testPo1.setHasLogin(null);
-			StateSet stateSet3 = new StateSet();
-			stateSet3.add(TestPo.CAN_EXECUTE);
-			stateSet3.add(TestPo.CAN_READ);
+			testPo3.setHasLogin(null);
+			StateSet<TestEnum> stateSet3 = StateSet.of(TestEnum.class);
+			stateSet3.add(TestEnum.CAN_EXECUTE);
+			stateSet3.add(TestEnum.CAN_READ);
 			testPo3.setStateSet(stateSet3);
 			testPo3.setLoginIp(null);
 			
@@ -105,12 +104,12 @@ public class TestPoServiceTest {
 		showTestPoList(testPoService.findByIsLock(true), "testPoService.findByIsLock(true)");
 		showTestPoList(testPoService.findByIsLock(false), "testPoService.findByIsLock(false)");
 		
-		StateSet stateSet = new StateSet();
-		stateSet.add(TestPo.CAN_EXECUTE);
-		stateSet.add(TestPo.CAN_READ);
+		StateSet<TestEnum> stateSet = StateSet.of(TestEnum.class);
+		stateSet.add(TestEnum.CAN_EXECUTE);
+		stateSet.add(TestEnum.CAN_READ);
 		showTestPoList(testPoService.findByStateSet(stateSet), "testPoService.findByStateSet(stateSet)");
-		stateSet.remove(TestPo.CAN_READ);
-		showTestPoList(testPoService.findByStateSets(StateSetUtils.getContainStates(stateSet)), "testPoService.findByStateSets(StateSetUtils.getContainStates(stateSet))");
+		stateSet.remove(TestEnum.CAN_READ);
+		showTestPoList(testPoService.findByStateSets(StateSet.getContainStates(stateSet)), "testPoService.findByStateSets(StateSetUtils.getContainStates(stateSet))");
 	}
 	
 	public void showTestPoList(List<TestPo> testPosList, String message) {

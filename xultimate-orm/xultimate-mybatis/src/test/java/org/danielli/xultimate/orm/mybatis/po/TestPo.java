@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.danielli.xultimate.jdbc.type.StateSet;
 import org.danielli.xultimate.orm.mybatis.po.e.Sex;
+import org.danielli.xultimate.orm.mybatis.po.e.TestEnum;
 import org.danielli.xultimate.util.builder.BuildType;
 import org.danielli.xultimate.util.builder.Buildable;
 import org.danielli.xultimate.util.builder.ToStringBuilderUtils;
@@ -13,10 +14,6 @@ import org.danielli.xultimate.util.builder.ToStringBuilderUtils;
 @Buildable({ BuildType.TO_STRING })
 public class TestPo implements Serializable {
 	private static final long serialVersionUID = -352608483864538404L;
-	
-	public static final byte CAN_READ = 1 << 0;
-	public static final byte CAN_WRITE = 1 << 1;
-	public static final byte CAN_EXECUTE = 1 << 2;
 	
 	private Long id;		// org.apache.ibatis.type.LongTypeHandler
 	
@@ -44,7 +41,7 @@ public class TestPo implements Serializable {
 	
 	private Boolean hasLogin;	// org.apache.ibatis.type.BooleanTypeHandler
 	
-	private StateSet stateSet;	// org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler
+	private StateSet<TestEnum> stateSet;	// org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler
 	
 	private String loginIp;	// org.apache.ibatis.type.StringTypeHandler
 	
@@ -144,11 +141,11 @@ public class TestPo implements Serializable {
 		this.isLock = isLock;
 	}
 
-	public StateSet getStateSet() {
+	public StateSet<TestEnum> getStateSet() {
 		return stateSet;
 	}
 
-	public void setStateSet(StateSet stateSet) {
+	public void setStateSet(StateSet<TestEnum> stateSet) {
 		this.stateSet = stateSet;
 	}
 

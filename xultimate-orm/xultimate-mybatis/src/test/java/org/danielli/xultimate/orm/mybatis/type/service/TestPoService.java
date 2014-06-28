@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.danielli.xultimate.jdbc.type.StateSet;
 import org.danielli.xultimate.orm.mybatis.po.TestPo;
+import org.danielli.xultimate.orm.mybatis.po.e.TestEnum;
 
 public interface TestPoService {
 
@@ -18,7 +19,7 @@ public interface TestPoService {
 	
 	List<TestPo> findByIsLock(Boolean isLock);
 	
-	List<TestPo> findByStateSet(StateSet stateSet);
+	List<TestPo> findByStateSet(StateSet<TestEnum> stateSet);
 	
 	List<TestPo> findByStateSets(List<Byte> stateSets);
 }

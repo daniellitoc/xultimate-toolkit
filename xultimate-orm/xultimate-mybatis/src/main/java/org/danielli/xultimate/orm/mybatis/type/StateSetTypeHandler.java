@@ -18,10 +18,17 @@ import org.danielli.xultimate.jdbc.type.StateSet;
  * @since 18 Jun 2013
  */
 //@MappedJdbcTypes({ JdbcType.TINYINT })
-public class StateSetTypeHandler extends TypeReference<StateSet> implements TypeHandler<StateSet> {
+public class StateSetTypeHandler<E extends Enum<E>> extends TypeReference<StateSet<E>> implements TypeHandler<StateSet<E>> {
 
+	private Class<E> elementType;
+
+	public StateSetTypeHandler(Class<E> elementType) {
+	    if (elementType == null) throw new IllegalArgumentException("Type argument cannot be null");
+	    this.elementType = elementType;
+	}
+	
 	@Override
-	public void setParameter(PreparedStatement ps, int i, StateSet parameter, JdbcType jdbcType) throws SQLException {
+	public void setParameter(PreparedStatement ps, int i, StateSet<E> parameter, JdbcType jdbcType) throws SQLException {
 		if (parameter == null) {
 			if (jdbcType == null) {
 				throw new TypeException("JDBC requires that the JdbcType must be specified for all nullable parameters.");
@@ -37,32 +44,38 @@ public class StateSetTypeHandler extends TypeReference<StateSet> implements Type
 	}
 
 	@Override
-	public StateSet getResult(ResultSet rs, String columnName) throws SQLException {
+	public StateSet<E> getResult(ResultSet rs, String columnName) throws SQLException {
 		Byte result = rs.getByte(columnName);
 		if (rs.wasNull()) {
 			return null;
 		} else {
-			return new StateSet(result);
+			StateSet<E> stateSet = StateSet.of(elementType);
+			stateSet.setValue(result);
+			return stateSet;
 		}
 	}
 
 	@Override
-	public StateSet getResult(ResultSet rs, int columnIndex) throws SQLException {
+	public StateSet<E> getResult(ResultSet rs, int columnIndex) throws SQLException {
 		Byte result = rs.getByte(columnIndex);
 		if (rs.wasNull()) {
 			return null;
 		} else {
-			return new StateSet(result);
+			StateSet<E> stateSet = StateSet.of(elementType);
+			stateSet.setValue(result);
+			return stateSet;
 		}
 	}
 
 	@Override
-	public StateSet getResult(CallableStatement cs, int columnIndex) throws SQLException {
+	public StateSet<E> getResult(CallableStatement cs, int columnIndex) throws SQLException {
 		Byte result = cs.getByte(columnIndex);
 		if (cs.wasNull()) {
 			return null;
 		} else {
-			return new StateSet(result);
+			StateSet<E> stateSet = StateSet.of(elementType);
+			stateSet.setValue(result);
+			return stateSet;
 		}
 	}
 

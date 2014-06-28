@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.danielli.xultimate.jdbc.type.StateSet;
 import org.danielli.xultimate.orm.mybatis.po.TestPo;
+import org.danielli.xultimate.orm.mybatis.po.e.TestEnum;
 import org.danielli.xultimate.orm.mybatis.type.biz.TestPoBiz;
 import org.danielli.xultimate.orm.mybatis.type.service.TestPoService;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class TestPoServiceImpl implements TestPoService {
 	}
 
 	@Override
-	public List<TestPo> findByStateSet(StateSet stateSet) {
+	public List<TestPo> findByStateSet(StateSet<TestEnum> stateSet) {
 		return testPoBiz.findByStateSet(stateSet);
 	}
 
