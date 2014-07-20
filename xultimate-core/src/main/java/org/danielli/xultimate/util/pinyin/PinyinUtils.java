@@ -20,17 +20,17 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
  */
 public class PinyinUtils {
 	
-	public static final HanyuPinyinOutputFormat lowerWithoutToneAndWithv= new HanyuPinyinOutputFormat();
-	public static final HanyuPinyinOutputFormat upperWithoutToneAndWithv= new HanyuPinyinOutputFormat();
+	public static final HanyuPinyinOutputFormat LOWER_WITHOUT_TONE_AND_WITH_V= new HanyuPinyinOutputFormat();
+	public static final HanyuPinyinOutputFormat UPPER_WITHOUT_TONE_AND_WITH_V= new HanyuPinyinOutputFormat();
 	
 	static {
-		lowerWithoutToneAndWithv.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-		lowerWithoutToneAndWithv.setVCharType(HanyuPinyinVCharType.WITH_V); 
-		lowerWithoutToneAndWithv.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+		LOWER_WITHOUT_TONE_AND_WITH_V.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		LOWER_WITHOUT_TONE_AND_WITH_V.setVCharType(HanyuPinyinVCharType.WITH_V); 
+		LOWER_WITHOUT_TONE_AND_WITH_V.setCaseType(HanyuPinyinCaseType.LOWERCASE);
 		
-		upperWithoutToneAndWithv.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-		upperWithoutToneAndWithv.setVCharType(HanyuPinyinVCharType.WITH_V); 
-		upperWithoutToneAndWithv.setCaseType(HanyuPinyinCaseType.UPPERCASE);
+		UPPER_WITHOUT_TONE_AND_WITH_V.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		UPPER_WITHOUT_TONE_AND_WITH_V.setVCharType(HanyuPinyinVCharType.WITH_V); 
+		UPPER_WITHOUT_TONE_AND_WITH_V.setCaseType(HanyuPinyinCaseType.UPPERCASE);
 	}
 	
 	/**
