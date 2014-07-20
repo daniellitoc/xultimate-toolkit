@@ -16,6 +16,7 @@
 	<url>https://github.com/daniellitoc/xultimate-toolkit/tree/master/xultimate-web</url>
 
 	<properties>
+		<org.apache.logging.log4j.version>2.0</org.apache.logging.log4j.version>
 		<com.github.httl.version>1.0.11</com.github.httl.version>
 		<org.freemarker.version>2.3.19</org.freemarker.version>
 		<org.apache.velocity.velocity.version>1.7</org.apache.velocity.velocity.version>
@@ -78,6 +79,12 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.servlet.javax.servlet-api.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-web</artifactId>
+		    <version>${org.apache.logging.log4j.version}</version>
+		    <scope>runtime</scope>
 		</dependency>
 		<!-- 
 		<dependency>

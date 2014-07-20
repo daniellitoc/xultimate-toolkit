@@ -10,7 +10,7 @@ import org.danielli.xultimate.web.util.WebUtils;
 import org.slf4j.MDC;
 
 /**
- * 设置host值到MDC当中，使logback可以使用host值创建日志。
+ * 设置host值到MDC当中，使SLF4j可以使用host值创建日志。
  * 
  * @author Daniel Li
  * @since 15 Jun 2013
@@ -21,16 +21,16 @@ import org.slf4j.MDC;
  * @see NetworkUtils#getLocalHostAddress()
  * @see MDC
  */
-public class LogbackHostListener implements ServletContextListener {
+public class LoggerHostListener implements ServletContextListener {
 	
 	/**
-	 * Logback host key parameter at the servlet context level
-	 * (i.e. a context-param in {@code web.xml}): "logbackHostKey".
+	 * Logger host key parameter at the servlet context level
+	 * (i.e. a context-param in {@code web.xml}): "loggerHostKey".
 	 */
-	public static final String LOGBACK_HOST_KEY_PARAM = "logbackHostKey";
+	public static final String LOGGER_HOST_KEY_PARAM = "loggerHostKey";
 
-	/** Default logback host key: "logback.host" */
-	public static final String DEFAULT_LOGBACK_HOST_KEY = "logback.host";
+	/** Default logger host key: "logger.host" */
+	public static final String DEFAULT_LOGGER_HOST_KEY = "logger.host";
 
 	/**
 	 * 属性Callback实例。主要提供了属性的添加和删除操作。
@@ -56,12 +56,12 @@ public class LogbackHostListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext servletContext = sce.getServletContext();
-		WebUtils.setProperty(servletContext, LOGBACK_HOST_KEY_PARAM, DEFAULT_LOGBACK_HOST_KEY, NetworkUtils.getLocalHostAddress(), propertyCallback);
+		WebUtils.setProperty(servletContext, LOGGER_HOST_KEY_PARAM, DEFAULT_LOGGER_HOST_KEY, NetworkUtils.getLocalHostAddress(), propertyCallback);
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		ServletContext servletContext = sce.getServletContext();
-		WebUtils.removeProperty(servletContext, LOGBACK_HOST_KEY_PARAM, DEFAULT_LOGBACK_HOST_KEY, propertyCallback);
+		WebUtils.removeProperty(servletContext, LOGGER_HOST_KEY_PARAM, DEFAULT_LOGGER_HOST_KEY, propertyCallback);
 	}
 }

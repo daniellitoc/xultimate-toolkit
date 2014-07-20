@@ -3,24 +3,37 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-	<!-- 日志查看 -->
-	<servlet>
-		<servlet-name>ViewStatusMessagesServlet</servlet-name>
-		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ViewStatusMessagesServlet</servlet-name>
-		<url-pattern>/lbClassicStatus</url-pattern>
-	</servlet-mapping>
+	
+	<context-param>
+        <param-name>isLog4jAutoInitializationDisabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <listener>
+        <listener-class>org.apache.logging.log4j.core.web.Log4jServletContextListener</listener-class>
+    </listener>
+ 
+    <filter>
+        <filter-name>log4jServletFilter</filter-name>
+        <filter-class>org.apache.logging.log4j.core.web.Log4jServletFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>log4jServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
+    </filter-mapping>
 	
 	<!-- 日志配置 -->
 	<context-param>
-		<param-name>logbackHostKey</param-name>
-		<param-value>logback.host</param-value>
+		<param-name>loggerHostKey</param-name>
+		<param-value>logger.host</param-value>
 	</context-param>
 	<listener>
-		<listener-class>org.danielli.xultimate.web.listener.LogbackHostListener</listener-class>
+		<listener-class>org.danielli.xultimate.web.listener.LoggerHostListener</listener-class>
 	</listener>
 	
 	<!-- 压缩 -->
