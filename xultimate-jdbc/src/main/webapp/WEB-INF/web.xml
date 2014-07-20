@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
- 
-  <servlet>
-    <servlet-name>DruidStatView</servlet-name>
-    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
-    <init-param>
-      <param-name>allow</param-name>
-      <param-value>127.0.0.1</param-value>
-    </init-param>
-    <init-param>
-      <param-name>deny</param-name>
-      <param-value>128.242.127.1/24,128.242.128.1</param-value>
-    </init-param>
-    <init-param>
-      <param-name>resetEnable</param-name>
-      <param-value>true</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DruidStatView</servlet-name>
-    <url-pattern>/druid/*</url-pattern>
-  </servlet-mapping>
-  
-  <filter>
-    <filter-name>DruidWebStatFilter</filter-name>
-    <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
-    <init-param>
-      <param-name>exclusions</param-name>
-      <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
-    </init-param>
-    <init-param>
-      <param-name>sessionStatMaxCount</param-name>
-      <param-value>1000</param-value>
-    </init-param>
-    <init-param>
-      <param-name>sessionStatEnable</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <param-name>principalCookieName</param-name>
-      <param-value>nickname</param-value>
-    </init-param>
-    <init-param>
-      <param-name>profileEnable</param-name>
-      <param-value>true</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>DruidWebStatFilter</filter-name>
-    <url-pattern>spring</url-pattern>
-  </filter-mapping>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+		<init-param>
+			<param-name>allow</param-name>
+			<param-value>127.0.0.1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>deny</param-name>
+			<param-value>128.242.127.1/24,128.242.128.1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>resetEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>sessionStatMaxCount</param-name>
+			<param-value>1000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>sessionStatEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>principalCookieName</param-name>
+			<param-value>nickname</param-value>
+		</init-param>
+		<init-param>
+			<param-name>profileEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>spring</url-pattern>
+	</filter-mapping>
 </web-app>

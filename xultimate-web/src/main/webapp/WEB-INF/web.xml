@@ -4,18 +4,27 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 	
+	<!-- 日志配置 -->
+	<context-param>
+		<param-name>loggerHostKey</param-name>
+		<param-value>logger.host</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.danielli.xultimate.web.listener.LoggerHostListener</listener-class>
+	</listener>
+	
 	<context-param>
         <param-name>isLog4jAutoInitializationDisabled</param-name>
         <param-value>true</param-value>
     </context-param>
     
     <listener>
-        <listener-class>org.apache.logging.log4j.core.web.Log4jServletContextListener</listener-class>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
     </listener>
  
     <filter>
         <filter-name>log4jServletFilter</filter-name>
-        <filter-class>org.apache.logging.log4j.core.web.Log4jServletFilter</filter-class>
+        <filter-class>org.apache.logging.log4j.web.Log4jServletFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>log4jServletFilter</filter-name>
@@ -26,15 +35,6 @@
         <dispatcher>ERROR</dispatcher>
         <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
-	
-	<!-- 日志配置 -->
-	<context-param>
-		<param-name>loggerHostKey</param-name>
-		<param-value>logger.host</param-value>
-	</context-param>
-	<listener>
-		<listener-class>org.danielli.xultimate.web.listener.LoggerHostListener</listener-class>
-	</listener>
 	
 	<!-- 压缩 -->
 	<filter>
