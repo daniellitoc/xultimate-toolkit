@@ -5,7 +5,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 	
 ## xultimate-core ##
 
-* 整合日志，包括commons-logging、JUL、log4j。统一使用slf4j + logback。
+* 整合日志，包括commons-logging、JUL、log4j。统一使用slf4j + log4j2，包含Async和Sync两种配置方式。
 * 日期处理，包括joda-time、prettytime的使用；添加农历日历(ChineseCalendarGB)。
 * 封装commons-lang3，添加CompareToBuilderUtils、EqualsBuilderUtils、HashCodeBuilderUtils、ToStringBuilderUtils。
 * 添加MapBuilder、ListBuilder、SetBuilder。
@@ -55,7 +55,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * ResourceUtils，是对Spring Resource的封装。
 * 提供StringToFileArrayPropertyEditor，是String到File[]的自定义属性编辑器。
 * GzipCompressFilter，用于压缩响应流。
-* LogbackHostListener，用于配置Slf4j MDC。
+* LoggerHostListener，用于配置Slf4j MDC。
 * 服务类BrowserCacheGenerator用于处理浏览器端缓存。
 * 服务类CookieGenerator用于处理浏览器Cookie。
 * HtmlUtils、ServletRequestUtils、WebUtils，主要内容是对Spring(Utils的封装)。
