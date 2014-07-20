@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Example LOGBACK Configuration File http://logback.qos.ch/manual/configuration.html -->
+<!-- 目前不再使用，准备删除 -->
 <configuration debug="true" scan="true" scanPeriod="30 seconds">
 	<contextName>xultimate</contextName>
 	
@@ -11,18 +12,18 @@
 	
 	<appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
-			<key>logback.host</key>
+			<key>logger.host</key>
 			<defaultValue>0.0.0.0</defaultValue>
 		</discriminator>
 		
 		<sift>
-			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}.log</file>
+			<appender name="${CONTEXT_NAME}-${logger.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}.log</file>
 				<!-- Support multiple-JVM writing to the same log file -->
 				<prudent>true</prudent> 
 				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 					<!-- daily rollover -->
-					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 						<maxFileSize>50MB</maxFileSize>
 					</timeBasedFileNamingAndTriggeringPolicy>
@@ -97,18 +98,18 @@
 
 	<appender name="SIFT_CRAWLER" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
-			<key>logback.host</key>
+			<key>logger.host</key>
 			<defaultValue>0.0.0.0</defaultValue>
 		</discriminator>
 		
 		<sift>
-			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-crawler.log</file>
+			<appender name="${CONTEXT_NAME}-${logger.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}-crawler.log</file>
 				<!-- Support multiple-JVM writing to the same log file -->
 				<prudent>true</prudent> 
 				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 					<!-- daily rollover -->
-					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-crawler.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}-crawler.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 						<maxFileSize>50MB</maxFileSize>
 					</timeBasedFileNamingAndTriggeringPolicy>
@@ -124,18 +125,18 @@
 	</appender>
 	<appender name="SIFT_LINKBASE" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
-			<key>logback.host</key>
+			<key>logger.host</key>
 			<defaultValue>0.0.0.0</defaultValue>
 		</discriminator>
 		
 		<sift>
-			<appender name="${CONTEXT_NAME}-${logback.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-linkbase.log</file>
+			<appender name="${CONTEXT_NAME}-${logger.host}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}-linkbase.log</file>
 				<!-- Support multiple-JVM writing to the same log file -->
 				<prudent>true</prudent> 
 				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 					<!-- daily rollover -->
-					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logback.host}-linkbase.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+					<fileNamePattern>${project.build.directory}/logs/${CONTEXT_NAME}-${logger.host}-linkbase.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 						<maxFileSize>50MB</maxFileSize>
 					</timeBasedFileNamingAndTriggeringPolicy>

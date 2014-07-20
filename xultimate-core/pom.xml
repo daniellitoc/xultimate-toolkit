@@ -18,7 +18,8 @@
 
 	<properties>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
-		<ch.qos.logback.version>1.0.13</ch.qos.logback.version>
+		<org.apache.logging.log4j.version>2.0</org.apache.logging.log4j.version>
+		<com.lmax.disruptor.version>3.2.1</com.lmax.disruptor.version>
 		<org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
 		<commons-io.version>2.4</commons-io.version>
 		<commons-collections.version>3.2.1</commons-collections.version>
@@ -66,11 +67,21 @@
 			<artifactId>jul-to-slf4j</artifactId>
 			<version>${org.slf4j.version}</version>
 		</dependency>
-		<!-- 日志实现使用Logback -->
+		<!-- 日志实现使用Log4j 2 -->
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${ch.qos.logback.version}</version>
+		  	<groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+			<version>${org.apache.logging.log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${org.apache.logging.log4j.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.lmax</groupId>
+		    <artifactId>disruptor</artifactId>
+		    <version>${com.lmax.disruptor.version}</version>
 		</dependency>
 		<!-- 日期操作 -->
 		<dependency>

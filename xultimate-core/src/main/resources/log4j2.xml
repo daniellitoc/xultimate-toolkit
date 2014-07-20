@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30" verbose="true" strict="true">
+  <Properties>
+    <Property name="contextName">xultimate</Property>
+  </Properties>
+  
+  <Appenders>
+    <Console name="STDOUT">
+    	<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout>
+      	<Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+    </Console>
+    
+    <RollingRandomAccessFile name="ROLLING" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}.%d{yyyy-MM-dd}.%i.log.gz" 
+                 immediateFlush="false">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+	    <TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+    
+    <RollingRandomAccessFile name="ROLLING_LINKBASE" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-linkbase.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-linkbase.%d{yyyy-MM-dd}.%i.log.gz"
+                 immediateFlush="false">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+		<TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+    
+    <RollingRandomAccessFile name="ROLLING_CRAWLER" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-crawler.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-crawler.%d{yyyy-MM-dd}.%i.log.gz"
+                 immediateFlush="false">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+	    <TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+  </Appenders>
+  
+  <Loggers>
+  	<!-- 测试性能测试的测试类 -->
+	<asyncLogger name="org.danielli.xultimate.util.time.StopWatchTest" level="TRACE" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.util.performance.PerformanceMonitorTest" level="TRACE" includeLocation="true" />
+	
+	<!-- 性能测试 -->
+	<asyncLogger name="org.danielli.xultimate.util.performance.PerformanceMonitor" level="TRACE" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.context.performance.PerformanceMonitorForEachMethodInterceptor" level="TRACE" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.context.performance.PerformanceMonitorForOneMethodInterceptor" level="TRACE" includeLocation="true" />
+	<!-- Spring -->
+	<asyncLogger name="org.springframework" level="DEBUG" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.transaction" level="DEBUG" includeLocation="true" />
+	<!-- Hibernate -->
+	<asyncLogger name="org.hibernate" level="DEBUG" includeLocation="true" />
+	<!-- MyBatis -->
+	<asyncLogger name="org.apache.ibatis" level="DEBUG" includeLocation="true" />
+	<asyncLogger name="org.mybatis" level="DEBUG" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" level="DEBUG" includeLocation="true" />
+	<!-- MyBatis，打印SQL输出 -->
+	<!-- 
+	<asyncLogger name="org.danielli.xultimate.orm.mybatis.area.dao" level="DEBUG" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" includeLocation="true" />
+	<asyncLogger name="org.danielli.xultimate.shard.mybatis.dao" level="DEBUG" includeLocation="true" />
+	 -->
+	<!-- 如果设置了Configuration的logPrefix属性，可以使用，否则只能使用上面的形式 -->
+	<asyncLogger name="org.danielli.xultimate.mybatis" level="TRACE" includeLocation="true" />
+	
+	<!-- Solr日志配置 -->
+	<asyncLogger name="org.apache.zookeeper" level="WARN" additivity="false" includeLocation="true" />
+	<asyncLogger name="org.apache.hadoop" level="WARN" additivity="false" includeLocation="true" />
+	<asyncLogger name="org.apache.solr.update.LoggingInfoStream" level="OFF" includeLocation="true" />
+  
+  	<asyncLogger name="linkbase" level="INFO" additivity="false" includeLocation="true">
+	  <AppenderRef ref="ROLLING_LINKBASE" />
+	</asyncLogger>
+  
+  	<asyncLogger name="org.danielli.xultimate.crawler" level="INFO" additivity="false" includeLocation="true">
+      <AppenderRef ref="ROLLING_CRAWLER"/>
+    </asyncLogger>
+    
+    <asyncRoot level="INFO" includeLocation="true">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="ROLLING" />
+    </asyncRoot>
+  </Loggers>
+</Configuration>

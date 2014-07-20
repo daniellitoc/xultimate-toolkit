@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30" verbose="true" strict="true">
+  <Properties>
+    <Property name="contextName">xultimate</Property>
+  </Properties>
+  
+  <Appenders>
+    <Console name="STDOUT">
+    	<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout>
+      	<Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+    </Console>
+    
+    <RollingRandomAccessFile name="ROLLING" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}.%d{yyyy-MM-dd}.%i.log.gz">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+	    <TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+    
+    <RollingRandomAccessFile name="ROLLING_LINKBASE" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-linkbase.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-linkbase.%d{yyyy-MM-dd}.%i.log.gz">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+		<TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+    
+    <RollingRandomAccessFile name="ROLLING_CRAWLER" fileName="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-crawler.log"
+                 filePattern="${project.build.directory}/logs/${contextName}-${ctx:logger.host}-crawler.%d{yyyy-MM-dd}.%i.log.gz">
+      <PatternLayout>
+        <Pattern>%date [${contextName}] %level [%thread] %logger [%file:%line] - %msg%n</Pattern>
+      </PatternLayout>
+ 	  <!-- daily rollover -->
+      <Policies>
+	    <OnStartupTriggeringPolicy />
+	    <SizeBasedTriggeringPolicy size="50 MB" />
+	    <TimeBasedTriggeringPolicy />
+	    <!--
+	    <TimeBasedTriggeringPolicy  interval="6" modulate="true" />
+	    -->
+	  </Policies>
+	  <!-- keep 14 days' worth of history -->
+	  <DefaultRolloverStrategy max="14"/>
+    </RollingRandomAccessFile>
+  </Appenders>
+  
+  <Loggers>
+  	<!-- 测试性能测试的测试类 -->
+	<logger name="org.danielli.xultimate.util.time.StopWatchTest" level="TRACE" />
+	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitorTest" level="TRACE" />
+	
+	<!-- 性能测试 -->
+	<logger name="org.danielli.xultimate.util.performance.PerformanceMonitor" level="TRACE" />
+	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForEachMethodInterceptor" level="TRACE" />
+	<logger name="org.danielli.xultimate.context.performance.PerformanceMonitorForOneMethodInterceptor" level="TRACE" />
+	<!-- Spring -->
+	<logger name="org.springframework" level="DEBUG" />
+	<logger name="org.danielli.xultimate.transaction" level="DEBUG" />
+	<!-- Hibernate -->
+	<logger name="org.hibernate" level="DEBUG" />
+	<!-- MyBatis -->
+	<logger name="org.apache.ibatis" level="DEBUG" />
+	<logger name="org.mybatis" level="DEBUG" />
+	<logger name="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" level="DEBUG" />
+	<!-- MyBatis，打印SQL输出 -->
+	<!-- 
+	<logger name="org.danielli.xultimate.orm.mybatis.area.dao" level="DEBUG" />
+	<logger name="org.danielli.xultimate.orm.mybatis.type.dao" level="DEBUG" />
+	<logger name="org.danielli.xultimate.shard.mybatis.dao" level="DEBUG" />
+	 -->
+	<!-- 如果设置了Configuration的logPrefix属性，可以使用，否则只能使用上面的形式 -->
+	<logger name="org.danielli.xultimate.mybatis" level="TRACE" />
+	
+	<!-- Solr日志配置 -->
+	<logger name="org.apache.zookeeper" level="WARN" additivity="false"/>
+	<logger name="org.apache.hadoop" level="WARN" additivity="false"/>
+	<logger name="org.apache.solr.update.LoggingInfoStream" level="OFF" />
+  
+  	<logger name="linkbase" level="INFO" additivity="false">
+	  <AppenderRef ref="ROLLING_LINKBASE" />
+	</logger>
+  
+  	<Logger name="org.danielli.xultimate.crawler" level="INFO" additivity="false">
+      <AppenderRef ref="ROLLING_CRAWLER"/>
+    </Logger>
+    
+    <Root level="INFO">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="ROLLING" />
+    </Root>
+  </Loggers>
+</Configuration>

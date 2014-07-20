@@ -8,12 +8,12 @@ import org.slf4j.MDC;
 
 public class SiftingAppenderTest {
 	
-	private final String LOGBACK_HOST_NAME = "logback.host";
-	private final String LOGBACK_HOST_VALUE = "127.0.0.1";
+	private final String LOGGER_HOST_NAME = "logger.host";
+	private final String LOGGER_HOST_VALUE = "127.0.0.1";
 
 	@Before
 	public void beforeLogger() {
-		MDC.put(LOGBACK_HOST_NAME, LOGBACK_HOST_VALUE);
+		MDC.put(LOGGER_HOST_NAME, LOGGER_HOST_VALUE);
 	}
 	
 	@Test
