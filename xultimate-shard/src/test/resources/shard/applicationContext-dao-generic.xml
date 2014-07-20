@@ -35,7 +35,6 @@
 			<array>
 				<bean class="org.danielli.xultimate.orm.mybatis.type.BigDecimalTypeHandler" />
 				<bean class="org.danielli.xultimate.orm.mybatis.type.ClobNullParameterTypeHandler" />
-				<bean class="org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler" />
 				<bean class="org.danielli.xultimate.orm.mybatis.type.StringNullParameterTypeHandler" />
 			</array>
 		</property>
