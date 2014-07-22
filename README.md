@@ -172,7 +172,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括线程部分中volatile的具体效果，以及concurrentlinkdhashmap、forkjoin、disruptor、CountDownLatch、Semaphore、CyclicBarrier等的ShowCase。
 * 收集的类，包括<<深入理解Java虚拟机>>部分的案例，以及自己的几个扩充。
 * 包括JDK中，NIO、AIO的API使用的ShowCase，没考虑线程池部分。只介绍API。
-
+* Mockito、JUnit、对Spring MVC测试的ShowCase，。
 
 ### 打算(Memcached) ###
 
