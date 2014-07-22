@@ -457,4 +457,67 @@ public class ArrayUtils {
     public static int getLength(Object array) {
     	return org.apache.commons.lang3.ArrayUtils.getLength(array);
     }
+    
+    /**
+     * <p>Removes the element at the specified position from the specified array.
+     * All subsequent elements are shifted to the left (subtracts one from
+     * their indices).</p>
+     *
+     * <p>This method returns a new array with the same elements of the input
+     * array except the element on the specified position. The component
+     * type of the returned array is always the same as that of the input
+     * array.</p>
+     *
+     * <p>If the input array is {@code null}, an IndexOutOfBoundsException
+     * will be thrown, because in that case no valid index can be specified.</p>
+     *
+     * <pre>
+     * ArrayUtils.remove(["a"], 0)           = []
+     * ArrayUtils.remove(["a", "b"], 0)      = ["b"]
+     * ArrayUtils.remove(["a", "b"], 1)      = ["a"]
+     * ArrayUtils.remove(["a", "b", "c"], 1) = ["a", "c"]
+     * </pre>
+     *
+     * @param <T> the component type of the array
+     * @param array  the array to remove the element from, may not be {@code null}
+     * @param index  the position of the element to be removed
+     * @return A new array containing the existing elements except the element
+     *         at the specified position.
+     * @throws IndexOutOfBoundsException if the index is out of range
+     * (index < 0 || index >= array.length), or if the array is {@code null}.
+     * @since 2.1
+     */
+    public static <T> T[] remove(T[] array, int index) {
+    	return org.apache.commons.lang3.ArrayUtils.remove(array, index);
+    }
+
+    /**
+     * <p>Removes the first occurrence of the specified element from the
+     * specified array. All subsequent elements are shifted to the left
+     * (subtracts one from their indices). If the array doesn't contains
+     * such an element, no elements are removed from the array.</p>
+     *
+     * <p>This method returns a new array with the same elements of the input
+     * array except the first occurrence of the specified element. The component
+     * type of the returned array is always the same as that of the input
+     * array.</p>
+     *
+     * <pre>
+     * ArrayUtils.removeElement(null, "a")            = null
+     * ArrayUtils.removeElement([], "a")              = []
+     * ArrayUtils.removeElement(["a"], "b")           = ["a"]
+     * ArrayUtils.removeElement(["a", "b"], "a")      = ["b"]
+     * ArrayUtils.removeElement(["a", "b", "a"], "a") = ["b", "a"]
+     * </pre>
+     *
+     * @param <T> the component type of the array
+     * @param array  the array to remove the element from, may be {@code null}
+     * @param element  the element to be removed
+     * @return A new array containing the existing elements except the first
+     *         occurrence of the specified element.
+     * @since 2.1
+     */
+    public static <T> T[] removeElement(T[] array, Object element) {
+    	return org.apache.commons.lang3.ArrayUtils.removeElement(array, element);
+    }
 }
