@@ -1,0 +1,161 @@
+1.ReentrantLock
+	public void lock()
+		调用sync.lock()方法
+	public void unlock()
+		调用sync.release(1)方法
+
+2.NonfairSync
+	final void lock()
+		调用compareAndSetState(0, 1)方法，若返回true
+			调用setExclusiveOwnerThread(Thread.currentThread())
+		若返回false
+			调用acquire(1)方法
+	protected final boolean compareAndSetState(int expect, int update)
+		返回unsafe.compareAndSwapInt(this, stateOffSet, expect, update)				// stateOffSet对应state成员变量
+	protected final void setExclusiveOwnerThread(Thread t)
+		设置exclusiveOwnerThread成员变量为t
+	public final void acquire(int arg)
+		执行tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)，若结果为true	// Node.EXCLUSIVE为null
+			调用selfInterrupt()
+	protected final boolean tryAcquire(int acquires)
+		返回nonfairTryAcquire(acquires)
+	final boolean nonfairTryAcquire(int acquires)
+		通过Thread.currentThread()获取当前线程
+		获取状态值，返回state成员变量
+		若状态值为0
+			调用compareAndSetState(0, acquires)进行重试，若返回true
+				调用setExclusiveOwnerThread(current)方法
+				返回true
+		否则判断当前线程是否等于getExclusiveOwnerThread()，若为true				// 对于当前线程，不断增加状态值的过程
+			将状态值 + acquires并保存为新的状态值
+			如果新的状态值小于0
+				抛出new Error("Maximum lock count exceeded")
+			将新状态值设置给state成员变量
+			返回true
+		返回false
+	protected final Thread getExclusiveOwnerThread()
+		返回exclusiveOwnerThread成员变量
+	private Node addWaiter(Node mode)
+		通过Thread.currentThread()和mode创建Node实例给node变量。
+		获取tail成员变量给pred变量
+		如果链表尾部不为null
+			设置node的prev属性为pred
+			调用compareAndSetTail(pred, node)方法并返回，如果为true				// 利用CAS操作为tail赋值
+				设置pred的next属性为node
+				返回node变量
+		调用enq(node)方法
+		返回node变量
+	private final boolean compareAndSetTail(Node expect, Node update)
+		返回unsafe.compareAndSwapObject(this, tailOffset, expect, update)			// tailOffset对应tail成员变量
+	private Node enq(final Node node)
+		无限循环
+			获取tail成员变量给t
+			如果t为null
+				调用compareAndSetHead(new Node())方法并返回，如果为true
+					设置tail为head
+			否则
+				设置node变量的prev属性为t
+				调用compareAndSetTail(t, node)方法并返回，如果为true
+					设置t变量的next属性为node变量。
+					返回t变量
+	private final boolean compareAndSetHead(Node update)
+		返回unsafe.compareAndSwapObject(this, headOffset, null, update)				// headOffset对应head成员变量
+	final boolean acquireQueued(final Node node, int arg)
+		设置failed变量为true
+		try 
+			设置interrupted变量为false
+			无限循环									// 无限循环并不是控制线程等待的主操作，而是parkAndCheckInterrupt()方法
+				调用node变量的prepredecessor()方法返回给p变量				// 返回其prev属性，若为null，则抛出new NullPointerException()
+				若p等于head成员变量并且tryAcquire(arg)为true
+					调用setHead(node)方法
+					设置p的next属性为null
+					设置failed变量为false
+					返回interrupted变量
+				调用shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt()并返回，若为true
+					设置interrupted为true
+		finally
+			若failed为true
+				调用cancelAcquire(node)方法
+	private void setHead(Node node)
+		设置head成员变量为node变量
+		设置node.thread为null
+		设置node.prev为null
+	private static boolean shouldParkAfterFailedAcquire(Node pred, Node node)
+		获取pred的waitStatus成员变量给ws				// 默认为0
+		若ws等于Node.SIGNAL						// Node.SIGNAL为-1
+			返回true
+		如果ws大于0
+			do
+				设置node.prev等于pred等于pred.prev		// 重新设置pred，用于跳过原pred
+			while (pred的waitStatus成员变量大于0)
+			设置pred变量的next属性为node变量
+		否则
+			调用compareAndSetWaitStatus(pred, ws, Node.SIGNAL)	// 正常情况下会先调用执行此方法并返回false，然后第二次调用时因为等于Node.SIGNAL，所以返回true
+		返回false
+	private static final boolean compareAndSetWaitStatus(Node node, int expect, int update)
+		返回unsafe.compareAndSwapInt(node, waitStatusOffset, expect, update)			// waitStatusOffset对应waitStatus成员变量
+	private final boolean parkAndCheckInterrupt()
+		调用LockSupport.park(this)			// 默认情况下会挂起线程，除非执行unpark或执行过unpark方法
+		返回Thread.interrupted()			// 设置线程中断状态
+	private static void selfInterrupt()
+		调用Thread.currentThread().interrupt()		// 设置线程中断状态
+	private void cancelAcquire(Node node)
+		// 没看
+	public final boolean release(int arg)
+		调用tryRelease(arg)方法并返回，如果为true
+			获取head成员变量给h变量
+			如果h变量不为null并且h变量的waitStatus不等于0
+				调用unparkSuccessor(h)方法
+			返回true
+		返回false
+	protected final boolean tryRelease(int releases)
+		将state成员变量 - releases，将值赋给c
+		如果当前线程不等于getExclusiveOwnerThread()
+			抛出new IllegalMonitorStateException()
+		设置free变量为false
+		如果c等于0
+			设置free为true
+			调用setExclusiveOwnerThread(null)方法
+		设置state成员变量为c
+		返回free变量
+	private void unparkSuccessor(Node node)
+		获取node变量的waitStatus成员变量给ws变量
+		如果ws小于0						// 如Node.SIGNAL
+			调用compareAndSetWaitStatus(node, ws, 0)方法
+		获取node的next成员变量给s
+		如果s等于null或者s的waitStatus大于0			// 如CANCELLED状态
+			设置s为null
+			循环(设置临时变量t为tail成员变量; t不等于0且t不等于node; t等于t.prev)		// 从后往前推，找出最后一个可用的
+				如果t.waitStatus调于等于0
+					设置s等于t
+		如果s不为null
+			调用LockSupport.unpark(s.thread)		// 正常情况下s会等于先执行lock时的node。执行lock时，如果没有获取到锁，则会挂起。此操作用于解挂起。
+			
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
