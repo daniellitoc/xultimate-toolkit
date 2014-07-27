@@ -1,0 +1,294 @@
+1.ThreadPoolExecutor
+	private volatile int corePoolSize											// 核心线程个数
+	private volatile boolean allowCoreThreadTimeOut;							// 是否允许核心线程超时
+	private volatile int maximumPoolSize;										// 最大线程个数
+	private final BlockingQueue<Runnable> workQueue								// 任务队列
+	private volatile long keepAliveTime											// 超时时间
+	private volatile ThreadFactory threadFactory
+	/**
+	 * AbortPolicy:			抛出new RejectedExecutionException("Task " + r.toString() + " rejected from " + e.toString())
+	 * CallerRunsPolicy: 	如果线程池为关闭，则调用任务的run方法同步执行
+	 * DiscardPolicy:		忽略任务
+	 * DiscardOldestPolicy:	移除workQueue的头元素，并调用execute(r)重新执行。
+	 */
+	private volatile RejectedExecutionHandler handler
+	
+	private final ReentrantLock mainLock = new ReentrantLock();
+	private final Condition termination = mainLock.newCondition();				// awaitTermination(long timeout, TimeUnit unit)方法使用
+	private final HashSet<Worker> workers = new HashSet<Worker>();				// Worker集合
+	private int largestPoolSize;												// 最大线程池个数，用于监控，不含其他作用
+	private long completedTaskCount;											// 已完成任务个数，用于监控，不含其他作用
+	
+	public ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+        如果corePoolSize小于0或者maximumPoolSize小于等于0或者maximumPoolSize小于corePoolSize或者keepAliveTime小于0			// 验证构造参数是否合法
+        	抛出new IllegalArgumentException()
+        如果workQueue为null或者threadFactory为null或者handler为null															// 验证构造参数是否合法
+        	抛出new NullPointerException()	
+        this.corePoolSize = corePoolSize;
+        this.maximumPoolSize = maximumPoolSize;
+        this.workQueue = workQueue;
+        this.keepAliveTime = unit.toNanos(keepAliveTime);
+        this.threadFactory = threadFactory;
+        this.handler = handler;
+    }
+    
+    private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));				// ctl，包含当前状态和活动的线程个数，其中高3位表示当前状态，低29位表示活动的线程个数
+    private static final int COUNT_BITS = Integer.SIZE - 3;								// 29，表示活动的线程个数区间
+    private static final int CAPACITY   = (1 << COUNT_BITS) - 1;						// 000 11111111111111111111111111111，表示最大活动线程个数；同时也用于计算状态和活动的线程个数
+    
+    /**
+     * 状态转换:
+     * 		RUNNING -> SHUTDOWN															// 执行了shutdown()方法，或被finalize()方法隐式调用shutdown()
+     *		SHUTDOWN -> TIDYING															// 队列和线程池都为空
+     *		(RUNNING or SHUTDOWN) -> STOP												// 执行了shutdownNow()方法
+     *		STOP -> TIDYING																// 线程池为空
+     *		TIDYING -> TERMINATED														// terminated()钩子方法执行完毕，由tryTerminate()方法处理并调用
+     **/
+    private static final int RUNNING    = -1 << COUNT_BITS;								// 111 00000000000000000000000000000，能接受新的任务，能处理队列中的任务
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;								// 000 00000000000000000000000000000，不能接受新的任务，能处理队列中的任务
+    private static final int STOP       =  1 << COUNT_BITS;								// 001 00000000000000000000000000000，不能接受新的任务，不能处理队列中的任务，中断正在执行的任务
+    private static final int TIDYING    =  2 << COUNT_BITS;								// 010 00000000000000000000000000000，所有的任务已经终止，workerCount为0，过渡到TIDYING的线程将执行terminated()钩子方法
+    private static final int TERMINATED =  3 << COUNT_BITS;								// 011 00000000000000000000000000000，terminated()方法已执行完毕
+    
+    private static int runStateOf(int c)     { return c & ~CAPACITY; }					// 返回当前状态
+    private static int workerCountOf(int c)  { return c & CAPACITY; }					// 返回活动的线程个数
+    private static int ctlOf(int rs, int wc) { return rs | wc; }						// 计算ctl
+    
+    
+    public void execute(Runnable command)
+    	如果command为null
+    		抛出new NullPointerException()
+    	调用ctl.get()给c变量																// 获取当前ctl
+    	如果workerCountOf(c)小于corePoolSize												// ctl中的活动线程个数 < corePoolSize
+    		调用addWorker(command, true)方法并返回，如果为true
+    			退出方法体
+    		调用ctl.get()给c变量															// 没有添加成功，ctl可能发生改变，重新赋值
+    	如果c小于SHUTDOWN并且workQueue.offer(command)为true								// 小于SHUTDOWN和等于RUNNING相同
+			调用ctl.get()给recheck变量	
+			如果recheck大于等于SHUTDOWN并且remove(command)为true							// 大于等于SHUTDOWN和不等于RUNNING相同，这是表示状态发生了改变
+                调用reject(command)方法
+            否则如果workerCountOf(recheck)等于0											// 没有活动的线程
+            	addWorker(null, false)
+        否则调用addWorker(command, false)，如果返回false									// 没有启动成功
+        	调用reject(command)方法													
+    private boolean addWorker(Runnable firstTask, boolean core)
+    	设置retry标记
+    	无限循环
+    		调用ctl.get()给c变量																		// 获取当前ctl
+    		调用runStateOf(c)给rs变量																// 获取ctl中的当前状态给rs
+    		如果rs大于等于SHUTDOWN并且(rs不等于SHUTDOWN或者firstTask不为null或者workQueue队列为空)
+    			返回false
+    		无限循环
+    			调用workerCountOf(c)给wc变量															// 获取ctl中的活动线程个数
+    			如果wc大于等于CAPACITY或者wc大于等于(core ? corePoolSize : maximumPoolSize)			// 活动线程个数超出对应范围
+    				返回false
+    			调用compareAndIncrementWorkerCount(c)方法并返回，如果为true
+    				跳出retry标记
+    			调用ctl.get()给c变量																	// 自增没有成功，ctl可能发生改变，重新赋值
+    			判断runStateOf(c)是否不等于rs，如果为true												
+    				跳到retry标记，重新执行															// ctl状态发生改变，需要重新执行addWork逻辑，若状态没发生改变，则只是活动线程个数发生改变，需要重新执行内层无限循环逻辑
+    	设置workerStarted变量为false																	// 表示firstTask对应的线程是否执行了start方法，workerStarted为true的前提是workerAdded为true
+    	设置workerAdded为false																		// 表示firstTask是否成功添加到了workQueue中
+    	创建Worker类型的变量w，设置为null																// Worker是对Runnable的包装
+    	try
+    		获取mainLock成员变量给mainLock局部变量
+    		创建new Worker(firstTask)给w变量															// 包装firstTask
+    		获取w变量中的thread属性给t变量															// 实例化Worker的时候会对thread赋值，且thread中的Runnable为w
+    		如果t不等于null																			// 对于默认的Executors.defaultThreadFactory()，不会出现为null的情况
+    			调用mainLock变量的lock()方法
+    			try
+    				调用ctl.get()给c变量																// 获取当前ctl
+    				调用runStateOf(c)给rs变量														// 获取ctl中的当前状态给rs
+    				如果rs小于SHUTDOWN或者(rs等于SHUTDOWN且firstTask为null)
+    					调用t.isAlive()方法并返回，如果为true											// 判断t是否已经启动
+    						抛出new IllegalThreadStateException()
+    					调用workers.add(w)															// 添加任务
+    					设置workers.size()给变量s
+    					如果s大于largestPoolSize
+    						设置largestPoolSize等于s	
+    					设置workerAdded为true														// 表示添加成功
+    			finally
+    				调用mainLock变量的unlock()方法
+    			如果workerAdded为true																// 是否添加成功
+    				调用t.start()																	// 启动线程，调用w的run()方法
+    				设置workerStarted为true															// 表示启动成功
+    	finally
+    		如果workerStarted为false																	// 添加失败或启动失败
+    			调用addWorkerFailed(w)方法
+    	返回workerStarted变量
+    private boolean compareAndIncrementWorkerCount(int expect)
+    	返回ctl.compareAndSet(expect, expect + 1)													// expect自增1
+    final void runWorker(Worker w)
+    	调用Thread.currentThread()给变量wt
+    	调用w变量的firstTask属性给task变量
+    	设置w.firstTask为null
+    	设置completedAbruptly变量为true
+    	try
+    		while(如果task不为null或者(task = getTask())不为null)									// 循环获取，使单个线程复用
+				调用w属性的lock()方法
+				如果(ctl.get()大于等于STOP或者(Thread.interrupted()为true并且ctl.get()大于等于STOP))并且wt.isInterrupted()为false
+					调用wt.interrupt()方法
+				try
+					执行task的run()方法，抛出可能发生的Exception和Error
+				finally
+					设置task为null
+					设置w.completedTasks++															// 累加完成任务数
+					调用w的unlock()方法
+			设置completedAbruptly为false
+    	finally
+    		调用processWorkerExit(w, completedAbruptly)方法
+    private void addWorkerFailed(Worker w)
+    	获取mainLock成员变量给mainLock局部变量
+    	调用mainLock变量的lock()方法
+    	try 
+    		如果w不等于null
+    			调用workers.remove(w)																// 移除从workers中
+    			调用decrementWorkerCount()方法														// 自减ctl
+    			调用tryTerminate()方法																// 
+    	finally
+    		调用mainLock变量的unlock()方法
+    private void decrementWorkerCount()
+    	do {} while (! compareAndDecrementWorkerCount(ctl.get()));									// 自减成功才退出
+    private boolean compareAndDecrementWorkerCount(int expect)										// expect自减1
+    	返回ctl.compareAndSet(expect, expect - 1);
+    public boolean remove(Runnable task)
+    	调用workQueue.remove(task)给removed变量
+    	调用tryTerminate()方法
+    	返回removed变量
+    final void reject(Runnable command)
+    	调用handler.rejection(command, this)方法
+    private Runnable getTask() {
+    	设置timedOut变量为false
+    	设置retry标记
+    	无限循环
+    		调用ctl.get()给c变量
+    		调用runStateOf(c)给rs变量
+    		如果rs大于等于SHUTDOWN并且(rs大于等于STOP或者workQueue为空)
+    			执行decrementWorkerCount()方法
+    			返回null
+    		创建boolean类型变量timed
+    		无限循环
+    			调用workerCountOf(c)给wc变量
+    			如果allowCoreThreadTimeOut为true或者wc大于corePoolSize，设置timed为true，否则设置为false
+    			如果wc小于等于maximumPoolSize且(timedOut为false或者timed为false)
+    				跳出内存循环
+    			如果compareAndDecrementWorkerCount(c)为true
+    				返回null
+    			调用ctl.get()给c变量
+    			如果runStateOf(c)不等于rs
+    				跳到retry标记，重新执行
+    		try
+    			若timed为true，返回workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS)，否则返回workQueue.take()给r变量
+    			如果r变量不等于null
+    				返回r变量
+    			设置timedOut为true
+    		catch
+    			设置timedOut为false
+   	private void processWorkerExit(Worker w, boolean completedAbruptly)
+   		若completedAbruptly为true
+   			调用decrementWorkerCount()方法
+   		获取mainLock成员变量给mainLock局部变量
+    	调用mainLock.lock()方法
+    	try 
+    		设置completedTaskCount成员变量等于completedTaskCount加上w.completedTasks属性
+    		执行workers.remove(w)方法																// 移除任务
+    	finally
+    		调用mainLock.unlock()方法
+    	调用tryTerminate()方法
+    	调用ctl.get()给c变量
+    	如果c小于STOP
+    		如果completedAbruptly为false
+    			如果allowCoreThreadTimeOut为true，设置0，否则设置corePoolSize给min变量				// allowCoreThreadTimeOut是否能够起作用
+    			如果min变量等于0并且workQueue不为空
+    				设置min为1
+    			如果workerCountOf(c)大于等于min														// 多余的线程结束
+    				退出方法体
+    		调用addWorker(null, false)方法
+    public void shutdown()
+    	获取mainLock成员变量给mainLock局部变量
+    	调用mainLock.lock()方法
+    	try 
+    		调用advanceRunState(SHUTDOWN)方法										// 设置ctl状态为SHUTDOWN
+    		调用interruptIdleWorkers()方法											// 遍历workers，循环调用其thread属性的interrupt()方法
+    	finally
+    		调用mainLock.unlock()方法
+    	调用tryTerminate()方法
+    final void tryTerminate()
+    	无限循环
+    		调用ctl.get()给c变量
+    		如果c小于SHUTDOWN或者大于等于TIDYING或者(等于SHUTDOWN且workQueue为空)
+    			退出方法
+    		如果workerCountOf(c)不等于0
+    			调用interruptIdleWorkers(true)方法									// 遍历workers，循环调用其thread属性的interrupt()方法，之调用一次就退出
+    			退出方法
+    		获取mainLock成员变量给mainLock局部变量
+    		调用mainLock.lock()方法
+    		try 
+	    		执行ctl.compareAndSet(c, ctlOf(TIDYING, 0))并返回，如果为true		// 将ctl的当前状态修改为TIDYING，活动的线程个数为0
+	    			try
+	    				调用terminated()方法											// 钩子方法，为空
+	    			finally
+	    				调用ctl.set(ctlOf(TERMINATED, 0))方法						// 将ctl的当前状态修改为TERMINATED，活动的线程个数0
+	    				调用termination.signalAll()方法								// 若先存在awaitTermination调用，使termination.awaitNanos恢复。
+	    			退出方法
+	    	finally
+	    		调用mainLock.unlock()方法
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+    	将timeout转换为timeout设置给nanos
+    	设置mainLock成员变量给mainLock局部变量
+    	调用mainLock.lock()方法
+    	try 
+    		无限循环
+    			如果ctl.get()大于等于TERMINATED										// 状态等于TERMINATED
+    				返回true
+    			如果nanos小于等于0													// 超时时间已到
+    				返回false
+    			调用termination.awaitNanos(nanos)方法并返回给nanos					// 轮询等待
+    	finally
+    		调用mainLock.unlock()方法
+    protected void finalize()														// JVM进行GC时，若finalize()没有被执行过，则可能会调用finalize()方法。
+        调用shutdown()方法
+    public void allowCoreThreadTimeOut(boolean value)
+    	如果value为true并且keepAliveTime小于等于0
+    		抛出new IllegalArgumentException("Core threads must have nonzero keep alive times")
+    	如果value不等于allowCoreThreadTimeOut
+    		设置allowCoreThreadTimeOut为value
+    		如果value为true
+    			调用interruptIdleWorkers()方法										// 遍历workers，循环调用其thread属性的interrupt()方法
+
+
+2.Worker extends AbstractQueuedSynchronizer implements Runnable		// ThreadPoolExecutor内部类
+	final Thread thread;											// 对应线程
+	Runnable firstTask;												// 任务
+	volatile long completedTasks;									// 完成任务数
+
+	Worker(Runnable firstTask) {
+    	setState(-1); 												// 设置状态为-1
+    	this.firstTask = firstTask;
+    	this.thread = getThreadFactory().newThread(this);			// newThread(Runnable r)，因此返回的Thread如果调用start()，会调用Worker实例的run()方法。
+    }
+	public void run()
+		runWorker(this);											// 调用ThreadPoolExecutor的runWorker(Worker w)方法
+	public void unlock()      { release(1); }
+	protected boolean tryRelease(int unused)
+        调用setExclusiveOwnerThread(null)方法						// 设置exclusiveOwnerThread为null
+        调用setState(0)方法											// 设置state为0
+        返回true
+    public void lock()        { acquire(1); }
+    protected boolean tryAcquire(int unused)
+		如果compareAndSetState(0, 1)为true							// 比较和设置状态为1
+			调用setExclusiveOwnerThread(Thread.currentThread())方法	// 设置exclusiveOwnerThread为当前线程
+			返回true
+		返回false
+		
+1.正常流程
+	接收新的任务，若当前线程数小于corePoolSize，则启动新的线程
+	接受新的任务，若当前线程数大于等于corePoolSize，则将任务加入到任务队列中
+	接受新的任务，若无法加入到队列并且当前线程数小于maximumPoolSize，则启动新的线程。
+	接受新的任务，若无法加入到队列并且当前线程数大于等于maximumPoolSize，调用handler处理该任务。
+2.总结
+	allowCoreThreadTimeOut属性通过void allowCoreThreadTimeOut(boolean value)和allowCoreThreadTimeOut ? 0 : corePoolSize生效
+	keepAliveTime属性通过Runnable getTask()生效，通过workerCountOf(c) >= min结束多余的线程。通过循环复用
+	当workQueue是无界队列时，maximumPoolSize将不会生效，因为workQueue.offer(command)始终生效
+	当workQueue是有界队列时，受maximumPoolSize和workQueue影响。
+	当workQueue是SynchronousQueue时，受maximumPoolSize影响，也受workQueue影响，看此时是否有其他线程在等待接收。若存在workQueue起作用，否则启动新的线程。
