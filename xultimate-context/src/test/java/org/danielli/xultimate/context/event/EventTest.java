@@ -14,6 +14,7 @@ public class EventTest {
 	public void testEvent() {
 		LogEvent logEvent = new LogEvent(BeanFactoryContext.currentApplicationContext(), Thread.currentThread().toString());
 		// 为单线程，事件监听器和发布器是同步的调用关系。
+		// 可通过taskExecutor配置实现异步，SimpleApplicationEventMulticaster
 		BeanFactoryContext.currentApplicationContext().publishEvent(logEvent);
 	}
 }

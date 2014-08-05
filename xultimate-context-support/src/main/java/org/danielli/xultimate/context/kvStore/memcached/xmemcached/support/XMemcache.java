@@ -1,8 +1,6 @@
 package org.danielli.xultimate.context.kvStore.memcached.xmemcached.support;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.rubyeye.xmemcached.MemcachedClient;
 
@@ -22,7 +20,7 @@ public class XMemcache {
     /** XMemcached模板 */
     private final XMemcachedTemplate memcachedTemplate;  
     /** 设置过缓存的Key集合 */
-    private Set<String> keySet = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    private CopyOnWriteArraySet<String> keySet = new CopyOnWriteArraySet<>();
 
     public XMemcache(String name, int expire, XMemcachedTemplate memcachedTemplate) {  
         this.name = name;  
@@ -80,12 +78,10 @@ public class XMemcache {
     	memcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
     		@Override
     		public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-    			synchronized (keySet) {
-				    for (String key : keySet) {
-				    	memcachedClient.deleteWithNoReply(key);
-				    }
-				    keySet.clear();
-    			}
+    			for (String key : keySet) {
+			    	memcachedClient.deleteWithNoReply(key);
+			    }
+			    keySet.clear();
     			return null;
 			}
 		});
@@ -101,10 +97,8 @@ public class XMemcache {
     	memcachedTemplate.execute(new XMemcachedReturnedCallback<Void>() {
     		@Override
     		public Void doInXMemcached(MemcachedClient memcachedClient) throws Exception {
-    			synchronized (keySet) {
-				    memcachedClient.deleteWithNoReply(k);
-				    keySet.remove(k);
-    			}
+    			memcachedClient.deleteWithNoReply(k);
+			    keySet.remove(k);
     			return null;
 			}
 		});
