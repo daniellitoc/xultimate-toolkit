@@ -19,7 +19,7 @@
 			调用selfInterrupt()
 	protected final boolean tryAcquire(int acquires)
 		返回nonfairTryAcquire(acquires)
-	final boolean nonfairTryAcquire(int acquires)
+	final boolean nonfairTryAcquire(int acquires)				// 在试一次，不行判断是否是当前线程持有的锁，如果是，将state++
 		通过Thread.currentThread()获取当前线程
 		获取状态值，返回state成员变量
 		若状态值为0
@@ -35,10 +35,10 @@
 		返回false
 	protected final Thread getExclusiveOwnerThread()
 		返回exclusiveOwnerThread成员变量
-	private Node addWaiter(Node mode)
+	private Node addWaiter(Node mode)							// 若tail为null，则实例化个新Node作为tail和head，将当前线程包装成新Node并设置为tail队列尾部，然后设置新Node为tail。
 		通过Thread.currentThread()和mode创建Node实例给node变量。
 		获取tail成员变量给pred变量
-		如果链表尾部不为null
+		如果pred不为null
 			设置node的prev属性为pred
 			调用compareAndSetTail(pred, node)方法并返回，如果为true				// 利用CAS操作为tail赋值
 				设置pred的next属性为node
