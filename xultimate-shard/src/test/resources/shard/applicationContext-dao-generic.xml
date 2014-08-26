@@ -54,8 +54,9 @@
 				<property name="useGeneratedKeys" value="true" />
 				<!-- 给予被嵌套的resultMap以字段－属性的映射支持 -->
 				<property name="autoMappingBehavior" value="FULL" />
-				<!-- 对于批量更新操作缓存SQL以提高性能 -->
-				<property name="defaultExecutorType" value="BATCH" />
+				<!-- BATCH可以重复执行语句和批量更新，但返回的受影响行数不正确，所以不应该使用 -->
+				<!-- REUSE可能重复使用PreparedStatements语句 -->
+				<property name="defaultExecutorType" value="REUSE" />
 				<!-- 数据库超过25000秒仍未响应则超时 -->
 				<property name="defaultStatementTimeout" value="25000" />
 			</bean>
