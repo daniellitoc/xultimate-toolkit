@@ -131,6 +131,18 @@
 	-->
 	<!-- 处理静态资源：通过Spring MVC自己处理静态资源，并添加一些有用的除加值功能。如客户端缓存。通过在视图中使用版本标签访问静态资源 -->
 	<mvc:resources mapping="/resources/**" location="/resources/" cache-period="31536000" />
+	<!-- 
+		匹配过程由AntPathMatcher.match(String pattern, String path)方法完成。
+		
+		?表示一个字符
+		*表示0个或多个字符
+		**表示0个或多个path中的目录
+		
+		如/a.html会匹配**/*.html
+		如/a/a.html会匹配**/*.html
+		如/a/a/a.html会匹配**/*.html
+	 -->
+	<mvc:resources mapping="**/*.html" location="/" cache-period="0" />
 	<!-- 不需要写Controller
 	<mvc:view-controller path="/test" view-name="test"/>
 	 -->
