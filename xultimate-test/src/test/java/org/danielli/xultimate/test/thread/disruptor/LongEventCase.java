@@ -52,5 +52,10 @@ public class LongEventCase {
 			producer.onData(bb);
 			Thread.sleep(1000);
 		}
+		
+//		BlockingWaitStrategy	速度最慢，CPU使用率最低和最稳定
+//		SleepingWaitStrategy
+//		YieldingWaitStrategy
+//		BusySpinWaitStrategy
 	}
 }
