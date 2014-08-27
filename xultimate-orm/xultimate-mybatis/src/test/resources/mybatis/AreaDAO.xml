@@ -11,7 +11,12 @@
 	<update id="update">
 		UPDATE ULTIMATE_AREA SET update_time=#{updateTime}, po_version=#{nextPoVersion}, name=#{name}, display_name=#{displayName}, boost=#{boost}, parent_id=#{parentId} WHERE id=#{id} AND po_version=#{poVersion}
 	</update>
-	
+
+	<!-- 
+		dynamicUpdate1和dynamicUpdate2更新后返回的受影响行数和MySQL并不相同。如update会更新10条数据，
+		其中有5条记录的状态为发生改变，那么MySQL的受影响行数是5，而MyBatis则是返回10。
+		若需要其返回5,则需要补充WHERE条件(原状态)使查询匹配到5条。
+	 -->
 	<update id="dynamicUpdate1">
 	  	UPDATE ULTIMATE_AREA
 		<set>
