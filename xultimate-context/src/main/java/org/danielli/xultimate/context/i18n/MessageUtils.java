@@ -1,9 +1,8 @@
 package org.danielli.xultimate.context.i18n;
 
-import java.util.Locale;
-
 import org.danielli.xultimate.context.util.ApplicationContextUtils;
 import org.danielli.xultimate.context.util.BeanFactoryContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 public class MessageUtils {
 
@@ -16,7 +15,7 @@ public class MessageUtils {
 	 * @return 消息实例。
 	 */
 	public static Message<String> valueOf(MessageType messageType, String code, Object... args) {
-		String content = ApplicationContextUtils.getMessage(BeanFactoryContext.currentApplicationContext(), Locale.getDefault(), code, args);
+		String content = ApplicationContextUtils.getMessage(BeanFactoryContext.currentApplicationContext(), LocaleContextHolder.getLocale(), code, args);
 		return new Message<String>(messageType, content);
 	}
 	

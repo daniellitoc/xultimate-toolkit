@@ -59,15 +59,17 @@
 	<bena id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
 	 -->
 	
-	<!-- 装配拦截器
+	<!-- 装配拦截器 -->
 	<mvc:interceptors>
-		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="locale" />
+		<!-- <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="locale" /> -->
+		<bean class="org.danielli.xultimate.web.servlet.i18n.RequestContextInterceptor" />
+		<!-- 
 		<mvc:interceptor>
 			<mvc:mapping path="/secure/*"/>
 			<bean class="org.Security" />
 		</mvc:interceptor>
+		 -->
 	</mvc:interceptors>
-	 -->
 	
 	<!-- 内容协作视图解析器，用于XML，JSON -->
 	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean" p:defaultContentType="text/html" p:ignoreAcceptHeader="false" p:favorPathExtension="false" p:favorParameter="true" p:parameterName="content">
