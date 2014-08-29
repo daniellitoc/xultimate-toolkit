@@ -1,10 +1,11 @@
-package org.danielli.xultimate.context.kvStore.memcached.xmemcached.support;
+package org.danielli.xultimate.context.kvStore.memcached.xmemcached.spring;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
 import org.danielli.xultimate.util.Assert;
 import org.springframework.cache.Cache;
 import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
@@ -20,8 +21,8 @@ public class XMemcachedCacheManager extends AbstractTransactionSupportingCacheMa
 	/** 配置信息 */
     private ConcurrentHashMap<String, Integer> expireMap = new ConcurrentHashMap<String, Integer>();  
   
-    /** XMemcached模板 */
-    private XMemcachedTemplate memcachedTemplate;  
+    /** XMemcached客户端 */
+    private XMemcachedClient xMemcachedClient;  
     
     private int defaultExpire;
   
@@ -29,7 +30,7 @@ public class XMemcachedCacheManager extends AbstractTransactionSupportingCacheMa
 
 	@Override  
     protected Collection<? extends Cache> loadCaches() {  
-    	Assert.notNull(this.memcachedTemplate, "A backing memcachedTemplate is required");
+    	Assert.notNull(this.xMemcachedClient, "A backing xMemcachedClient is required");
 		return new LinkedHashSet<Cache>(0);
     }  
   
@@ -42,7 +43,7 @@ public class XMemcachedCacheManager extends AbstractTransactionSupportingCacheMa
                 expire = defaultExpire;  
                 expireMap.put(name, expire);  
             }  
-            cache = new XMemcachedCache(name, expire.intValue(), memcachedTemplate);  
+            cache = new XMemcachedCache(name, expire.intValue(), xMemcachedClient);  
             addCache(cache);
 		}
 		return cache;
@@ -58,13 +59,13 @@ public class XMemcachedCacheManager extends AbstractTransactionSupportingCacheMa
     }
 
     /**
-     * 设置XMemcached模板。
+     * 设置XMemcached客户端。
      * 
-     * @param memcachedTemplate XMemcached模板。
+     * @param xMemcachedClient XMemcached客户端。
      */
-	public void setMemcachedTemplate(XMemcachedTemplate memcachedTemplate) {
-		this.memcachedTemplate = memcachedTemplate;
-	}  
+    public void setxMemcachedClient(XMemcachedClient xMemcachedClient) {
+		this.xMemcachedClient = xMemcachedClient;
+	}
 	
 	/**
 	 * 设置默认失效时间。

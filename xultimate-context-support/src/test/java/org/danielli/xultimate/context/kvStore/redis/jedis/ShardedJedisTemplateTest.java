@@ -41,14 +41,15 @@ public class ShardedJedisTemplateTest {
 		PerformanceMonitor.start("JedisTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
+				shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 					
 					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
+					public Void doInShardedJedis(ShardedJedis shardedJedis) {
 						byte[] key = rpcProtostuffSerializer.serialize("person");
 						shardedJedis.set(key, rpcProtostuffSerializer.serialize(person));
 						rpcProtostuffDeserializer.deserialize(shardedJedis.get(key), Person.class);
 						shardedJedis.getShard(shardedJedis.get(key)).del(shardedJedis.get(key));
+						return null;
 					}
 				});
 			}
@@ -57,13 +58,14 @@ public class ShardedJedisTemplateTest {
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
+				shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 					
 					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
+					public Void doInShardedJedis(ShardedJedis shardedJedis) {
 						shardedJedis.set("person", fastJsonTemplate.writeValueAsString(person));
 						fastJsonTemplate.readValue(shardedJedis.get("person"), new ValueType<Person>() { });
 						shardedJedis.getShard("person").del("person");
+						return null;
 					}
 				});
 			}
@@ -72,14 +74,15 @@ public class ShardedJedisTemplateTest {
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10000; j++) {
-				shardedJedisTemplate.execute(new ShardedJedisCallback() {
+				shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 					
 					@Override
-					public void doInShardedJedis(ShardedJedis shardedJedis) {
+					public Void doInShardedJedis(ShardedJedis shardedJedis) {
 						byte[] key = rpcProtostuffSerializer.serialize("person");
 						shardedJedis.set(key, rpcProtostuffSerializer.serialize(fastJsonTemplate.writeValueAsString(person)));
 						fastJsonTemplate.readValue(rpcProtostuffDeserializer.deserialize(shardedJedis.get(key), String.class), new ValueType<Person>() { });
 						shardedJedis.getShard(key).del(key);
+						return null;
 					}
 				});
 			}

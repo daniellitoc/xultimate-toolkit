@@ -22,7 +22,7 @@
 		<org.quartz-scheduler.quartz.version>2.2.0</org.quartz-scheduler.quartz.version>
 		<javax.mail.mail.version>1.4.6-rc1</javax.mail.mail.version>
 		<org.antlr.antlr.version>3.5</org.antlr.antlr.version>
-		<com.googlecode.xmemcached.version>1.4.2</com.googlecode.xmemcached.version>
+		<com.googlecode.xmemcached.version>2.0.0</com.googlecode.xmemcached.version>
 		<com.thimbleware.jmemcached.version>1.0.0</com.thimbleware.jmemcached.version>
 		<redis.clients.jedis.version>2.1.0</redis.clients.jedis.version>
 		<org.csource.fastdfs.version>1.24</org.csource.fastdfs.version>

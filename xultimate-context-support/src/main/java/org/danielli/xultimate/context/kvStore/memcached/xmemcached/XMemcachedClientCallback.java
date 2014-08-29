@@ -1,6 +1,5 @@
 package org.danielli.xultimate.context.kvStore.memcached.xmemcached;
 
-import net.rubyeye.xmemcached.MemcachedClient;
 
 /**
  * XMemcached回调。
@@ -10,14 +9,14 @@ import net.rubyeye.xmemcached.MemcachedClient;
  *
  * @param <T> 回调返回值。
  */
-public interface XMemcachedReturnedCallback<T> {
+public interface XMemcachedClientCallback<T> {
 	
 	/**
 	 * 回调实现。
 	 * 
-	 * @param memcachedClient XMemcached客户端。
+	 * @param xMemcachedClient XMemcached客户端。
 	 * @return 回调返回值。
 	 * @exception Exception 任何可能出现的异常。
 	 */
-	T doInXMemcached(MemcachedClient memcachedClient) throws Exception;
+	T doInXMemcached(XMemcachedClient xMemcachedClient) throws Exception;
 }

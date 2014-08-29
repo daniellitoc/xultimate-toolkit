@@ -97,9 +97,15 @@
 	
 	<bean id="memcachedClient" factory-bean="memcachedClientBuilder" factory-method="build" destroy-method="shutdown" />
   	
-  	<bean id="xmemcachedTemplate" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedTemplate" p:memcachedClient-ref="memcachedClient" />
+  	<bean id="xMemcachedClient" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient" c:xMemcachedClient-ref="memcachedClient" />
   	
-  	<bean id="cacheManager" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedCacheManager" p:memcachedTemplate-ref="xmemcachedTemplate">  
+  	<bean id="xMemcachedTemplate" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedClientTemplate" p:xMemcachedClient-ref="xMemcachedClient" />
+  	
+  	<bean id="xMemcachedLockFactory" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory" p:xMemcachedClient-ref="xMemcachedClient" />
+  	
+  	<bean id="xMemcachedLimiterFactory" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLimiterFactory" p:xMemcachedClient-ref="xMemcachedClient" />
+  	
+  	<bean id="cacheManager" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.spring.XMemcachedCacheManager" p:xMemcachedClient-ref="xMemcachedClient">  
         <property name="configMap">  
             <map>  
                 <!-- key：@Cacheable、@CachePut、@CacheEvict等的name属性。value：缓存过期时间(单位：秒)，默认值：0 -->  

@@ -7,14 +7,17 @@ import redis.clients.jedis.Jedis;
  * 
  * @author Daniel Li
  * @since 19 Jun 2013
+ *
+ * @param <T> 回调返回值。
  */
-public interface JedisCallback {
-	
+public interface JedisCallback<T> {
+
 	/**
 	 * 回调实现。
 	 * 
 	 * @param jedis Jedis客户端。
+	 * @return 回调返回值。
 	 * @exception Exception 任何可能出现的异常。
 	 */
-	void doInJedis(Jedis jedis) throws Exception;
+	T doInJedis(Jedis jedis) throws Exception;
 }

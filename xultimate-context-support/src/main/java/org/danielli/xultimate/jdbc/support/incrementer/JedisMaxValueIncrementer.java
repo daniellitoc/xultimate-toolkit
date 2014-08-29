@@ -2,7 +2,7 @@ package org.danielli.xultimate.jdbc.support.incrementer;
 
 
 import org.danielli.xultimate.context.kvStore.KeyValueStoreException;
-import org.danielli.xultimate.context.kvStore.redis.jedis.JedisReturnedCallback;
+import org.danielli.xultimate.context.kvStore.redis.jedis.JedisCallback;
 import org.danielli.xultimate.context.kvStore.redis.jedis.support.JedisTemplate;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -23,7 +23,7 @@ public class JedisMaxValueIncrementer extends AbstractKeyMaxValueIncrementer {
 	@Override
 	protected long getNextMaxId() throws DataAccessException {
 		try {
-			return jedisTemplate.execute(new JedisReturnedCallback<Long>() {
+			return jedisTemplate.execute(new JedisCallback<Long>() {
 				@Override
 				public Long doInJedis(Jedis jedis) {
 					return jedis.incrBy(getKeyName(), getCacheSize() * getStep());

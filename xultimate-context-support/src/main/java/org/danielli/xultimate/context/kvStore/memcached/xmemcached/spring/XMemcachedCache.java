@@ -1,5 +1,6 @@
-package org.danielli.xultimate.context.kvStore.memcached.xmemcached.support;
+package org.danielli.xultimate.context.kvStore.memcached.xmemcached.spring;
 
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.SimpleValueWrapper;
 
@@ -15,13 +16,13 @@ public class XMemcachedCache implements Cache {
 	private final String name;  
 	/** XMemcached缓存服务 */
     private final XMemcache memcache; 
-    /** XMemcached模板 */
-    private final XMemcachedTemplate memcachedTemplate;
+    /** XMemcached客户端 */
+    private final XMemcachedClient xMemcachedClient;
       
-    public XMemcachedCache(String name, int expire, XMemcachedTemplate memcachedTemplate) {  
+    public XMemcachedCache(String name, int expire, XMemcachedClient xMemcachedClient) {  
         this.name = name;  
-        this.memcachedTemplate = memcachedTemplate;   
-        this.memcache = new XMemcache(name, expire, memcachedTemplate);  
+        this.xMemcachedClient = xMemcachedClient;   
+        this.memcache = new XMemcache(name, expire, xMemcachedClient);  
     }  
   
     @Override  
@@ -50,8 +51,8 @@ public class XMemcachedCache implements Cache {
     }  
   
     @Override  
-    public XMemcachedTemplate getNativeCache() {  
-        return this.memcachedTemplate;  
+    public XMemcachedClient getNativeCache() {  
+        return this.xMemcachedClient;  
     }  
   
     @Override  

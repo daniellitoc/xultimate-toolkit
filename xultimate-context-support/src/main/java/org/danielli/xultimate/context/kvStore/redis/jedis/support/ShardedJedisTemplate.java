@@ -3,7 +3,6 @@ package org.danielli.xultimate.context.kvStore.redis.jedis.support;
 import org.danielli.xultimate.context.kvStore.redis.AbstractRedisTemplate;
 import org.danielli.xultimate.context.kvStore.redis.RedisException;
 import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisCallback;
-import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisReturnedCallback;
 import org.danielli.xultimate.context.kvStore.redis.jedis.util.ShardedJedisPoolUtils;
 
 import redis.clients.jedis.ShardedJedisPool;
@@ -34,25 +33,12 @@ public class ShardedJedisTemplate extends AbstractRedisTemplate {
 	 * @param shardedJedisReturnedCallback 回调。
 	 * @return 回调指定值。
 	 */
-	public <T> T execute(ShardedJedisReturnedCallback<T> shardedJedisReturnedCallback) throws RedisException {
+	public <T> T execute(ShardedJedisCallback<T> shardedJedisReturnedCallback) throws RedisException {
 		try {
 			return ShardedJedisPoolUtils.execute(shardedJedisPool, shardedJedisReturnedCallback);
 		} catch (Exception e) {
 			handleException(wrapperException(e));
 			return null;		// TODO 补全
-		}
-	}
-	
-	/**
-	 * 此方法可以通过Jedis客户端执行相应功能。
-	 * 
-	 * @param shardedJedisCallback 回调。
-	 */
-	public void execute(ShardedJedisCallback shardedJedisCallback) throws RedisException {
-		try {
-			ShardedJedisPoolUtils.execute(shardedJedisPool, shardedJedisCallback);
-		} catch (Exception e) {
-			handleException(wrapperException(e));
 		}
 	}
 }
