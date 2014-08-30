@@ -90,7 +90,7 @@ public class MemcachedLockFactory {
 	 * @author Daniel Li
 	 * @since 19 Jun 2013
 	 */
-	interface MemcachedLock {
+	public interface MemcachedLock {
 		/**
 		 * 锁。
 		 * @param lockName 锁名称。

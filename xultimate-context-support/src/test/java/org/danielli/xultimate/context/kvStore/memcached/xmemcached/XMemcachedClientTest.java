@@ -47,7 +47,7 @@ public class XMemcachedClientTest {
 		person.setName("Daniel Li");
 		person.setAge(18);
 		
-		PerformanceMonitor.start("XMemcachedTemplateTest");
+		PerformanceMonitor.start("XMemcachedClientTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				defaultTranscoder.decode(defaultTranscoder.encode(person));
@@ -116,7 +116,7 @@ public class XMemcachedClientTest {
 		person.setName("Daniel Li");
 		person.setAge(18);
 		
-		PerformanceMonitor.start("XMemcachedTemplateTest");
+		PerformanceMonitor.start("XMemcachedClientTemplateTest");
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 100000; j++) {
 				xMemcachedClient.set("person", 1000, person);

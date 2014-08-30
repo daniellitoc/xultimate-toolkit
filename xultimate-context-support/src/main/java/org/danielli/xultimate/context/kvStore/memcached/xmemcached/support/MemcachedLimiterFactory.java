@@ -87,7 +87,7 @@ public class MemcachedLimiterFactory {
 	 * @author Daniel Li
 	 * @since 15 Jun 2013
 	 */
-	interface MemcachedLimiter {
+	public interface MemcachedLimiter {
 		/**
 		 * 是否可继续。
 		 * @param limitName 限制名称。
@@ -102,7 +102,7 @@ public class MemcachedLimiterFactory {
 	 * @author Daniel Li
 	 * @since 15 Jun 2013
 	 */
-	interface LimitResult {
+	public interface LimitResult {
 		
 		/**
 		 * 是否可以继续。
