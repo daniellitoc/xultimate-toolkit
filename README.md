@@ -86,7 +86,7 @@ The X-Ultimate Toolkit provides a JavaEE application reference architecture base
 * 包括HTTL(HTTLEngineUtils)、Freemarker、StringTemeplateV3、StringTemplateV4、Velocity的模板处理Utils类。
 * 提供Formatter，包括对HTTL、Spel、FreeMarker、MessageFormat、StringTemplateV3、StrpingTemplateV4、Velocity的封装。
 * 包括对FastDFS Java Api的封装，主要有ClientGlobalInitializer、StorageClientTemplate、FastDFSUtils等。
-* 提供XMemcachedTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制Java、Kryo、Protobuf、Protostuff；同时具备压缩功能，可配置为GZIP、Snappy。
+* 提供XMemcachedClientTemplate，是对XMemcached的封装，重写SerializingTranscoder，使其支持多种序列化机制Java、Kryo、Protobuf、Protostuff；同时具备压缩功能，可配置为GZIP、Snappy。
 * 提供XMemcachedCacheManager用于支持Spring Cache和Spring缓存注解。
 * 提供MemcachedClientMutex，内部使用add实现分布式互斥锁。
 * 提供MemcachedClientLimiter，用于限制访问记录。
