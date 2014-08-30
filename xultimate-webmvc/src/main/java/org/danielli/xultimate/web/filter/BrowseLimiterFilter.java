@@ -9,7 +9,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.MemcachedClientLimiter;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLimiterFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -24,8 +24,10 @@ public abstract class BrowseLimiterFilter extends OncePerRequestFilter {
 	protected int cacheSeconds;
 	/** 访问次数限制 */
 	protected int visitLimiterCount;
-	/** 访问限制器 */
-	protected MemcachedClientLimiter memcachedClientLimiter;
+	/** 访问限制器工厂 */
+	protected MemcachedLimiterFactory memcachedLimiterFactory;
+	
+	protected MemcachedLimiterFactory.MemcachedLimiter memcachedLimiter;
 
 	/**
 	 * 设置缓存时间。
@@ -46,18 +48,24 @@ public abstract class BrowseLimiterFilter extends OncePerRequestFilter {
 	}
 
 	/**
-	 * 设置访问限制器。
+	 * 设置访问限制器工厂。
 	 * 
-	 * @param memcachedClientLimiter 访问限制器。
+	 * @param memcachedLimiterFactory 访问限制器工厂。
 	 */
-	public void setMemcachedClientLimiter(MemcachedClientLimiter memcachedClientLimiter) {
-		this.memcachedClientLimiter = memcachedClientLimiter;
+	public void setMemcachedLimiterFactory(MemcachedLimiterFactory memcachedLimiterFactory) {
+		this.memcachedLimiterFactory = memcachedLimiterFactory;
+	}
+	
+	@Override
+	public void afterPropertiesSet() throws ServletException {
+		super.afterPropertiesSet();
+		memcachedLimiter = memcachedLimiterFactory.getLimiter(cacheSeconds, 1, 0, visitLimiterCount);
 	}
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String key = getKey(request, response);
-		boolean allowBrowse = memcachedClientLimiter.allowBrowse(key, cacheSeconds, visitLimiterCount);
+		boolean allowBrowse = memcachedLimiter.limit(key).isAllow();
 		if (allowBrowse) {
 			filterChain.doFilter(request, response);
 		} else {
