@@ -49,7 +49,7 @@ public class CookieGenerator extends org.springframework.web.util.CookieGenerato
 		} else if (this.cookieExpireDate != null) {
 			Duration duration = new Duration(DateTime.now(), cookieExpireDate);
 			if (duration.getStandardSeconds() <= 0) {
-				if (logger.isDebugEnabled()) {
+				if (logger.isWarnEnabled()) {
 					logger.warn("expireDate must be great than now, ignore setMaxAge(int expiry)");
 				}
 			} else {
