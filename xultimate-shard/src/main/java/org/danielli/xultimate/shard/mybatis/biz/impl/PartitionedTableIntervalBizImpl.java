@@ -6,29 +6,30 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import net.rubyeye.xmemcached.MemcachedClient;
-
 import org.danielli.xultimate.context.format.FormatterUtils;
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.MemcachedClientMutex;
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedReturnedCallback;
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedTemplate;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClientCallback;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory.MemcachedLock;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedClientTemplate;
 import org.danielli.xultimate.core.json.JSONTemplate;
 import org.danielli.xultimate.shard.mybatis.biz.PartitionedTableIntervalBiz;
 import org.danielli.xultimate.shard.mybatis.dao.PartitionedTableIntervalDAO;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service("partitionedTableIntervalBizImpl")
-public class PartitionedTableIntervalBizImpl implements PartitionedTableIntervalBiz {
+public class PartitionedTableIntervalBizImpl implements PartitionedTableIntervalBiz, InitializingBean {
 
 	@Resource(name = "partitionedTableIntervalDAO")
 	private PartitionedTableIntervalDAO partitionedTableIntervalDAO;
 	
-	@Resource(name = "xMemcachedTemplate")
-	private XMemcachedTemplate xMemcachedTemplate;
+	@Resource(name = "xMemcachedClientTemplate")
+	private XMemcachedClientTemplate xMemcachedClientTemplate;
 	
-	@Resource(name = "memcachedClientMutex")
-	private MemcachedClientMutex memcachedClientMutex;
+	@Resource(name = "memcachedLockFactory")
+	private MemcachedLockFactory memcachedLockFactory;
 	
 	@Resource(name = "jsonTemplate")
 	private JSONTemplate jsonTemplate;
@@ -36,25 +37,32 @@ public class PartitionedTableIntervalBizImpl implements PartitionedTableInterval
 	@Value("${memcached.expireSeconds}")
 	private Integer expireSeconds;
 	
+	private MemcachedLock memcachedLock;
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		memcachedLock = memcachedLockFactory.getLock(10);
+	}
+	
 	@Override
 	public List<Map<String, Object>> findInfosByVirtualTableIdAndVirtualSocketIdSet(final Long virtualTableId, final Set<Long> virtualSocketIdSet) {
-		return xMemcachedTemplate.execute(new XMemcachedReturnedCallback<List<Map<String, Object>>>() {
+		return xMemcachedClientTemplate.execute(new XMemcachedClientCallback<List<Map<String, Object>>>() {
 			@Override
-			public List<Map<String, Object>> doInXMemcached(MemcachedClient memcachedClient) throws Exception {
+			public List<Map<String, Object>> doInXMemcached(XMemcachedClient xMemcachedClient) throws Exception {
 				String partitionedTableIntervalInfosKey = FormatterUtils.format("PartitionedTableInterval:virtualTableId:{0}:virtualSocketIdSet:{1}", virtualTableId, jsonTemplate.writeValueAsString(virtualSocketIdSet));
-				List<Map<String, Object>> partitionedTableIntervalInfos = memcachedClient.get(partitionedTableIntervalInfosKey);
+				List<Map<String, Object>> partitionedTableIntervalInfos = xMemcachedClient.get(partitionedTableIntervalInfosKey);
 				if (partitionedTableIntervalInfos == null) {
 					String partitionedTableIntervalInfosKeyLock = FormatterUtils.format("{0}.lock", partitionedTableIntervalInfosKey);
-					if (memcachedClientMutex.tryLock(memcachedClient, partitionedTableIntervalInfosKeyLock)) {
+					if (memcachedLock.tryLock(partitionedTableIntervalInfosKeyLock)) {
 						try {
 							partitionedTableIntervalInfos = partitionedTableIntervalDAO.findInfosByVirtualTableIdAndVirtualSocketIdSet(virtualTableId, virtualSocketIdSet);
-							memcachedClient.set(partitionedTableIntervalInfosKey, expireSeconds, partitionedTableIntervalInfos);
+							xMemcachedClient.set(partitionedTableIntervalInfosKey, expireSeconds, partitionedTableIntervalInfos);
 						} finally {
-							memcachedClientMutex.unlock(memcachedClient, partitionedTableIntervalInfosKeyLock);
+							memcachedLock.unlock(partitionedTableIntervalInfosKeyLock);
 						}
 					} else {
 						Thread.sleep(500);
-						return doInXMemcached(memcachedClient);
+						return doInXMemcached(xMemcachedClient);
 					}
 				}
 				return partitionedTableIntervalInfos;
