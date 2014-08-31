@@ -3,7 +3,7 @@ package org.danielli.xultimate.context.kvStore.memcached.xmemcached.support;
 import org.danielli.xultimate.context.kvStore.memcached.AbstractMemcachedTemplate;
 import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClientCallback;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.callback.XMemcachedClientCallback;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.util.XMemcachedClientUtils;
 
 /**

@@ -1,4 +1,6 @@
-package org.danielli.xultimate.context.kvStore.memcached.xmemcached;
+package org.danielli.xultimate.context.kvStore.memcached.xmemcached.callback;
+
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
 
 
 /**
