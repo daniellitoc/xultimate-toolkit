@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
+import net.rubyeye.xmemcached.XMemcachedClient;
+
+import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.util.Assert;
 import org.danielli.xultimate.util.builder.EqualsBuilderUtils;
 import org.danielli.xultimate.util.builder.HashCodeBuilderUtils;
@@ -93,7 +95,7 @@ public class MemcachedLimiterFactory {
 		 * @param limitName 限制名称。
 		 * @return 限制结果。
 		 */
-		LimitResult limit(String limitName);
+		LimitResult limit(String limitName) throws MemcachedException;
 	}
 	
 	/**
@@ -253,14 +255,16 @@ public class MemcachedLimiterFactory {
 		}
 		
 		@Override
-		public DefaultLimitResult limit(String limitName) {
+		public DefaultLimitResult limit(String limitName) throws MemcachedException {
 			Assert.notNull(limitName, "this argument `limitName` is required; it must not be null");
-			Long currentLimit = xMemcachedClient.incr(limitName, limiterConfig.getStep(), limiterConfig.getInitLimit(), xMemcachedClient.getOpTimeout(), limiterConfig.getExpireSeconds());
-			if (currentLimit == null) {
-				LOGGER.warn("try to increment a Counter `{}` failure. Please Check Memcached Log", limitName);
-				return new DefaultLimitResult(false);
+			try {
+				long currentLimit = xMemcachedClient.incr(limitName, limiterConfig.getStep(), limiterConfig.getInitLimit(), xMemcachedClient.getOpTimeout(), limiterConfig.getExpireSeconds());
+				return new DefaultLimitResult(!limiterConfig.grantThan(currentLimit));
+			} catch (Exception e) {
+				LOGGER.error("Use MemcachedLimiter caught Exception");
+				LOGGER.error(e.getMessage(), e);
+				throw new MemcachedException(e.getMessage(), e);
 			}
-			return new DefaultLimitResult(!limiterConfig.grantThan(currentLimit));
 		}
 	}
 }

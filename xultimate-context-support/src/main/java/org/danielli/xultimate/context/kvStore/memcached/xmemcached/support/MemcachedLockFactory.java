@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
+import net.rubyeye.xmemcached.XMemcachedClient;
+
+import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.util.Assert;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -95,14 +97,16 @@ public class MemcachedLockFactory {
 		 * 锁。
 		 * @param lockName 锁名称。
 		 * @return 是否获取锁，如果为true表示获取成功，否则表示获取失败。
+		 * @exception MemcachedException 可能出现的任何异常。
 		 */
-		boolean tryLock(String lockName);
+		boolean tryLock(String lockName) throws MemcachedException;
 		
 		/**
 		 * 解锁。
 		 * @param lockName 锁名称。
+		 * @exception MemcachedException 可能出现的任何异常。
 		 */
-		void unlock(String lockName);
+		void unlock(String lockName) throws MemcachedException;
 	}
 	
 	/**
@@ -114,18 +118,27 @@ public class MemcachedLockFactory {
 	abstract class AbstractMemcachedLock implements MemcachedLock {
 		
 		@Override
-		public boolean tryLock(String lockName) {
+		public boolean tryLock(String lockName) throws MemcachedException {
 			Assert.notNull(lockName, "this argument `lockName` is required; it must not be null");
-			boolean result = xMemcachedClient.add(lockName, getExpireSeconds(), true);
-			LOGGER.debug("try to acquire a lock `{}`: {}", lockName, result ? "success" : "failure");
-			return result;
+			try {
+				return xMemcachedClient.add(lockName, getExpireSeconds(), true);
+			} catch (Exception e) {
+				LOGGER.error("Use MemcachedLock caught Exception");
+				LOGGER.error(e.getMessage(), e);
+				throw new MemcachedException(e.getMessage(), e);
+			}
 		}
 		
 		@Override
-		public void unlock(String lockName) {
+		public void unlock(String lockName) throws MemcachedException {
 			Assert.notNull(lockName, "this argument `lockName` is required; it must not be null");
-			boolean result = xMemcachedClient.delete(lockName);
-			LOGGER.debug("try to release a lock `{}`: {}", lockName, result ? "success" : "failure. Please Check Memcached Log");
+			try {
+				xMemcachedClient.delete(lockName);
+			} catch (Exception e) {
+				LOGGER.error("Use MemcachedLock caught Exception");
+				LOGGER.error(e.getMessage(), e);
+				throw new MemcachedException(e.getMessage(), e);
+			}
 		}
 		
 		protected abstract int getExpireSeconds();
