@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.danielli.xultimate.context.format.FormatterUtils;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient;
-import org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClientCallback;
+import org.danielli.xultimate.context.kvStore.memcached.xmemcached.callback.XMemcachedClientCallback;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory.MemcachedLock;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.XMemcachedClientTemplate;
