@@ -9,6 +9,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLimiterFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -64,12 +65,16 @@ public abstract class BrowseLimiterFilter extends OncePerRequestFilter {
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		String key = getKey(request, response);
-		boolean allowBrowse = memcachedLimiter.limit(key).isAllow();
-		if (allowBrowse) {
-			filterChain.doFilter(request, response);
-		} else {
-			doRestrictions(request, response, filterChain);
+		String cachedKey = getCachedKey(request, response);
+		try {
+			boolean allowBrowse = memcachedLimiter.limit(cachedKey).isAllow();
+			if (allowBrowse) {
+				filterChain.doFilter(request, response);
+			} else {
+				doRestrictions(request, response, filterChain);
+			}
+		} catch (MemcachedException e) {
+			onMemcachedException(request, response, filterChain);
 		}
 	}
 	
@@ -80,7 +85,7 @@ public abstract class BrowseLimiterFilter extends OncePerRequestFilter {
 	 * @param response 响应对象。
 	 * @return 缓存KEY。
 	 */
-	public abstract String getKey(ServletRequest request, ServletResponse response);
+	public abstract String getCachedKey(ServletRequest request, ServletResponse response);
 
 	/**
 	 * 若是不允许访问，应该执行的操作。
@@ -91,5 +96,12 @@ public abstract class BrowseLimiterFilter extends OncePerRequestFilter {
 	 */
 	public abstract void doRestrictions(ServletRequest request, ServletResponse response, FilterChain chain);
 
-
+	/**
+	 * 当出现异常时的处理，通常表示分布式限制器调用失败。
+	 * 
+	 * @param request 请求对象。
+	 * @param response 响应对象。
+	 * @param chain 执行链。
+	 */
+	public abstract void onMemcachedException(ServletRequest request, ServletResponse response, FilterChain chain);
 }
