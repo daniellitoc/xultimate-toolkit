@@ -38,8 +38,8 @@
 	
 	<!-- 压缩 -->
 	<filter>
-		<filter-class>org.danielli.xultimate.web.filter.GzipCompressFilter</filter-class>
 		<filter-name>gzipCompressFilter</filter-name>
+		<filter-class>org.danielli.xultimate.web.filter.GzipCompressFilter</filter-class>
 		<init-param>
 			<param-name>isGzipEnabled</param-name>
 			<param-value>true</param-value>
