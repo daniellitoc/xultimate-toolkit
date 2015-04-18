@@ -31,57 +31,79 @@
 	<!-- 使用JBoss、WebLogic时使用应用服务器本身提供的数据源。
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/bbt" />
 	 -->
-	 
-	<!-- 
+
+	<bean id="abstractDataSource" abstract="true" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">   	    
+	    <!-- 获取连接最大等待超时的时间 -->
+	    <property name="maxWait" value="60000" />
+
+		<!--
+			1) Destroy线程会检测连接的间隔时间，配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+			2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明
+		-->
+	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+	    
+	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+	    <property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<!-- 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用 -->
+	    <property name="validationQuery" value="SELECT 'x'" />
+		<!-- 申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。 -->
+	    <property name="testWhileIdle" value="true" />
+		<!-- 申请连接时执行validationQuery检测连接是否有效 -->
+	    <property name="testOnBorrow" value="false" />
+		<!-- 归还连接时执行validationQuery检测连接是否有效 -->
+	    <property name="testOnReturn" value="false" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小。如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。分库分表较多的数据库，建议配置为false。 -->
+		<property name="poolPreparedStatements" value="false" />
+		<!-- 当大于0时，poolPreparedStatements自动触发修改为true -->
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="-1" />
+
+
+		<!-- 以下可不进行配置 -->
+		<!--
+			当程序存在缺陷时，申请的连接忘记关闭，这时候，就存在连接泄漏了。Druid提供了RemoveAbandanded相关配置，用来关闭长时间不使用的连接。
+			1. 在内置监控页面weburi-detail.html中，查看JdbcPoolConnectionOpenCount和JdbcPoolConnectionCloseCount属性，如果不相等，就是泄漏了。
+			2. 在内置监控界面datasource.html中的查看ActiveConnection StackTrace属性的，可以看到未关闭连接的具体堆栈信息，从而方便查出哪些连接泄漏了。
+		 -->
+		<property name="removeAbandoned" value="true" /> <!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandonedTimeout" value="1800" /> <!-- 1800秒，也就是30分钟 -->
+		<property name="logAbandoned" value="true" /> <!-- 关闭abanded连接时输出错误日志 -->
+
+	    <!-- 定期将监控数据输出到日志中 -->
+	    <property name="timeBetweenLogStatsMillis" value="300000" />
+		<!-- 合并多个DruidDataSource的监控数据，无法和timeBetweenLogStatsMillis共用 -->
+		<property name="useGloalDataSourceStat" value="false" />
+	    <!-- 配置监控统计拦截的filters -->
+	    <property name="proxyFilters">
+	        <list>
+	        	<!-- 拦截检测的时间包含在StatFilter统计的SQL执行时间内。 -->
+	            <ref bean="statFilter" />
+				<ref bean="wallFilter"/>
+	            <ref bean="logFilter" />
+	        </list>
+	    </property>
+
+	</bean>
+
+	<!--
 		slowSqlMillis：定义慢SQL的标准
 		logSlowSql：慢SQL记录
 		mergeSql：SQL合并配置
 	 -->
 	<bean id="statFilter" class="com.alibaba.druid.filter.stat.StatFilter" p:logSlowSql="true" p:mergeSql="true" p:slowSqlMillis="1000" />
-	<!-- 
+	<!--
 		logViolation：怀疑攻击的SQL记录到日志
 		throwException：怀疑攻击的SQL抛异常
 	 -->
 	<bean id="wallFilter" class="com.alibaba.druid.wall.WallFilter" p:dbType="mysql" p:logViolation="true" p:throwException="false" />
-	<!-- 
+	<!--
 		statementExecutableSqlLogEnable：记录所有可执行的SQL
+		loggerName
+			1. druid.sql.DataSource
+			2. druid.sql.Connection
+			3. druid.sql.Statement
+			4. druid.sql.ResultSet
 	 -->
 	<bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter" p:statementExecutableSqlLogEnable="true" />
-	<bean id="abstractDataSource" abstract="true" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">   	    
-	    <!-- 配置获取连接等待超时的时间 -->
-	    <property name="maxWait" value="60000" />
-		
-		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
-	    
-	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-	    <property name="minEvictableIdleTimeMillis" value="300000" />
-	 
-	    <property name="validationQuery" value="SELECT 'x'" />
-	    <property name="testWhileIdle" value="true" />
-	    <property name="testOnBorrow" value="false" />
-	    <property name="testOnReturn" value="false" />
-	    <!-- 定期将监控数据输出到日志中 -->
-	    <property name="timeBetweenLogStatsMillis" value="300000" />
-	    
-	    <!-- 当程序存在缺陷时，申请的连接忘记关闭，这时候，就存在连接泄漏了。Druid提供了RemoveAbandanded相关配置，用来关闭长时间不使用的连接。 -->
-	    <property name="removeAbandoned" value="true" /> <!-- 打开removeAbandoned功能 -->
-    	<property name="removeAbandonedTimeout" value="1800" /> <!-- 1800秒，也就是30分钟 -->
-    	<property name="logAbandoned" value="true" /> <!-- 关闭abanded连接时输出错误日志 -->
-	    
-	    <!-- 打开PSCache，并且指定每个连接上PSCache的大小。如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。分库分表较多的数据库，建议配置为false。 -->
-	    <property name="poolPreparedStatements" value="false" />
-	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
-	    
-	    <!-- 配置监控统计拦截的filters -->
-	    <property name="proxyFilters">
-	        <list>
-	        	<ref bean="wallFilter"/>
-	            <ref bean="statFilter" />
-	            <ref bean="logFilter" />
-	        </list>
-	    </property>
-	    <!-- 合并多个DruidDataSource的监控数据，无法和timeBetweenLogStatsMillis共用 -->
-	    <property name="useGloalDataSourceStat" value="false" />
-	</bean>
 </beans>

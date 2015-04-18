@@ -10,10 +10,10 @@
 			<param-name>allow</param-name>
 			<param-value>127.0.0.1</param-value>
 		</init-param>
-		<init-param>
+<!--		<init-param>
 			<param-name>deny</param-name>
 			<param-value>128.242.127.1/24,128.242.128.1</param-value>
-		</init-param>
+		</init-param>-->
 		<init-param>
 			<param-name>resetEnable</param-name>
 			<param-value>true</param-value>
