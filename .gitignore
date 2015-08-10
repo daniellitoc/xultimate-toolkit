@@ -2,12 +2,15 @@
 .project
 .classpath
 
+.idea
+*.ipr
+*.iml
+*.iws
+
+.DS_Store
+Thumbs.db
+
 *.class
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
 target
-.springBeans
+
